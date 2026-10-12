@@ -68,3 +68,8 @@ Each phase appends a summary of at most 15 lines.
 - research/h3/study_plan_draft.md (5 tasks, between-subjects, measures, recruitment, power note: 39 per arm for 50% vs 80%); research/accuracy_check/plan.md + phone_check.csv (10 pairs, 10 hospitals, both metros).
 - Data issue for a human: CMS lists CCN 030037 (registry: HonorHealth Tempe) at 1800 E Van Buren St, Phoenix.
 - Tests: 20 passing (pytest), ruff clean.
+
+## FINAL - Team summary (2026-10-12)
+- docs/WEEK8_SUMMARY.md written: per-phase status, key numbers, 10 open human tasks, 5-sentence paragraph for Dr. Li.
+- Branches: main (Phase 0) <- pipeline/phase1-registry <- ... <- api/phase6-search (stacked, one per phase); one PR per phase.
+- Still running at the time of writing: Mayo (21.5 GB) validation and parse in pipeline.run (log: data/raw/mayo_etl.log).
