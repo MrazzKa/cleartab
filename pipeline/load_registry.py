@@ -20,7 +20,11 @@ ON CONFLICT (ccn) DO UPDATE SET
     discovery_method = EXCLUDED.discovery_method,
     latitude = COALESCE(EXCLUDED.latitude, hospitals.latitude),
     longitude = COALESCE(EXCLUDED.longitude, hospitals.longitude),
-    status = EXCLUDED.status, source_url = EXCLUDED.source_url, retrieved_at = EXCLUDED.retrieved_at
+    -- once the ETL has scored a hospital, its status comes from the ETL, not from the registry
+    status = CASE WHEN hospitals.completeness_score IS NULL THEN EXCLUDED.status ELSE hospitals.status END,
+    source_url = EXCLUDED.source_url,
+    retrieved_at = CASE WHEN hospitals.completeness_score IS NULL THEN EXCLUDED.retrieved_at
+                        ELSE hospitals.retrieved_at END
 """
 
 
@@ -56,6 +60,15 @@ def to_row(r: dict) -> dict:
 def main() -> None:
     with open(REGISTRY_CSV, newline="") as f:
         rows = [to_row(r) for r in csv.DictReader(f)]
+    geo_path = REGISTRY_CSV.parent / "hospital_geo.csv"
+    if geo_path.exists():  # phone and coordinates from pipeline/geo.py
+        with open(geo_path, newline="") as f:
+            geo = {g["ccn"]: g for g in csv.DictReader(f)}
+        for r in rows:
+            g = geo.get(r["ccn"], {})
+            r["phone"] = r["phone"] or g.get("phone") or None
+            r["latitude"] = r["latitude"] or (float(g["lat"]) if g.get("lat") else None)
+            r["longitude"] = r["longitude"] or (float(g["lon"]) if g.get("lon") else None)
     with psycopg.connect(DATABASE_URL) as conn, conn.cursor() as cur:
         cur.executemany(UPSERT, rows)
     print(f"loaded {len(rows)} hospitals")

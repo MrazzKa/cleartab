@@ -8,3 +8,6 @@ testpaths = ["tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+"api/make_wireframe.py" = ["E501"]  # HTML template lines

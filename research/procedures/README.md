@@ -55,4 +55,5 @@ Reproduce: `PYTHONPATH=. .venv/bin/python research/procedures/procedures_frequen
 Carondelet (30 of 50) lacks most surgery and endoscopy codes; Arizona Spine and Joint (20) is a specialty
 hospital. Exceptional publishes CPT codes labelled "CDM", so 0 match; CORE is non-standard; Mayo is not
 downloaded yet. Human review: a clinician or the advisor should read the 50 plain names and descriptions
-before launch; the reading level was written to 8th grade but not measured with a tool.
+before launch. Reading level, measured with research/readability.py (Flesch-Kincaid with an approximate
+syllable counter): descriptions average grade 4.7, highest 7.6, none above grade 8.

@@ -59,3 +59,12 @@ Each phase appends a summary of at most 15 lines.
 - Downloader now makes one request per file per run (F3); Phase 2 used HEAD + GET.
 - Correction to Phases 2-4: Valleywise downloaded on the 3rd attempt. H1 now 12 of 15 usable (8 systems); launch list re-selected under the same rules (77065, 66984 replace 72114, 10060; 44 CMS + 6, all >= 8 hospitals); dictionary 327 strings, coverage 72.6% (Valleywise 68.2%, Banner UMC Tucson 58.9% below 60%); provisional H2 median ratio 2.81 (40/50 >= 2), cash below median negotiated 7/50 (14%). Reports updated.
 - Mayo (21.5 GB) still downloading; not loaded. Human: run `python -m pipeline.run 030103` and `python -m pipeline.h1_profile 030103` when data/processed/downloads.csv shows it ok.
+
+## Phase 6 - Search API and screen specification (2026-10-12)
+- FastAPI (api/main.py): GET /search?q=&plan=&zip= (best-matching launch procedure via full-text + pg_trgm; up to 10 hospitals in the user's metro, sorted by applicable price; gross, cash, negotiated or allowed range with methodology labels; completeness; city; straight-line distance; provenance), GET /procedures/suggest, GET /plans. Logs keep the path only (no procedure or ZIP).
+- Latency (api/bench.py, 500 mixed requests over 14 hospitals / 33,991 price rows): search p95 9.6 ms over HTTP, 11.9 ms in-process (target 500 ms); suggest p95 4.9 ms (target 150 ms). Must be re-measured when more hospitals are loaded.
+- ZIP centroids: 2020 ZCTA internal points for 417 AZ ZCTAs from Census TIGERweb (the gazetteer on www2.census.gov is disallowed by its robots.txt when read strictly per RFC 9309). Hospital phones and addresses from CMS Hospital General Information; 37 of 46 geocoded by the Census Geocoder, the rest at their ZIP centroid (flagged in hospital_geo.csv).
+- docs/results_screen_spec.md, web/wireframes/results.html (grayscale, 5 real results, explainer, call summary). Explainer 91 words, Flesch-Kincaid 7.2; procedure descriptions rewritten so none is above grade 8 (mean 4.7).
+- research/h3/study_plan_draft.md (5 tasks, between-subjects, measures, recruitment, power note: 39 per arm for 50% vs 80%); research/accuracy_check/plan.md + phone_check.csv (10 pairs, 10 hospitals, both metros).
+- Data issue for a human: CMS lists CCN 030037 (registry: HonorHealth Tempe) at 1800 E Van Buren St, Phoenix.
+- Tests: 20 passing (pytest), ruff clean.
