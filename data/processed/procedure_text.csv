@@ -1,0 +1,51 @@
+code,plain_name,synonyms,description
+76830,pelvic ultrasound (vaginal),transvaginal ultrasound; vaginal ultrasound; pelvic ultrasound; TVUS,An ultrasound of the uterus and ovaries done with a small wand placed in the vagina. Not for pregnancy.
+76805,pregnancy ultrasound,OB ultrasound; prenatal ultrasound; anatomy scan; baby ultrasound,An ultrasound to check the baby and the womb after 14 weeks of pregnancy with one baby.
+72110,lower back x-ray,lumbar spine x-ray; low back x-ray; lumbar x-ray,X-ray pictures of the lower back with at least four views.
+74177,CT scan of belly and pelvis with contrast,abdominal CT; CT abdomen pelvis; belly CT scan; CAT scan stomach,A CT scan of the belly and hips area using contrast dye to make organs easier to see.
+76700,abdominal ultrasound,belly ultrasound; stomach ultrasound; ultrasound abdomen complete,An ultrasound of all the main organs in the belly such as the liver gallbladder and kidneys.
+72193,CT scan of pelvis with contrast,pelvic CT; hip area CT; CAT scan pelvis,A CT scan of the hips and lower belly area using contrast dye.
+70450,head CT scan,brain CT; CT head without contrast; CAT scan head,A CT scan of the head and brain without contrast dye.
+70553,brain MRI with and without contrast,head MRI; MRI brain; brain scan with dye,An MRI of the brain taken first without and then with contrast dye.
+72148,lower back MRI,lumbar spine MRI; low back MRI; MRI lumbar without contrast,An MRI of the lower spine without contrast dye.
+73721,knee MRI,leg joint MRI; MRI knee; ankle MRI; hip joint MRI,An MRI of one leg joint such as the knee without contrast dye.
+77067,screening mammogram,mammogram; breast cancer screening; routine mammogram; 3D mammogram screening,A routine x-ray of both breasts for people with no breast problems.
+77066,diagnostic mammogram (both breasts),diagnostic mammogram; follow-up mammogram; breast x-ray both sides,An x-ray of both breasts to look at a lump or other problem.
+71045,chest x-ray (1 view),chest x-ray; CXR; lung x-ray,One x-ray picture of the chest to look at the lungs and heart.
+71046,chest x-ray (2 views),chest x-ray; CXR two views; lung x-ray,Two x-ray pictures of the chest from the front and the side.
+72114,lower back x-ray (6 or more views),lumbar spine x-ray complete; low back x-ray with bending views,A fuller set of at least six x-ray pictures of the lower back.
+81003,urine test (automated),urinalysis; UA; urine test without microscope,A machine checks a urine sample for signs of infection kidney problems or diabetes.
+85610,blood clotting test (PT/INR),prothrombin time; PT; INR; protime,A blood test that measures how long blood takes to clot. Often used with blood thinners.
+85730,blood clotting test (PTT),partial thromboplastin time; PTT; aPTT,A blood test that checks another part of how the blood clots.
+84153,PSA blood test,prostate specific antigen; prostate test; total PSA,A blood test for a protein made by the prostate. Used to screen for prostate problems.
+80061,cholesterol test (lipid panel),lipid panel; cholesterol panel; triglycerides test,A blood test for cholesterol and other fats in the blood.
+84443,thyroid test (TSH),thyroid stimulating hormone; TSH; thyroid blood test,A blood test that shows how well the thyroid gland is working.
+85025,complete blood count with differential,CBC with diff; blood count; CBC,A blood test that counts red cells white cells and platelets and sorts white cells by type.
+80048,basic metabolic panel,BMP; chem 7; basic blood chemistry,A blood test for sugar salts and kidney function.
+85027,complete blood count,CBC; blood count without differential,A blood test that counts red cells white cells and platelets.
+80076,liver function test,hepatic function panel; liver panel; LFT,A group of blood tests that show how well the liver is working.
+80053,comprehensive metabolic panel,CMP; chem 14; full blood chemistry,A blood test for sugar salts kidney function and liver function.
+81001,urine test with microscope (automated),urinalysis with microscopy; UA with micro; urine test,A machine checks a urine sample and also looks at it under a microscope.
+81002,urine dipstick test,urinalysis manual; UA dipstick; urine test,A urine sample is checked by hand with a test strip.
+80069,kidney function panel,renal panel; kidney blood test; renal function panel,A group of blood tests that show how well the kidneys are working.
+84154,free PSA blood test,free prostate specific antigen; free PSA,A blood test for the part of PSA that is not attached to other proteins. Often done after a high PSA result.
+43239,upper endoscopy with biopsy,EGD with biopsy; upper GI scope biopsy; stomach scope with biopsy,A thin camera tube checks the food pipe stomach and upper intestine and takes small tissue samples.
+45380,colonoscopy with biopsy,colon scope with biopsy; colonoscopy biopsy,A camera tube checks the large intestine and takes small tissue samples.
+43235,upper endoscopy,EGD; upper GI scope; stomach scope; esophagogastroduodenoscopy,A thin camera tube checks the food pipe stomach and upper intestine.
+45385,colonoscopy with polyp removal,colonoscopy polypectomy; colonoscopy snare; polyp removal,A camera tube checks the large intestine and removes polyps with a small wire loop.
+45378,colonoscopy,diagnostic colonoscopy; colon scope; colon exam,A camera tube checks the inside of the large intestine.
+45391,colonoscopy with ultrasound,endoscopic ultrasound colon; colonoscopy EUS,A colonoscopy that also uses ultrasound to look at the wall of the large intestine.
+45330,flexible sigmoidoscopy,sigmoidoscopy; lower bowel scope; flex sig,A camera tube checks the lower part of the large intestine.
+31622,bronchoscopy,lung scope; airway scope; diagnostic bronchoscopy,A thin camera tube checks the airways of the lungs.
+64483,lower back nerve root injection,transforaminal epidural; lumbar steroid injection; nerve block lower back,A shot of numbing medicine or steroid near a nerve root in the lower back using imaging to guide the needle.
+62323,lower back epidural injection with imaging,epidural steroid injection; lumbar epidural; ESI,A shot of medicine into the space around the spinal cord in the lower back using imaging to guide the needle.
+29881,knee arthroscopy (meniscus),knee scope; meniscectomy; torn meniscus surgery,Surgery through small cuts with a camera to trim a torn piece of knee cartilage.
+29826,shoulder arthroscopy (bone shaving),shoulder scope; subacromial decompression; shoulder impingement surgery,Surgery through small cuts with a camera to shave bone in the shoulder and make more room for tendons.
+62322,lower back epidural injection,epidural steroid injection without imaging; lumbar epidural,A shot of medicine into the space around the spinal cord in the lower back without imaging guidance.
+55700,prostate biopsy,prostate needle biopsy; prostate tissue sample,Small samples of the prostate are taken with a needle to check for disease.
+19120,breast lump removal,breast lesion excision; lumpectomy for benign lump; breast biopsy surgery,Surgery to remove a lump or growth from the breast through a cut in the skin.
+47562,gallbladder removal (laparoscopic),lap chole; cholecystectomy; gallbladder surgery,Surgery through small cuts with a camera to remove the gallbladder.
+49505,inguinal hernia repair,groin hernia repair; hernia surgery; inguinal hernia,Surgery to fix a hernia in the groin for someone age 5 or older.
+20611,joint injection or fluid removal with ultrasound,joint aspiration; knee injection; shoulder injection; arthrocentesis,A needle is used to remove fluid from or inject medicine into a large joint such as the knee using ultrasound to guide it.
+10140,draining a fluid pocket under the skin,hematoma drainage; seroma drainage; fluid collection drainage,A cut is made to drain blood or fluid that has collected under the skin.
+10060,abscess drainage,boil drainage; incision and drainage; I&D abscess,A small cut is made to drain a single simple pocket of pus under the skin.
