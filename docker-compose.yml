@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: cleartab
+      POSTGRES_PASSWORD: cleartab
+      POSTGRES_DB: cleartab
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cleartab"]
+      interval: 5s
+      retries: 10
+volumes:
+  pgdata:

@@ -1,0 +1,19 @@
+"""Shared constants and helpers for the ClearTab pipeline."""
+import os
+import pathlib
+from datetime import UTC, datetime
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+RAW = ROOT / "data" / "raw"
+MANUAL = RAW / "manual"
+PROCESSED = ROOT / "data" / "processed"
+
+USER_AGENT = "ClearTab-capstone/0.1 (University of Arizona; contact kamarayev@arizona.edu)"
+DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://cleartab:cleartab@localhost:5432/cleartab")
+REGISTRY_CSV = PROCESSED / "hospital_registry.csv"
+# Base list used to build the registry (audit XLSX, "Method" sheet).
+REGISTRY_SOURCE = "https://data.cms.gov/provider-data/dataset/xubh-q36u"
+
+
+def now_utc() -> str:
+    return datetime.now(UTC).replace(microsecond=0).isoformat()
