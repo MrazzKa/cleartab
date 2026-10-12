@@ -10,5 +10,6 @@ web/dist/
 .env
 *.log
 .DS_Store
+tools/validator/
 docs/source/
 data/processed/etl_cache.json

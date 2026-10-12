@@ -20,3 +20,15 @@ Each phase appends a summary of at most 15 lines.
 - Incident: the first robots.txt checker (urllib.robotparser) ignored `*` wildcards, so one HEAD request (no body) went to each of the 3 Northwest file URLs. Replaced with an RFC 9309 matcher (pipeline/robots.py, 7 tests); not repeated.
 - Proposal citation error found: "without barriers" is 45 CFR 180.50(d)(3), the .txt file is (d)(6), not (b)(3) and (d).
 - Human: do the 6 manual downloads; read terms of use for the 8 hospitals still "Not checked".
+
+## Phase 2 - H1 parse test (2026-10-12)
+- H1 rule copied into research/h1/REPORT.md before downloading. 15 hospitals attempted (11 system labels); 13 files downloaded once each (sha256 and size in data/processed/downloads.csv).
+- Replacements logged: Northwest x2 (robots.txt) -> Exceptional, East Valley; Valleywise (portal dropped 2 GETs) -> CORE. Mayo (21.5 GB) still resuming at about 1 MB/s.
+- Formats: 6 CMS JSON, 6 CMS CSV tall, 0 wide, 1 non-standard (CORE). All 12 template files are v3.0.0 and pass the CMS validator (CLI 1.10.8) with 0 errors (data/processed/h1_validator.csv).
+- Streaming parser pipeline/parsers/cms.py (JSON via ijson, CSV tall and wide) -> one long table per hospital (data/raw/normalized/*.parquet). 13 pytest tests, fixtures cut from real files.
+- H1 verdict: PROCEED. 11 of 15 attempted hospitals yield usable coded rows (>= 100 priced CPT/HCPCS/MS-DRG codes) across 7 systems; 9 of the 11 are non-Banner.
+- 2026 elements: org NPI, attester, attestation present in 12/12; allowed-amount elements present wherever applicable; 0 of 12 files omit an applicable element. Most percent/algorithm records lack a median, but all of those report count 0. The "substantial share omit" half of H1 is not supported.
+- 4 of 12 template files have no negotiated rates at all (Carondelet x2, East Valley, Exceptional). Exceptional labels CPT codes as "CDM" (not relabelled).
+- Completeness score: equal weights 20 x 5, formula in REPORT.md; 11 hospitals >= 90. Limitation: the Table 10 components do not reward negotiated rates (Carondelet 98.7, Exceptional 80.0). PM and Dr. Li to decide.
+- Outputs: h1_file_profile.csv, h1_required_elements.csv, payer_strings.csv (raw payer/plan with row counts).
+- Human: manual downloads (MANUAL_DOWNLOADS.md, now 7 incl. Valleywise); decide on the score limitation; rerun `python -m pipeline.h1_profile 030103` when Mayo finishes.

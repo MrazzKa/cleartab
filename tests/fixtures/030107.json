@@ -1,0 +1,167 @@
+{
+ "hospital_name": "Arizona Spine and Joint Hospital LLC",
+ "last_updated_on": "2026-04-14",
+ "version": "3.0.0",
+ "pid": "2095547270",
+ "rid": "12448",
+ "location_name": [
+  "Arizona Spine and Joint Hospital"
+ ],
+ "hospital_address": [
+  "4620 E Baseline Rd, Mesa, AZ 85206"
+ ],
+ "type_2_npi": [
+  "1396745832"
+ ],
+ "license_information": {
+  "license_number": "SH3711",
+  "state": "AZ"
+ },
+ "attestation": {
+  "attestation": "To the best of its knowledge and belief, this hospital has included all applicable standard charge information in accordance with the requirements of 45 CFR 180.50, and the information encoded is true, accurate, and complete as of the date in the file. This hospital has included all payer-specific negotiated charges in dollars that can be expressed as a dollar amount. For payer-specific negotiated charges that cannot be expressed as a dollar amount in the machine-readable file or not knowable in advance, the hospital attests that the payer-specific negotiated charge is based on a contractual algorithm, percentage or formula that precludes the provision of a dollar amount and has provided all necessary information available to the hospital for the public to be able to derive the dollar amount, including, but not limited to, the specific fee schedule or components referenced in such percentage, algorithm or formula.",
+  "confirm_attestation": true,
+  "attester_name": "Geoffrey Vines"
+ },
+ "standard_charge_information": [
+  {
+   "description": "ABORTION WITH D&C, ASPIRATION CURETTAGE OR HYSTEROTOMY",
+   "code_information": [
+    {
+     "code": "770",
+     "type": "MS-DRG"
+    }
+   ],
+   "standard_charges": [
+    {
+     "minimum": 8624.36,
+     "maximum": 16684.04,
+     "discounted_cash": 5844.75,
+     "setting": "inpatient",
+     "payers_information": [
+      {
+       "payer_name": "CIGNA",
+       "plan_name": "All Plans",
+       "standard_charge_dollar": 16684.04,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United Healthcare",
+       "plan_name": "Exchange",
+       "standard_charge_dollar": 10605.14,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United Healthcare",
+       "plan_name": "Navigate",
+       "standard_charge_dollar": 8624.36,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United Healthcare",
+       "plan_name": "Non Options",
+       "standard_charge_dollar": 10605.14,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United Healthcare",
+       "plan_name": "Options",
+       "standard_charge_dollar": 13814.32,
+       "methodology": "case rate"
+      }
+     ],
+     "billing_class": "facility"
+    }
+   ]
+  },
+  {
+   "description": "ABORTION WITHOUT D&C",
+   "code_information": [
+    {
+     "code": "779",
+     "type": "MS-DRG"
+    }
+   ],
+   "standard_charges": [
+    {
+     "minimum": 10681.38,
+     "maximum": 20663.4,
+     "discounted_cash": 7238.8,
+     "setting": "inpatient",
+     "payers_information": [
+      {
+       "payer_name": "CIGNA",
+       "plan_name": "All Plans",
+       "standard_charge_dollar": 20663.4,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United Healthcare",
+       "plan_name": "Exchange",
+       "standard_charge_dollar": 13134.6,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United Healthcare",
+       "plan_name": "Navigate",
+       "standard_charge_dollar": 10681.38,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United Healthcare",
+       "plan_name": "Non Options",
+       "standard_charge_dollar": 13134.6,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United Healthcare",
+       "plan_name": "Options",
+       "standard_charge_dollar": 17109.2,
+       "methodology": "case rate"
+      }
+     ],
+     "billing_class": "facility"
+    }
+   ]
+  },
+  {
+   "description": "ABS TRANSFER BAG",
+   "code_information": [
+    {
+     "code": "2700001913",
+     "type": "CDM"
+    },
+    {
+     "code": "270",
+     "type": "RC"
+    }
+   ],
+   "standard_charges": [
+    {
+     "gross_charge": 17.66,
+     "setting": "both",
+     "billing_class": "facility"
+    }
+   ]
+  },
+  {
+   "description": "ACE DRESSING 2IN STERILE",
+   "code_information": [
+    {
+     "code": "2700001093",
+     "type": "CDM"
+    },
+    {
+     "code": "270",
+     "type": "RC"
+    }
+   ],
+   "standard_charges": [
+    {
+     "gross_charge": 10.59,
+     "setting": "both",
+     "billing_class": "facility"
+    }
+   ]
+  }
+ ]
+}
