@@ -14,7 +14,7 @@ from pipeline.http import PoliteSession
 
 MANIFEST = PROCESSED / "downloads.csv"
 FIELDS = ["ccn", "url", "final_url", "path", "sha256", "size_bytes", "http_last_modified", "http_content_length",
-          "status", "note", "source_url", "retrieved_at"]
+          "http_etag", "status", "note", "source_url", "retrieved_at"]
 CHUNK = 1 << 20
 
 
@@ -35,7 +35,7 @@ def load_manifest() -> dict[tuple[str, str], dict]:
 
 def save_manifest(rows: dict[tuple[str, str], dict]) -> None:
     with open(MANIFEST, "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=FIELDS)
+        w = csv.DictWriter(f, fieldnames=FIELDS, extrasaction="ignore", restval="")
         w.writeheader()
         w.writerows(rows.values())
 
@@ -48,26 +48,44 @@ def local_name(ccn: str, url: str, final_url: str) -> str:
 
 
 def download(s: PoliteSession, ccn: str, url: str, manifest: dict, force: bool = False) -> dict:
+    """One GET per file per run (F3: at most 1 request per hospital per run, plus robots.txt per host).
+
+    Unchanged files are detected with a conditional GET (If-None-Match / If-Modified-Since -> 304). If the
+    server ignores those headers and answers 200 with the same Last-Modified and Content-Length as last time,
+    the connection is closed before the body is read and the local copy is re-hashed instead.
+    """
     prev = manifest.get((ccn, url))
-    head = s.head(url)
-    lm, cl = head.headers.get("Last-Modified", ""), head.headers.get("Content-Length", "")
-    if prev and not force and prev["status"] == "ok":
-        same_version = (lm and lm == prev["http_last_modified"]) or (not lm and cl and cl == prev["http_content_length"])
-        p = pathlib.Path(prev["path"])
-        if same_version and p.exists() and sha256_file(p) == prev["sha256"]:
-            prev["note"] = f"unchanged, skipped on {now_utc()}"
-            return prev
-    row = {"ccn": ccn, "url": url, "http_last_modified": lm, "http_content_length": cl, "source_url": url,
-           "retrieved_at": now_utc(), "note": ""}
-    # Resume a broken transfer of the same file version (If-Range on ETag or Last-Modified) instead of
-    # starting again; the whole file is hashed once complete.
+    have = None
+    if prev and prev.get("status") == "ok" and prev.get("path") and pathlib.Path(prev["path"]).exists():
+        have = prev
     partial = RAW / local_name(ccn, url, url)
     headers = {}
-    validator = head.headers.get("ETag") or lm
-    if prev and prev.get("status", "").startswith("error") and partial.exists() and validator:
-        headers = {"Range": f"bytes={partial.stat().st_size}-", "If-Range": validator}
+    if have and not force:
+        if have.get("http_etag"):
+            headers["If-None-Match"] = have["http_etag"]
+        if have.get("http_last_modified"):
+            headers["If-Modified-Since"] = have["http_last_modified"]
+    elif prev and prev.get("status", "").startswith("error") and partial.exists() and prev.get("http_etag"):
+        # Resume a broken transfer of the same version instead of starting again.
+        headers = {"Range": f"bytes={partial.stat().st_size}-", "If-Range": prev["http_etag"]}
+    row = {"ccn": ccn, "url": url, "source_url": url, "retrieved_at": now_utc(), "note": ""}
     with s.get(url, stream=True, timeout=(30, 300), headers=headers) as r:
-        row["final_url"] = r.url
+        lm, cl = r.headers.get("Last-Modified", ""), r.headers.get("Content-Length", "")
+        etag = r.headers.get("ETag", "")
+        row.update(final_url=r.url, http_last_modified=lm or (have or {}).get("http_last_modified", ""),
+                   http_content_length=cl, http_etag=etag or (have or {}).get("http_etag", ""))
+        same = have and r.status_code == 200 and lm and lm == have.get("http_last_modified") and (
+            not cl or cl == have.get("http_content_length") or cl == str(have.get("size_bytes")))
+        # Some servers (the Valleywise portal) send neither Last-Modified nor ETag. Then the only signal without
+        # downloading is the size; it is used and the note says so.
+        size_only = (have and r.status_code == 200 and not lm and not etag and cl
+                     and cl == str(have.get("size_bytes")))
+        if have and (r.status_code == 304 or same or size_only):
+            p = pathlib.Path(have["path"])
+            if sha256_file(p) == have["sha256"]:
+                how = "same size, server sends no Last-Modified or ETag" if size_only else f"HTTP {r.status_code}"
+                return {**have, "http_etag": row["http_etag"], "status": "ok",
+                        "note": f"unchanged ({how}), download skipped {now_utc()}"}
         if r.status_code not in (200, 206):
             row.update(status=f"HTTP {r.status_code}", path="", sha256="", size_bytes=0)
             return row
@@ -80,6 +98,6 @@ def download(s: PoliteSession, ccn: str, url: str, manifest: dict, force: bool =
             row["note"] = f"resumed from byte {headers['Range'][6:-1]}"
     size = path.stat().st_size
     row.update(path=str(path), sha256=sha256_file(path), size_bytes=size, status="ok")
-    if cl and cl.isdigit() and int(cl) != size and "gzip" not in r.headers.get("Content-Encoding", ""):
+    if not resumed and cl and cl.isdigit() and int(cl) != size and "gzip" not in r.headers.get("Content-Encoding", ""):
         row["note"] = f"size {size} differs from Content-Length {cl}"
     return row

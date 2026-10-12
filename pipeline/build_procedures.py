@@ -40,6 +40,8 @@ def main() -> None:
         w.writerows(rows)
     with psycopg.connect(DATABASE_URL) as conn, conn.cursor() as cur:
         cur.executemany(UPSERT, rows)
+        cur.execute("UPDATE procedures SET is_launch = false WHERE is_launch AND NOT (code = ANY(%s))",
+                    ([r["code"] for r in rows],))
     print(f"wrote and loaded {len(rows)} launch procedures")
 
 

@@ -51,3 +51,11 @@ Each phase appends a summary of at most 15 lines.
 - Provisional H2: median highest-to-lowest ratio 2.81 (50 procedures, Phoenix only, 7 hospitals); same-insurer sensitivity 3.33. Cash below median negotiated: 12 of 50 procedures (24%). Tucson cannot be measured (1 hospital with negotiated rates).
 - IRR: 200 strings sampled (seed 20261012), rater files, labeling guide and irr_score.py ready; not filled, no agreement estimated.
 - Human: two raters (suggest Timur and Artyom) label 200 rows independently, about 1-1.5 hours each, then run irr_score.py and resolve disagreements together (about 30 minutes). Spot-check the top surgical ratios in the source files.
+
+## Phase 5 - ETL loads hospitals end to end (2026-10-12)
+- One command: `make etl` / `python -m pipeline.run` (registry -> download -> validator -> parse -> F4 -> prices -> completeness). Docs: docs/etl_report.md.
+- Loaded 14 hospitals from 9 systems (target 5 from 3): 33,991 price rows for the 50 launch procedures, 14 source_files; 12 published, 2 not published (Exceptional, CORE).
+- Re-runs skip unchanged files: conditional GET (HTTP 304) for 13 files; Valleywise (no Last-Modified/ETag) by size, logged. Validator and parse cached by sha256. Run times: 514 s (first), 62 s (all cached).
+- Downloader now makes one request per file per run (F3); Phase 2 used HEAD + GET.
+- Correction to Phases 2-4: Valleywise downloaded on the 3rd attempt. H1 now 12 of 15 usable (8 systems); launch list re-selected under the same rules (77065, 66984 replace 72114, 10060; 44 CMS + 6, all >= 8 hospitals); dictionary 327 strings, coverage 72.6% (Valleywise 68.2%, Banner UMC Tucson 58.9% below 60%); provisional H2 median ratio 2.81 (40/50 >= 2), cash below median negotiated 7/50 (14%). Reports updated.
+- Mayo (21.5 GB) still downloading; not loaded. Human: run `python -m pipeline.run 030103` and `python -m pipeline.h1_profile 030103` when data/processed/downloads.csv shows it ok.
