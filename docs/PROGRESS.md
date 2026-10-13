@@ -79,7 +79,7 @@ Each phase appends a summary of at most 15 lines.
 - Out-of-memory fix: F4 normalization and the code frequency script now stream in batches (peak 3.1 GB; identical results for the other hospitals).
 - Launch list under the same rules: 66821 replaces 10140 (45 CMS + 5). Dictionary 2,391 strings; coverage 72.6% without Mayo, 8.6% with Mayo (Mayo 3.0%). H2 unchanged at 2.81; cash below median negotiated 5 of 50.
 - Database: 15 hospitals, 142,727 price rows; search p95 18.7 ms over HTTP.
-- GitHub: public repo MrazzKa/cleartab, 14 issues, 6 stacked PRs. Branch protection pending GitHub Education; no CI run has been created yet.
+- GitHub: public repo MrazzKa/cleartab, 14 issues, 6 stacked PRs. Branch protection was not yet set; no CI run had been created yet.
 
 ## Addendum - manual downloads loaded (2026-10-13)
 - Team member downloaded the robots.txt-blocked files by hand; TMC, Northwest, Oro Valley and Sahuarita loaded from data/raw/manual/ (no network). City of Hope's file is for Duarte, CA (not used); azosh.com shows a vendor page (not found). TMC Rincon Hospital has its own file but is not in the registry.
@@ -98,3 +98,4 @@ Each phase appends a summary of at most 15 lines.
 - 11 missed spellings fixed ("UHC ...", "BCBS AZ ...", mostly Northwest). Coverage: 66.7% pooled without Mayo, 51.0% with Mayo (Mayo 48.3%).
 - H2 (provisional): Phoenix 2.81, Tucson 1.39, pooled 1.92. Identical with the contract rule switched off (--payer-rule).
 - Guide rewritten with explicit rules; round 2 sample drawn (seed 20261013, round 1 strings excluded); files research/h2/irr_round2_rater_A.xlsx and B.xlsx.
+- GitHub: ruleset "Protect main" active (2026-10-13): no deletion or force push; changes only through a pull request with 1 approval and the python, web and migrations checks passing. Team members still need to be added as collaborators so their approvals count; until then the repository admin can merge a pull request without approval (remove that bypass once they are added).
