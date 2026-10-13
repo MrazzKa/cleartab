@@ -80,3 +80,13 @@ Each phase appends a summary of at most 15 lines.
 - Launch list under the same rules: 66821 replaces 10140 (45 CMS + 5). Dictionary 2,391 strings; coverage 72.6% without Mayo, 8.6% with Mayo (Mayo 3.0%). H2 unchanged at 2.81; cash below median negotiated 5 of 50.
 - Database: 15 hospitals, 142,727 price rows; search p95 18.7 ms over HTTP.
 - GitHub: public repo MrazzKa/cleartab, 14 issues, 6 stacked PRs. Branch protection pending GitHub Education; no CI run has been created yet.
+
+## Addendum - manual downloads loaded (2026-10-13)
+- Team member downloaded the robots.txt-blocked files by hand; TMC, Northwest, Oro Valley and Sahuarita loaded from data/raw/manual/ (no network). City of Hope's file is for Duarte, CA (not used); azosh.com shows a vendor page (not found). TMC Rincon Hospital has its own file but is not in the registry.
+- Northwest files are the first CMS CSV wide files in the sample; parsed values checked against the raw file.
+- H1: 17 of 19 usable (11 systems, 7 in Tucson); 18 of 18 template files valid.
+- Launch list under the same rules: 45331 replaces 31622; 51798 (bladder scan, a measurement) added to the exclusions.
+- Dictionary 2,502 strings (16 new aliases for TMC and Northwest spellings); coverage 66.0% pooled without Mayo, 12.8% with Mayo.
+- H2 now measurable in Tucson: Phoenix 2.81, Tucson 1.63, pooled 1.99. H2 not resolved until the dictionary is accepted by two raters.
+- Database: 19 hospitals, 13 systems, 174,071 price rows; search p95 39.3 ms over HTTP.
+- Rater files also provided as Excel with drop-down lists (irr_rater_A.xlsx, irr_rater_B.xlsx).

@@ -1,7 +1,8 @@
 # Payer labeling guide (inter-rater test)
 
-Two team members label the same 200 strings **independently**: Rater A fills `irr_rater_A.csv`, Rater B fills
-`irr_rater_B.csv`. Do not discuss strings, do not open the other file and do not look at
+Two team members label the same 200 strings **independently**: Rater A fills `irr_rater_A.xlsx`, Rater B fills
+`irr_rater_B.xlsx` (open in Excel or Google Sheets; the yellow columns have drop-down lists). The CSV copies hold
+the same rows for anyone without Excel. Do not discuss strings, do not open the other file and do not look at
 `data/processed/payer_aliases.csv` (the provisional rule-based mapping) until both files are saved.
 
 For each row read `raw_payer` and `raw_plan` (and `hospital` for context) and fill in:
@@ -44,5 +45,5 @@ company that owns a provider group.
 
 ## Time
 About 1 to 1.5 hours per rater for 200 rows (20 to 30 seconds per row). When both files are saved, run
-`.venv/bin/python research/h2/irr_score.py`. Disagreements are then resolved together and the agreed values
+`.venv/bin/python research/h2/irr_score.py` (reads the two .xlsx files). Disagreements are then resolved together and the agreed values
 are written into `data/processed/payer_aliases.csv` with rater_status = accepted.

@@ -12,7 +12,11 @@ from pipeline.http import PoliteSession, RobotsDisallowed
 # Default sample from the master prompt. Northwest Medical Center and Oro Valley are blocked by robots.txt
 # (Phase 1) and are replaced by two non-Banner hospitals from systems not otherwise in the sample.
 SAMPLE = ["030010", "030011", "030092", "030038", "030024", "030036", "030030", "030022", "030103", "030107",
-          "030064", "030065", "030152", "030153", "030108"]
+          "030064", "030065", "030152", "030153", "030108",
+          # Added after team members downloaded the robots.txt-blocked files by hand (data/raw/manual/):
+          # Tucson Medical Center (required by the master prompt once its file is present), and the three
+          # Northwest Healthcare hospitals, two of which were in the default sample.
+          "030006", "030085", "030114", "030148"]
 # Valleywise (030022) closed the connection on two GET attempts on 2026-10-12 (HEAD worked: 539,835,870 bytes)
 # and is replaced by The CORE Institute Specialty Hospital, another system not otherwise in the sample.
 REPLACED = {"030085": "030152", "030114": "030153", "030022": "030108"}

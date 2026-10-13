@@ -9,7 +9,7 @@ import pathlib
 import re
 from urllib.parse import unquote, urlsplit
 
-from pipeline.common import PROCESSED, RAW, now_utc
+from pipeline.common import PROCESSED, RAW, ROOT, now_utc
 from pipeline.http import PoliteSession
 
 MANIFEST = PROCESSED / "downloads.csv"
@@ -56,7 +56,7 @@ def download(s: PoliteSession, ccn: str, url: str, manifest: dict, force: bool =
     """
     prev = manifest.get((ccn, url))
     have = None
-    if prev and prev.get("status") == "ok" and prev.get("path") and pathlib.Path(prev["path"]).exists():
+    if prev and prev.get("status") == "ok" and prev.get("path") and (ROOT / prev["path"]).exists():
         have = prev
     partial = RAW / local_name(ccn, url, url)
     headers = {}
@@ -81,7 +81,7 @@ def download(s: PoliteSession, ccn: str, url: str, manifest: dict, force: bool =
         size_only = (have and r.status_code == 200 and not lm and not etag and cl
                      and cl == str(have.get("size_bytes")))
         if have and (r.status_code == 304 or same or size_only):
-            p = pathlib.Path(have["path"])
+            p = ROOT / have["path"]
             if sha256_file(p) == have["sha256"]:
                 how = "same size, server sends no Last-Modified or ETag" if size_only else f"HTTP {r.status_code}"
                 return {**have, "http_etag": row["http_etag"], "status": "ok",
@@ -97,7 +97,8 @@ def download(s: PoliteSession, ccn: str, url: str, manifest: dict, force: bool =
         if resumed:
             row["note"] = f"resumed from byte {headers['Range'][6:-1]}"
     size = path.stat().st_size
-    row.update(path=str(path), sha256=sha256_file(path), size_bytes=size, status="ok")
+    # Paths are stored relative to the repository root so the manifest is portable.
+    row.update(path=str(path.relative_to(ROOT)), sha256=sha256_file(path), size_bytes=size, status="ok")
     if not resumed and cl and cl.isdigit() and int(cl) != size and "gzip" not in r.headers.get("Content-Encoding", ""):
         row["note"] = f"size {size} differs from Content-Length {cl}"
     return row

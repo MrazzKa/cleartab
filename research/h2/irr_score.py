@@ -1,6 +1,6 @@
 """Inter-rater agreement for the payer dictionary: percent agreement, Cohen's kappa, list of disagreements.
 
-Usage: python research/h2/irr_score.py [rater_A.csv rater_B.csv]
+Usage: python research/h2/irr_score.py [rater_A.xlsx rater_B.xlsx]  (CSV files also accepted)
 Target (proposal Table 9): 85% agreement or higher on canonical_payer.
 """
 import csv
@@ -9,6 +9,12 @@ from collections import Counter
 
 
 def load(path: str) -> list[dict]:
+    """Read a rater file: the Excel copy (.xlsx, sheet "label") or the CSV."""
+    if path.endswith(".xlsx"):
+        from openpyxl import load_workbook
+        rows = list(load_workbook(path, read_only=True)["label"].iter_rows(values_only=True))
+        head = [str(h) for h in rows[0]]
+        return [{k: ("" if v is None else str(v)) for k, v in zip(head, r, strict=False)} for r in rows[1:] if any(r)]
     with open(path, newline="") as f:
         return list(csv.DictReader(f))
 
@@ -23,7 +29,7 @@ def kappa(a: list[str], b: list[str]) -> float:
 
 def main() -> None:
     pa, pb = (sys.argv[1:3] if len(sys.argv) >= 3 else
-              ("research/h2/irr_rater_A.csv", "research/h2/irr_rater_B.csv"))
+              ("research/h2/irr_rater_A.xlsx", "research/h2/irr_rater_B.xlsx"))
     A, B = load(pa), load(pb)
     assert [(r["raw_payer"], r["raw_plan"]) for r in A] == [(r["raw_payer"], r["raw_plan"]) for r in B], \
         "the two files must list the same strings in the same order"

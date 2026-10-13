@@ -59,18 +59,38 @@ ALIASES = {
     "molina": ("Molina", "high", ""),
     "magellan health": ("Molina", "medium", "Magellan Complete Care of Arizona (AHCCCS) was acquired by Molina"),
     "oscar health plan": ("Oscar", "high", ""),
+    # Spellings in the Tucson Medical Center and Northwest Healthcare files (added 2026-10-13).
+    "arizona complete": (CENTENE, "high", ""),
+    "complete health medicaid az": (CENTENE, "high", ""),
+    "banner university family care": ("Banner Health plans", "high", ""),
+    "banner ufc medicaid az": ("Banner Health plans", "high", ""),
+    "health choice medicaid az": ("Health Choice Arizona", "high", ""),
+    "mercy care medicaid az": ("Mercy Care", "high", ""),
+    "apipa medicaid az": ("UnitedHealthcare", "medium",
+                          "APIPA is the former name of UnitedHealthcare Community Plan in AHCCCS"),
+    "uhc hix": ("UnitedHealthcare", "high", ""),
+    "uhc": ("UnitedHealthcare", "high", ""),
+    "bcbs az ppo hmo nbr": ("Blue Cross Blue Shield of Arizona", "high", ""),
+    "bcbs pimaconnect": ("Blue Cross Blue Shield of Arizona", "high", ""),
+    "bcbs az pima connect": ("Blue Cross Blue Shield of Arizona", "high", ""),
+    "blue cross blue shield": ("Blue Cross Blue Shield of Arizona", "medium",
+                               "no state given; read as BCBS of Arizona because the files are Arizona hospitals"),
+    "blue cross health choice": ("Blue Cross Blue Shield of Arizona", "medium",
+                                 "BCBSAZ Health Choice plan; Health Choice Arizona is owned by BCBSAZ"),
+    "magellan medicaid az": ("Molina", "medium",
+                             "Magellan Complete Care of Arizona (AHCCCS) was acquired by Molina"),
 }
 
 # Plans that are not the named insurer's own product for a patient: rental networks, workers compensation.
 OTHER_PLAN_RULES = [
     (re.compile(r"rental|first health|multiplan|provider network of america|plotkin|nhsi"), "rental network",
      "rental or access network rate, not an insurer's member plan"),
-    (re.compile(r"workers? ?comp"), "workers comp", "workers compensation rate, not paid by a patient's plan"),
+    (re.compile(r"work(ers)? ?comp"), "workers comp", "workers compensation rate, not paid by a patient's plan"),
 ]
 PLAN_TYPE_RULES = [
     (re.compile(r"supplement"), "medicare supplement"),
     (re.compile(r"medicaid|ahcccs|\bltc\b|managed care program|apipa"), "ahcccs"),
-    (re.compile(r"medicare|advantage|\bdual\b|care improvement plus|university care advantage|\bma\b"),
+    (re.compile(r"medicare|advantage|\bdual\b|care improvement plus|university care advantage|\bma\b|mcr adv"),
      "medicare advantage"),
     (re.compile(r"exchange|\bhix\b|marketplace|\baca\b|\bifp\b|\bqhp\b|hmox|ppox"), "marketplace"),
     (re.compile(r"tricare|government|community care network|veterans|federal prison"), "government"),
@@ -103,6 +123,9 @@ def match(payer: str, plan: str) -> dict:
         if rx.search(pl) or rx.search(p):
             return {**out, "canonical_payer": "other", "plan_type": ptype, "method": "regex",
                     "confidence": "high", "note": note}
+    if p == "magellan" and "medicaid" in pl:
+        return {**out, "canonical_payer": "Molina", "method": "regex", "confidence": "medium",
+                "note": "Magellan Complete Care of Arizona (AHCCCS) was acquired by Molina"}
     if p in ALIASES:
         canon, conf, note = ALIASES[p]
         return {**out, "canonical_payer": canon, "method": "alias table", "confidence": conf, "note": note}
