@@ -90,3 +90,11 @@ Each phase appends a summary of at most 15 lines.
 - H2 now measurable in Tucson: Phoenix 2.81, Tucson 1.63, pooled 1.99. H2 not resolved until the dictionary is accepted by two raters.
 - Database: 19 hospitals, 13 systems, 174,071 price rows; search p95 39.3 ms over HTTP.
 - Rater files also provided as Excel with drop-down lists (irr_rater_A.xlsx, irr_rater_B.xlsx).
+
+## Addendum - inter-rater round 1 (2026-10-13)
+- Two team members labelled 200 payer strings independently: canonical_payer 136 of 200 = 68.0% (kappa 0.289), plan_type 98.5%. Below the 85% target, so the dictionary is not accepted.
+- 50 of 64 disagreements: employer fund or administrator plus a listed insurer's contract in the plan column (rater A "other", rater B the insurer). 5: Banner hospital used as the payer. 9 other.
+- Evidence for the contract reading: in the Mayo file all 136 payers under "AZ CIGNA [39]" have one rate per procedure. Dictionary now maps these 608 Mayo strings to the contract's insurer (medium confidence).
+- 11 missed spellings fixed ("UHC ...", "BCBS AZ ...", mostly Northwest). Coverage: 66.7% pooled without Mayo, 51.0% with Mayo (Mayo 48.3%).
+- H2 (provisional): Phoenix 2.81, Tucson 1.39, pooled 1.92. Identical with the contract rule switched off (--payer-rule).
+- Guide rewritten with explicit rules; round 2 sample drawn (seed 20261013, round 1 strings excluded); files research/h2/irr_round2_rater_A.xlsx and B.xlsx.

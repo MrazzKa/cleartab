@@ -4,8 +4,8 @@ Canonical list (about 10 Arizona insurers + "other"), from the payer strings in 
 contractor list (AHCCCS Population by Health Care Contractor, September 2026,
 https://www.azahcccs.gov/Resources/Downloads/PopulationStatistics/PopulationbyContractor09102026.pdf).
 
-Every mapping carries method (alias table | regex) and confidence (high | medium). "medium" marks a judgement
-a human rater must confirm; the reason is in the note column of payer_aliases.csv.
+Every mapping carries method (alias table | regex | network contract) and confidence (high | medium). "medium"
+marks a judgement a human rater must confirm; the reason is in the note column of payer_aliases.csv.
 """
 import csv
 import re
@@ -130,11 +130,22 @@ def match(payer: str, plan: str) -> dict:
         canon, conf, note = ALIASES[p]
         return {**out, "canonical_payer": canon, "method": "alias table", "confidence": conf, "note": note}
     # Payer column filled with a long plan-style name: try regex on brand words.
-    for rx, canon in ((r"\bunited ?healthcare\b", "UnitedHealthcare"), (r"\baetna\b", "Aetna"),
+    for rx, canon in ((r"\bunited ?healthcare\b|\buhc\b", "UnitedHealthcare"), (r"\baetna\b", "Aetna"),
+                      (r"\bbcbs ?az\b|\bbcbsaz\b", "Blue Cross Blue Shield of Arizona"),
                       (r"\bcigna\b", "Cigna"), (r"\bhumana\b", "Humana"), (r"\bmolina\b", "Molina"),
                       (r"\boscar\b", "Oscar")):
         if re.search(rx, p):
             return {**out, "canonical_payer": canon, "method": "regex", "confidence": "high", "note": ""}
+    # Payer is an employer plan, fund, administrator or an insurer not on the list, but the plan column names a
+    # listed insurer's network contract (Mayo: "AZ CIGNA [39]" carries one identical rate for 136 payer names).
+    # The contract sets the price, so the row counts under that insurer (labeling guide rule 3, round 2).
+    for rx, canon in ((r"\bcigna\b", "Cigna"), (r"\baetna\b", "Aetna"),
+                      (r"\bbcbs\b|\bblue cross\b|\bblue card\b", "Blue Cross Blue Shield of Arizona"),
+                      (r"\buhc\b|\bunited ?healthcare\b", "UnitedHealthcare"), (r"\bhumana\b", "Humana")):
+        if re.search(rx, pl):
+            return {**out, "canonical_payer": canon, "method": "network contract", "confidence": "medium",
+                    "note": "plan column names this insurer's network contract; payer is an employer plan, fund "
+                            "or administrator"}
     return {**out, "canonical_payer": "other", "method": "alias table", "confidence": "high",
             "note": "not one of the canonical insurers"}
 

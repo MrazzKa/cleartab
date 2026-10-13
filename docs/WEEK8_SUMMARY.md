@@ -1,4 +1,4 @@
-# ClearTab - Weeks 7 and 8 catch-up summary (as of 2026-10-12)
+# ClearTab - Weeks 7 and 8 catch-up summary (as of 2026-10-13)
 
 Plain-English summary of the catch-up session against the signed proposal (Table 14 milestones through
 Oct 14). Every number below comes from committed code and CSVs; the phase logs are in docs/PROGRESS.md.
@@ -31,13 +31,20 @@ Oct 14). Every number below comes from committed code and CSVs; the phase logs a
   The Table 10 components do not reward negotiated rates (Carondelet scores 98.7 without any).
 - **Launch procedures:** 50 (45 CMS shoppable codes + 5 most published), each published by at least 9 of the
   17 usable hospitals; descriptions average reading grade 4.7, none above grade 8.
-- **Payer matching:** 2,502 raw strings mapped to 11 canonical insurers + "other" (2,464 high, 38 medium
-  confidence, all provisional). Row coverage 66.0% pooled without Mayo (target 60%), 12.8% with Mayo; per
-  hospital, 5 of 14 are below 60% (Banner UMC Tucson, Sahuarita, Northwest, Oro Valley, Mayo).
+- **Payer matching:** 2,502 raw strings mapped to 11 canonical insurers + "other" (1,856 high, 646 medium
+  confidence, all provisional). Row coverage 66.7% pooled without Mayo (target 60%), 51.0% with Mayo; per
+  hospital, 5 of 14 are below 60% (Banner UMC Tucson 58.9%, Sahuarita 57.1%, Mayo 48.3%, Northwest 44.9%,
+  Oro Valley 38.2%).
+- **Inter-rater test, round 1: 68.0% agreement (kappa 0.29), below the 85% target, so the dictionary is not
+  accepted.** 50 of the 64 disagreements were one case the guide left open (an employer fund or administrator
+  paying through a listed insurer's contract, as in BOILERMAKERS NATIONAL FUND / AZ CIGNA). The guide now has
+  explicit rules; the dictionary counts such rows under the contract's insurer, because in the Mayo file all
+  payers under one contract have the same rate. Round 2 files are ready (fresh sample, seed 20261013).
 - **Provisional H2: not resolved.** Median highest-to-lowest ratio 2.81 in Phoenix (40 of 50 procedures at 2 or
-  more) and 1.63 in Tucson (9 of 49); pooled across both metros 1.99, just under the rule of 2, and the payer
-  dictionary can move it (new aliases moved it from 2.13 to 1.99). Cash price below the median negotiated rate
-  for 1 of 50 procedures. The final answer waits for the two-rater test.
+  more) and 1.39 in Tucson (6 of 49); pooled across both metros 1.92, under the rule of 2. Both readings of the
+  disputed rule give identical H2 figures; the 11 missed UHC and BCBS spellings fixed after round 1 moved the
+  pooled median from 1.99 to 1.92. Cash price below the median negotiated rate for 1 of 50 procedures. The
+  final answer waits for round 2.
 - **ETL:** 19 hospitals from 13 systems loaded (target 5 from 3), 174,071 price rows for the launch procedures;
   full re-run with unchanged files about 11 minutes; peak memory 3.2 GB.
 - **Latency:** search p95 39.3 ms over HTTP with all 19 hospitals (target 500 ms), autocomplete p95 8.4 ms
@@ -46,10 +53,10 @@ Oct 14). Every number below comes from committed code and CSVs; the phase logs a
   6 stacked pull requests.
 
 ## Open human tasks
-1. Inter-rater test (decides H2): two people label research/h2/irr_rater_A.xlsx and irr_rater_B.xlsx
-   independently, about 1-1.5 hours each (guide: research/h2/labeling_guide.md), then run
-   `python research/h2/irr_score.py`, resolve disagreements together, mark the dictionary accepted and re-run
-   research/h2/h2_provisional.py.
+1. Inter-rater test round 2 (decides H2): the same two people label research/h2/irr_round2_rater_A.xlsx and
+   irr_round2_rater_B.xlsx independently, about 1 hour each (guide: research/h2/labeling_guide.md, rewritten
+   after round 1), then run `python -m research.h2.irr_score`, resolve disagreements together, mark the
+   dictionary accepted and re-run `python -m research.h2.h2_provisional`.
 2. Decide with Dr. Li: completeness weights and whether negotiated rates should count; whether the 60% coverage
    rule is per hospital or pooled; whether H2's median is pooled across metros or judged per metro; which
    hypothesis carries the paper.
@@ -70,8 +77,9 @@ four files that robots.txt blocks and that we downloaded by hand, and all 18 fil
 the official CMS validator with no errors. H1 is met under the pre-written rule, since 17 of the 19 hospitals
 yield usable coded prices, but its second half is largely not supported, because no file leaves out a required
 CY 2026 element as a column and only Mayo omits them in some records. H2 is not resolved yet: on provisional
-payer matching the median highest-to-lowest ratio is 2.81 in Phoenix and 1.63 in Tucson, 1.99 when both metros
-are pooled, so the decision sits at the threshold and will be settled by the two-rater payer test. The search
+payer matching the median highest-to-lowest ratio is 2.81 in Phoenix and 1.39 in Tucson, 1.92 when both metros
+are pooled. The first round of the two-rater payer test reached 68% agreement against a target of 85%, mostly
+over one rule that our guide left open; the guide is fixed and a second round is under way. The search
 API answers in under 40 ms at the 95th percentile across all 19 hospitals. We would value your advice on how to
 read the H2 rule across metros, on the completeness score weights, on the 60% payer coverage rule, and on which
 hypothesis should carry the paper.

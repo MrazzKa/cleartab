@@ -13,9 +13,15 @@ Cash: share of the 50 procedures where the median of hospital cash prices is bel
 comparable negotiated rates; and the share of hospital-procedure pairs where the hospital's own cash price is
 below its own median comparable rate.
 Writes data/processed/h2_provisional_by_procedure.csv.
+
+Option --payer-rule (sensitivity for the round 1 inter-rater disagreement, research/h2/REPORT.md): mappings made
+by the "network contract" rule (payer is an employer plan, fund or administrator; the plan column names a listed
+insurer's contract, for example Mayo's "AZ CIGNA [39]") are put back to "other", as in the round 1 dictionary.
+Writes data/processed/h2_payer_rule_by_procedure.csv instead.
 """
 import csv
 import glob
+import sys
 
 import polars as pl
 
@@ -34,10 +40,20 @@ for path in glob.glob("data/raw/normalized/*_f4.parquet"):
         .filter(pl.col("code").is_in(list(procs)) & pl.col("code_type").is_in(["CPT", "HCPCS"])
                 & pl.col("drop_reason").is_null()
                 & pl.col("billing_class").is_in(["facility", ""]) & pl.col("setting").is_in(["outpatient", "both"]))
-        .select("code", "price_type", "amount", "methodology_label", "canonical_payer", "plan_type")
+        .select("code", "price_type", "amount", "methodology_label", "canonical_payer", "plan_type", "payer_name",
+                "plan_name")
         .with_columns(pl.lit(ccn).alias("ccn"), pl.lit(metro[ccn]).alias("metro"))
         .collect())
 df = pl.concat(frames)
+PAYER_RULE = "--payer-rule" in sys.argv
+if PAYER_RULE:
+    with open("data/processed/payer_aliases.csv", newline="") as f:
+        contract = [(r["raw_payer"], r["raw_plan"]) for r in csv.DictReader(f) if r["method"] == "network contract"]
+    revert = pl.DataFrame({"payer_name": [x for x, _ in contract], "plan_name": [y for _, y in contract],
+                           "_revert": [True] * len(contract)})
+    df = (df.join(revert, on=["payer_name", "plan_name"], how="left")
+          .with_columns(pl.when(pl.col("_revert")).then(pl.lit("other")).otherwise(pl.col("canonical_payer"))
+                        .alias("canonical_payer")).drop("_revert"))
 neg = df.filter((pl.col("price_type") == "negotiated_dollar") & (pl.col("methodology_label") == "fixed dollar")
                 & (pl.col("canonical_payer") != "other") & pl.col("canonical_payer").is_not_null())
 cash = df.filter(pl.col("price_type") == "cash")
@@ -65,7 +81,8 @@ out = (primary.join(same_payer, on=["code", "metro"], how="left").join(rowlevel,
                      pl.lit("data/raw/normalized/*_f4.parquet").alias("source_url"),
                      pl.lit(now_utc()).alias("retrieved_at"))
        .sort("metro", "code"))
-out.write_csv("data/processed/h2_provisional_by_procedure.csv")
+out.write_csv("data/processed/h2_payer_rule_by_procedure.csv" if PAYER_RULE
+              else "data/processed/h2_provisional_by_procedure.csv")
 
 print("comparable negotiated rows:", neg.height, "hospitals:", neg["ccn"].n_unique(),
       "by metro:", dict(neg.group_by("metro").agg(pl.col("ccn").n_unique()).iter_rows()))

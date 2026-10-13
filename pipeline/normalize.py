@@ -15,6 +15,7 @@ Output: data/raw/normalized/<ccn>_f4.parquet, data/processed/f4_flag_log.csv, da
 """
 import csv
 import glob
+import sys
 from collections import Counter
 
 import polars as pl
@@ -105,19 +106,30 @@ def normalize_file(path: str, alias: pl.DataFrame) -> tuple[pl.LazyFrame, Counte
     neg = f4.filter(pl.col("price_type").str.starts_with("negotiated"))
     for lab, n in neg.group_by("methodology_label").len().collect(engine="streaming").iter_rows():
         log[f"methodology: {lab}"] = n
-    kept = neg.filter(pl.col("drop_reason").is_null())
+    return f4, log, coverage(f4)
+
+
+def coverage(f4: pl.LazyFrame) -> dict:
+    """Negotiated rows kept after the outlier rules, and how many of them map to a canonical insurer."""
+    kept = f4.filter(pl.col("price_type").str.starts_with("negotiated") & pl.col("drop_reason").is_null())
     total, canon = kept.select(pl.len(), (pl.col("canonical_payer") != "other").sum()).collect(engine="streaming").row(0)
-    return f4, log, {"negotiated_rows": total, "canonical_rows": canon or 0}
+    return {"negotiated_rows": total, "canonical_rows": canon or 0}
 
 
 def main() -> None:
+    """Normalize every file. With --coverage-only, recompute f4_coverage.csv from the existing _f4 files (used
+    after pipeline.run re-normalized some hospitals with a changed dictionary; the flag log does not change)."""
     alias = aliases()
+    only_cov = "--coverage-only" in sys.argv
     logs, cov = [], []
     for path in sorted(glob.glob(str(RAW / "normalized" / "[0-9]*.parquet"))):
         if path.endswith("_f4.parquet"):
             continue
         ccn = path.rsplit("/", 1)[-1][:6]
-        _, log, c = normalize_file(path, alias)
+        if only_cov:
+            log, c = Counter(), coverage(pl.scan_parquet(path.replace(".parquet", "_f4.parquet")))
+        else:
+            _, log, c = normalize_file(path, alias)
         for k, n in sorted(log.items()):
             logs.append({"ccn": ccn, "reason": k, "rows": n, "source_url": f"data/raw/normalized/{ccn}.parquet",
                          "retrieved_at": now_utc()})
@@ -130,6 +142,8 @@ def main() -> None:
     cov.append({"ccn": "ALL", "negotiated_rows": tot_n, "canonical_rows": tot_c,
                 "coverage": round(tot_c / tot_n, 4) if tot_n else "", "source_url": "", "retrieved_at": now_utc()})
     for name, data in (("f4_flag_log.csv", logs), ("f4_coverage.csv", cov)):
+        if not data:
+            continue
         with open(PROCESSED / name, "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=list(data[0]))
             w.writeheader()
