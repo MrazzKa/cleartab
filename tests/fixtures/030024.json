@@ -1,0 +1,453 @@
+{
+ "hospital_name": "DIGNITY HEALTH",
+ "last_updated_on": "2026-02-28",
+ "version": "3.0.0",
+ "location_name": [
+  "St. Joseph's Hospital and Medical Center"
+ ],
+ "hospital_address": [
+  "350 W Thomas Rd, Phoenix, AZ 85013"
+ ],
+ "license_information": {
+  "license_number": "H3003",
+  "state": "AZ"
+ },
+ "type_2_npi": [
+  "1982733655",
+  "1992131734"
+ ],
+ "attestation": {
+  "attestation": "To the best of its knowledge and belief, this hospital has included all applicable standard charge information in accordance with the requirements of 45 CFR 180.50, and the information encoded is true, accurate, and complete as of the date in the file. This hospital has included all payer-specific negotiated charges in dollars that can be expressed as a dollar amount. For payer-specific negotiated charges that cannot be expressed as a dollar amount in the machine-readable file or not knowable in advance, the hospital attests that the payer-specific negotiated charge is based on a contractual algorithm, percentage or formula that precludes the provision of a dollar amount and has provided all necessary information available to the hospital for the public to be able to derive the dollar amount, including, but not limited to, the specific fee schedule or components referenced in such percentage, algorithm or formula.",
+  "confirm_attestation": true,
+  "attester_name": "Douglas  Ross MD,  Hospital President"
+ },
+ "general_contract_provisions": [
+  {
+   "payer_name": "Aetna",
+   "plan_name": "Commercial|All Plans",
+   "description": "Inpatient - Reimbursement for the entire encounter may be increased by $6,136.00 Per Diem for days in excess of 18/Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "BCBS - AZ",
+   "plan_name": "Commercial|All Other Plans",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "BCBS - AZ",
+   "plan_name": "Commercial|MaricopaFocus",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "BCBS - AZ",
+   "plan_name": "Commercial|Neighborhood",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "BCBS - AZ",
+   "plan_name": "Commercial|Workers Comp",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "Cigna",
+   "plan_name": "Commercial|All Other Plans",
+   "description": "Inpatient - Reimbursement for the entire encounter may be 39.6 Percent of Billed Charges when Billed Charges exceeds a threshold of $605,366.00/Inpatient - Reimbursement for the entire encounter may be limited to 97 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "Cigna",
+   "plan_name": "Commercial|Exchange",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges/Inpatient - Reimbursement for the entire encounter may be 29 Percent of Billed Charges when Billed Charges exceeds a threshold of $561,168.00"
+  },
+  {
+   "payer_name": "Cigna",
+   "plan_name": "Commercial|LocalPlus SureFit",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 97 Percent of Billed Charges/Inpatient - Reimbursement for the entire encounter may be 29.9 Percent of Billed Charges when Billed Charges exceeds a threshold of $579,630.00"
+  },
+  {
+   "payer_name": "Connected Care",
+   "plan_name": "Commercial|Intel",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "Health Net",
+   "plan_name": "Commercial|Interlink",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 50 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "Optum",
+   "plan_name": "Commercial|OptumHealth",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 61 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "United",
+   "plan_name": "Commercial|All Other Plans",
+   "description": "Inpatient - Reimbursement for the entire encounter may be increased by $12,893.00 Per Diem for days in excess of 11/Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "United",
+   "plan_name": "Commercial|DignityHealthEmployee",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "United",
+   "plan_name": "Commercial|Navigate",
+   "description": "Inpatient - Reimbursement for the entire encounter may be increased by $9,078.00 Per Diem for days in excess of 8/Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "United",
+   "plan_name": "Commercial|Options PPO",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges/Inpatient - Reimbursement for the entire encounter may be increased by $15,232.00 Per Diem for days in excess of 11"
+  },
+  {
+   "payer_name": "United",
+   "plan_name": "Medicaid|All Plans",
+   "description": "Outpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "Optum",
+   "plan_name": "Medicare|OptumCare",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "United",
+   "plan_name": "Medicare|All Other Plans",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges"
+  },
+  {
+   "payer_name": "United",
+   "plan_name": "Medicare|Dual Complete",
+   "description": "Inpatient - Reimbursement for the entire encounter may be limited to 100 Percent of Billed Charges"
+  }
+ ],
+ "standard_charge_information": [
+  {
+   "description": "HEART TRANSPLANT OR IMPLANT OF HEART ASSIST SYSTEM WITH MCC",
+   "code_information": [
+    {
+     "code": "001",
+     "type": "MS-DRG"
+    }
+   ],
+   "standard_charges": [
+    {
+     "minimum": 214276,
+     "maximum": 1033864,
+     "setting": "inpatient",
+     "payers_information": [
+      {
+       "payer_name": "Aetna",
+       "plan_name": "Commercial|All Plans",
+       "standard_charge_dollar": 833021,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "BCBS - AZ",
+       "plan_name": "Commercial|All Other Plans",
+       "standard_charge_dollar": 682980,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "BCBS - AZ",
+       "plan_name": "Commercial|MaricopaFocus",
+       "standard_charge_dollar": 512241,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "BCBS - AZ",
+       "plan_name": "Commercial|Neighborhood",
+       "standard_charge_dollar": 512241,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "BCBS - AZ",
+       "plan_name": "Commercial|Workers Comp",
+       "standard_charge_dollar": 1033864,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Cigna",
+       "plan_name": "Commercial|All Other Plans",
+       "standard_charge_dollar": 856457,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Cigna",
+       "plan_name": "Commercial|Exchange",
+       "standard_charge_dollar": 608097,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Cigna",
+       "plan_name": "Commercial|LocalPlus SureFit",
+       "standard_charge_dollar": 650913,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Connected Care",
+       "plan_name": "Commercial|Intel",
+       "standard_charge_dollar": 649702,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "First Health",
+       "plan_name": "Commercial|All Plans",
+       "standard_charge_percentage": 70,
+       "count": "0",
+       "methodology": "percent of total billed charges",
+       "additional_payer_notes": "No services performed during 12-month lookback period."
+      },
+      {
+       "payer_name": "Health Net",
+       "plan_name": "Commercial|Interlink",
+       "standard_charge_dollar": 4500,
+       "methodology": "per diem"
+      },
+      {
+       "payer_name": "MultiPlan",
+       "plan_name": "Commercial|All Plans",
+       "standard_charge_percentage": 79,
+       "count": "0",
+       "methodology": "percent of total billed charges",
+       "additional_payer_notes": "No services performed during 12-month lookback period."
+      },
+      {
+       "payer_name": "Other",
+       "plan_name": "Commercial|NTN",
+       "standard_charge_percentage": 60,
+       "count": "0",
+       "methodology": "percent of total billed charges",
+       "additional_payer_notes": "No services performed during 12-month lookback period."
+      },
+      {
+       "payer_name": "United",
+       "plan_name": "Commercial|All Other Plans",
+       "standard_charge_dollar": 697391,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United",
+       "plan_name": "Commercial|DignityHealthEmployee",
+       "standard_charge_dollar": 214276,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United",
+       "plan_name": "Commercial|Navigate",
+       "standard_charge_dollar": 439707,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United",
+       "plan_name": "Commercial|Options PPO",
+       "standard_charge_dollar": 852204,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Aetna",
+       "plan_name": "Medicare|All Plans",
+       "standard_charge_dollar": 262251.69,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "BCBS - AZ",
+       "plan_name": "Medicare|All Plans",
+       "standard_charge_dollar": 262251.69,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Care 1st",
+       "plan_name": "Medicare|All Plans",
+       "standard_charge_dollar": 262251.69,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Cigna",
+       "plan_name": "Medicare|All Plans",
+       "standard_charge_dollar": 262251.69,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "First Health",
+       "plan_name": "Medicare|All Plans",
+       "standard_charge_dollar": 262251.69,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Health Choice",
+       "plan_name": "Medicare|All Plans",
+       "standard_charge_dollar": 262251.69,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Humana",
+       "plan_name": "Medicare|All Plans",
+       "standard_charge_dollar": 262251.69,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Mercy Care Plan",
+       "plan_name": "Medicare|All Plans",
+       "standard_charge_dollar": 262251.69,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Optum",
+       "plan_name": "Medicare|OptumCare",
+       "standard_charge_dollar": 262251.69,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Optum",
+       "plan_name": "Medicare|OptumHealth",
+       "standard_charge_dollar": 288476.86,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United",
+       "plan_name": "Medicare|All Other Plans",
+       "standard_charge_dollar": 268807.99,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United",
+       "plan_name": "Medicare|Dual Complete",
+       "standard_charge_dollar": 268807.99,
+       "methodology": "case rate"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "description": "LIVER TRANSPLANT AND/OR INTESTINAL TRANSPLANT",
+   "code_information": [
+    {
+     "code": "0011",
+     "type": "APR-DRG"
+    }
+   ],
+   "standard_charges": [
+    {
+     "minimum": 44527,
+     "maximum": 44527,
+     "setting": "inpatient",
+     "payers_information": [
+      {
+       "payer_name": "First Health",
+       "plan_name": "Commercial|All Plans",
+       "standard_charge_percentage": 70,
+       "count": "0",
+       "methodology": "percent of total billed charges",
+       "additional_payer_notes": "No services performed during 12-month lookback period."
+      },
+      {
+       "payer_name": "Health Net",
+       "plan_name": "Commercial|Interlink",
+       "standard_charge_dollar": 4500,
+       "methodology": "per diem"
+      },
+      {
+       "payer_name": "MultiPlan",
+       "plan_name": "Commercial|All Plans",
+       "standard_charge_percentage": 79,
+       "count": "0",
+       "methodology": "percent of total billed charges",
+       "additional_payer_notes": "No services performed during 12-month lookback period."
+      },
+      {
+       "payer_name": "Other",
+       "plan_name": "Commercial|NTN",
+       "standard_charge_percentage": 60,
+       "count": "0",
+       "methodology": "percent of total billed charges",
+       "additional_payer_notes": "No services performed during 12-month lookback period."
+      },
+      {
+       "payer_name": "Health Choice",
+       "plan_name": "Medicaid|All Plans",
+       "standard_charge_dollar": 44527,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Mercy Care Plan",
+       "plan_name": "Medicaid|All Plans",
+       "standard_charge_dollar": 44527,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United",
+       "plan_name": "Medicaid|All Plans",
+       "standard_charge_dollar": 44527,
+       "methodology": "case rate"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "description": "LIVER TRANSPLANT AND/OR INTESTINAL TRANSPLANT",
+   "code_information": [
+    {
+     "code": "0012",
+     "type": "APR-DRG"
+    }
+   ],
+   "standard_charges": [
+    {
+     "minimum": 44527,
+     "maximum": 44527,
+     "setting": "inpatient",
+     "payers_information": [
+      {
+       "payer_name": "First Health",
+       "plan_name": "Commercial|All Plans",
+       "standard_charge_percentage": 70,
+       "count": "0",
+       "methodology": "percent of total billed charges",
+       "additional_payer_notes": "No services performed during 12-month lookback period."
+      },
+      {
+       "payer_name": "Health Net",
+       "plan_name": "Commercial|Interlink",
+       "standard_charge_dollar": 4500,
+       "methodology": "per diem"
+      },
+      {
+       "payer_name": "MultiPlan",
+       "plan_name": "Commercial|All Plans",
+       "standard_charge_percentage": 79,
+       "count": "0",
+       "methodology": "percent of total billed charges",
+       "additional_payer_notes": "No services performed during 12-month lookback period."
+      },
+      {
+       "payer_name": "Other",
+       "plan_name": "Commercial|NTN",
+       "standard_charge_percentage": 60,
+       "count": "0",
+       "methodology": "percent of total billed charges",
+       "additional_payer_notes": "No services performed during 12-month lookback period."
+      },
+      {
+       "payer_name": "Health Choice",
+       "plan_name": "Medicaid|All Plans",
+       "standard_charge_dollar": 44527,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "Mercy Care Plan",
+       "plan_name": "Medicaid|All Plans",
+       "standard_charge_dollar": 44527,
+       "methodology": "case rate"
+      },
+      {
+       "payer_name": "United",
+       "plan_name": "Medicaid|All Plans",
+       "standard_charge_dollar": 44527,
+       "methodology": "case rate"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
