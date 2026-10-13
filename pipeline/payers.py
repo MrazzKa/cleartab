@@ -4,8 +4,8 @@ Canonical list (about 10 Arizona insurers + "other"), from the payer strings in 
 contractor list (AHCCCS Population by Health Care Contractor, September 2026,
 https://www.azahcccs.gov/Resources/Downloads/PopulationStatistics/PopulationbyContractor09102026.pdf).
 
-Every mapping carries method (alias table | regex) and confidence (high | medium). "medium" marks a judgement
-a human rater must confirm; the reason is in the note column of payer_aliases.csv.
+Every mapping carries method (alias table | regex | network contract) and confidence (high | medium). "medium"
+marks a judgement a human rater must confirm; the reason is in the note column of payer_aliases.csv.
 """
 import csv
 import re
@@ -59,18 +59,38 @@ ALIASES = {
     "molina": ("Molina", "high", ""),
     "magellan health": ("Molina", "medium", "Magellan Complete Care of Arizona (AHCCCS) was acquired by Molina"),
     "oscar health plan": ("Oscar", "high", ""),
+    # Spellings in the Tucson Medical Center and Northwest Healthcare files (added 2026-10-13).
+    "arizona complete": (CENTENE, "high", ""),
+    "complete health medicaid az": (CENTENE, "high", ""),
+    "banner university family care": ("Banner Health plans", "high", ""),
+    "banner ufc medicaid az": ("Banner Health plans", "high", ""),
+    "health choice medicaid az": ("Health Choice Arizona", "high", ""),
+    "mercy care medicaid az": ("Mercy Care", "high", ""),
+    "apipa medicaid az": ("UnitedHealthcare", "medium",
+                          "APIPA is the former name of UnitedHealthcare Community Plan in AHCCCS"),
+    "uhc hix": ("UnitedHealthcare", "high", ""),
+    "uhc": ("UnitedHealthcare", "high", ""),
+    "bcbs az ppo hmo nbr": ("Blue Cross Blue Shield of Arizona", "high", ""),
+    "bcbs pimaconnect": ("Blue Cross Blue Shield of Arizona", "high", ""),
+    "bcbs az pima connect": ("Blue Cross Blue Shield of Arizona", "high", ""),
+    "blue cross blue shield": ("Blue Cross Blue Shield of Arizona", "medium",
+                               "no state given; read as BCBS of Arizona because the files are Arizona hospitals"),
+    "blue cross health choice": ("Blue Cross Blue Shield of Arizona", "medium",
+                                 "BCBSAZ Health Choice plan; Health Choice Arizona is owned by BCBSAZ"),
+    "magellan medicaid az": ("Molina", "medium",
+                             "Magellan Complete Care of Arizona (AHCCCS) was acquired by Molina"),
 }
 
 # Plans that are not the named insurer's own product for a patient: rental networks, workers compensation.
 OTHER_PLAN_RULES = [
     (re.compile(r"rental|first health|multiplan|provider network of america|plotkin|nhsi"), "rental network",
      "rental or access network rate, not an insurer's member plan"),
-    (re.compile(r"workers? ?comp"), "workers comp", "workers compensation rate, not paid by a patient's plan"),
+    (re.compile(r"work(ers)? ?comp"), "workers comp", "workers compensation rate, not paid by a patient's plan"),
 ]
 PLAN_TYPE_RULES = [
     (re.compile(r"supplement"), "medicare supplement"),
     (re.compile(r"medicaid|ahcccs|\bltc\b|managed care program|apipa"), "ahcccs"),
-    (re.compile(r"medicare|advantage|\bdual\b|care improvement plus|university care advantage|\bma\b"),
+    (re.compile(r"medicare|advantage|\bdual\b|care improvement plus|university care advantage|\bma\b|mcr adv"),
      "medicare advantage"),
     (re.compile(r"exchange|\bhix\b|marketplace|\baca\b|\bifp\b|\bqhp\b|hmox|ppox"), "marketplace"),
     (re.compile(r"tricare|government|community care network|veterans|federal prison"), "government"),
@@ -81,7 +101,8 @@ PLAN_TYPE_RULES = [
 
 
 def norm(s: str) -> str:
-    s = (s or "").casefold().replace("&", " and ")
+    s = re.sub(r"\[\s*\d+\s*\]", " ", (s or ""))  # Mayo appends payer IDs: "AETNA [91160003]"
+    s = s.casefold().replace("&", " and ")
     s = re.sub(r"\(.*?\)", lambda m: " " + m.group(0)[1:-1] + " ", s)
     s = re.sub(r"[^a-z0-9 ]+", " ", s)
     return re.sub(r"\s+", " ", s).strip()
@@ -102,15 +123,29 @@ def match(payer: str, plan: str) -> dict:
         if rx.search(pl) or rx.search(p):
             return {**out, "canonical_payer": "other", "plan_type": ptype, "method": "regex",
                     "confidence": "high", "note": note}
+    if p == "magellan" and "medicaid" in pl:
+        return {**out, "canonical_payer": "Molina", "method": "regex", "confidence": "medium",
+                "note": "Magellan Complete Care of Arizona (AHCCCS) was acquired by Molina"}
     if p in ALIASES:
         canon, conf, note = ALIASES[p]
         return {**out, "canonical_payer": canon, "method": "alias table", "confidence": conf, "note": note}
     # Payer column filled with a long plan-style name: try regex on brand words.
-    for rx, canon in ((r"\bunited ?healthcare\b", "UnitedHealthcare"), (r"\baetna\b", "Aetna"),
+    for rx, canon in ((r"\bunited ?healthcare\b|\buhc\b", "UnitedHealthcare"), (r"\baetna\b", "Aetna"),
+                      (r"\bbcbs ?az\b|\bbcbsaz\b", "Blue Cross Blue Shield of Arizona"),
                       (r"\bcigna\b", "Cigna"), (r"\bhumana\b", "Humana"), (r"\bmolina\b", "Molina"),
                       (r"\boscar\b", "Oscar")):
         if re.search(rx, p):
             return {**out, "canonical_payer": canon, "method": "regex", "confidence": "high", "note": ""}
+    # Payer is an employer plan, fund, administrator or an insurer not on the list, but the plan column names a
+    # listed insurer's network contract (Mayo: "AZ CIGNA [39]" carries one identical rate for 136 payer names).
+    # The contract sets the price, so the row counts under that insurer (labeling guide rule 3, round 2).
+    for rx, canon in ((r"\bcigna\b", "Cigna"), (r"\baetna\b", "Aetna"),
+                      (r"\bbcbs\b|\bblue cross\b|\bblue card\b", "Blue Cross Blue Shield of Arizona"),
+                      (r"\buhc\b|\bunited ?healthcare\b", "UnitedHealthcare"), (r"\bhumana\b", "Humana")):
+        if re.search(rx, pl):
+            return {**out, "canonical_payer": canon, "method": "network contract", "confidence": "medium",
+                    "note": "plan column names this insurer's network contract; payer is an employer plan, fund "
+                            "or administrator"}
     return {**out, "canonical_payer": "other", "method": "alias table", "confidence": "high",
             "note": "not one of the canonical insurers"}
 

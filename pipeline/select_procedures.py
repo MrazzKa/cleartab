@@ -7,7 +7,9 @@ Rules (written before selection; a reviewer can change them here):
   (proposal 6.2 item 5): 55866 radical prostatectomy, radiation oncology 77261-77799, nuclear therapy 79xxx;
   procedures limited to children (42820, under 12, outside the adult self-pay scope); codes whose most common
   setting in the files is inpatient; "unlisted procedure" codes (ending in 99); vascular access and blood
-  draws 36000-36699 (ancillary to other care, not a service a patient shops for).
+  draws 36000-36699 (ancillary to other care, not a service a patient shops for); 51798 (bladder volume
+  measured by ultrasound: a measurement, not surgery, although its code is in the surgery range; added on
+  2026-10-13 when the larger sample first made it eligible).
   Step A: every CMS-specified shoppable service (84 FR 65524 Table 3) in a category with >= 8 hospitals.
   Step B: fill category quotas (imaging 15, laboratory 15, endoscopy 8, outpatient surgery 12) with the
   non-CMS codes published by the most hospitals (>= 8). Ties: more hospitals publishing a cash price first
@@ -19,7 +21,8 @@ import polars as pl
 from pipeline.cms70 import CMS70, MS_DRG
 
 QUOTA = {"imaging": 15, "laboratory": 15, "endoscopy": 8, "outpatient surgery": 12}
-EXCLUDE = {"55866", "42820"}
+EXCLUDE = {"55866", "42820",
+           "51798"}  # bladder volume by ultrasound: a measurement that sits in the surgery code range
 THRESHOLDS = (8, 7, 6)
 
 

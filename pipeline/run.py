@@ -20,8 +20,8 @@ import polars as pl
 import psycopg
 
 from pipeline import validate
-from pipeline.common import DATABASE_URL, PROCESSED, RAW, REGISTRY_CSV, now_utc
-from pipeline.download import download, load_manifest, save_manifest
+from pipeline.common import DATABASE_URL, MANUAL, PROCESSED, RAW, REGISTRY_CSV, ROOT, now_utc
+from pipeline.download import download, load_manifest, save_manifest, sha256_file
 from pipeline.h1_download import SAMPLE
 from pipeline.h1_profile import process_hospital
 from pipeline.http import PoliteSession, RobotsDisallowed
@@ -34,6 +34,25 @@ RUNS = PROCESSED / "etl_runs.csv"
 PRICE_COLS = ["hospital_id", "source_file_id", "procedure_id", "payer_id", "raw_payer", "raw_plan", "setting",
               "price_type", "amount", "percentage", "algorithm_text", "methodology", "flags", "source_url",
               "retrieved_at"]
+
+
+# Pages where a human downloaded the file when robots.txt or the site blocked ClearTab's downloader
+# (MANUAL_DOWNLOADS.md). Used as source_url when the registry has no direct file URL.
+MANUAL_PAGES = {"030006": "https://www.tmcaz.com/en/price-transparency"}
+
+
+def manual_file(ccn: str, r: dict) -> dict | None:
+    """A file a team member saved in data/raw/manual/<ccn>_<name>; no network request is made."""
+    files = sorted(MANUAL.glob(f"{ccn}_*"))
+    if not files:
+        return None
+    path = files[0]
+    url = r["mrf_url"] if r["mrf_url"].startswith("http") else MANUAL_PAGES.get(ccn, "")
+    when = datetime.fromtimestamp(path.stat().st_mtime).astimezone().replace(microsecond=0).isoformat()
+    return {"ccn": ccn, "url": url, "final_url": url, "path": str(path.relative_to(ROOT)),
+            "sha256": sha256_file(path), "size_bytes": path.stat().st_size, "http_last_modified": "",
+            "http_content_length": "", "http_etag": "", "status": "ok", "source_url": url, "retrieved_at": when,
+            "note": f"manual browser download by a team member ({path.name}); automated access blocked"}
 
 
 def parse_date(s: str) -> str | None:
@@ -54,7 +73,7 @@ def ensure_payers(cur) -> dict[str, int]:
     return dict(cur.fetchall())
 
 
-def load_hospital(conn, ccn: str, m: dict, profile: dict, f4: pl.DataFrame, payer_ids: dict, proc_ids: dict) -> int:
+def load_hospital(conn, ccn: str, m: dict, profile: dict, f4: pl.LazyFrame | None, payer_ids: dict, proc_ids: dict) -> int:
     with conn.cursor() as cur:
         cur.execute("SELECT id FROM hospitals WHERE ccn = %s", (ccn,))
         hid = cur.fetchone()[0]
@@ -72,8 +91,9 @@ def load_hospital(conn, ccn: str, m: dict, profile: dict, f4: pl.DataFrame, paye
         sfid = cur.fetchone()[0]
         cur.execute("DELETE FROM prices WHERE hospital_id = %s", (hid,))   # idempotent reload of this hospital
         rows = 0
-        if f4.height:
+        if f4 is not None:
             launch = (f4.filter(pl.col("code").is_in(list(proc_ids)) & pl.col("code_type").is_in(["CPT", "HCPCS"]))
+                      .collect(engine="streaming")
                       .with_columns(pl.col("code").replace_strict(proc_ids).alias("procedure_id"),
                                     pl.col("canonical_payer").replace_strict(payer_ids, default=None).alias("payer_id"),
                                     pl.concat_str([pl.lit("{"), pl.concat_str([
@@ -126,7 +146,7 @@ def main() -> None:
             st = {"ccn": ccn, "hospital": r["name"], "started_at": now_utc()}
             t = time.monotonic()
             try:
-                m = download(session, ccn, url, manifest, force="--force" in args)
+                m = manual_file(ccn, r) or download(session, ccn, url, manifest, force="--force" in args)
             except RobotsDisallowed:
                 m = {"ccn": ccn, "url": url, "status": "robots.txt disallows"}
             except Exception as e:  # reported, never skipped silently
@@ -144,7 +164,7 @@ def main() -> None:
             entry = cache.get(key, {})
             t = time.monotonic()
             if "validator" not in entry:
-                entry["validator"] = validate.run(ccn, m["path"], url)
+                entry["validator"] = validate.run(ccn, str(ROOT / m["path"]), url)
             st["t_validate_s"] = round(time.monotonic() - t, 1)
             t = time.monotonic()
             parquet = RAW / "normalized" / f"{ccn}.parquet"
@@ -156,9 +176,9 @@ def main() -> None:
             cache[key] = entry
             CACHE.write_text(json.dumps(cache, indent=1, default=str))
             t = time.monotonic()
-            f4 = pl.DataFrame()
+            f4 = None
             if profile.get("format", "").startswith("CMS"):
-                f4, log = normalize_file(str(parquet), alias)
+                f4, log, _ = normalize_file(str(parquet), alias)
                 st["flags"] = "; ".join(f"{k}={n}" for k, n in sorted(log.items()) if not k.startswith("methodology"))
             st["t_normalize_s"] = round(time.monotonic() - t, 1)
             t = time.monotonic()

@@ -28,4 +28,12 @@ third, in the first ETL run, succeeded.
 
 | CCN | Downloaded by | Date | Page where the link was | File name | Notes |
 |---|---|---|---|---|---|
-| | | | | | |
+| 030085 | Timur Kamarayev | 2026-10-12 | healthiertucson.com price transparency page | 621762430_northwest-medical-center-tucson_standardcharges.csv | 534,445,854 bytes, same size as the 2026-10-12 HEAD; loaded |
+| 030114 | Timur Kamarayev | 2026-10-12 | healthiertucson.com price transparency page | 522379881_oro-valley-hospital_standardcharges.csv | 488,379,428 bytes; loaded |
+| 030148 | Timur Kamarayev | 2026-10-12 | healthiertucson.com price transparency page | 384088744_northwest-medical-center-sahuarita_standardcharges.csv | 386,020,978 bytes; loaded |
+| 030006 | Timur Kamarayev | 2026-10-12 | https://www.tmcaz.com/en/price-transparency (exact file URL not recorded) | 860137567_tucson-medical-center_standardcharges.csv | loaded. A second file, 860137568-1174512792_tucson-medical-center_standardcharges.csv, is for TMC Rincon Hospital (5755 S. Houghton Road), which is not in the CMS list the registry was built from |
+| 030138 | Timur Kamarayev | 2026-10-12 | City of Hope price transparency page | 951683875_city-of-hope-national-medical-center-_standardcharges.json | **not used**: the file is for City of Hope Helford Clinical Research Hospital, Duarte, California. No file for the Phoenix (Goodyear) location was found |
+| 030112 | Timur Kamarayev | 2026-10-12 | azosh.com | - | **not found**: the azosh.com address now shows a vendor's page offering to build CMS files for hospitals, not the hospital's own site |
+
+Two further files in the same download batch (Benson Hospital, Northern Cochise Community Hospital) are rural
+Cochise County hospitals outside the registry scope and were not used.

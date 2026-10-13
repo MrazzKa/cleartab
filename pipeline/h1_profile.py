@@ -27,7 +27,7 @@ from collections import Counter
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from pipeline.common import PROCESSED, RAW, REGISTRY_CSV, now_utc
+from pipeline.common import PROCESSED, RAW, REGISTRY_CSV, ROOT, now_utc
 from pipeline.download import load_manifest
 from pipeline.h1_download import SAMPLE
 from pipeline.parsers.cms import ELEMENTS_2026, USABLE_CODE_TYPES, parse_file
@@ -93,7 +93,7 @@ def process_hospital(ccn: str, r: dict, m: dict | None, v: dict) -> tuple[dict, 
         profile = ({**base, "format": "not downloaded", "download_status": (m or {}).get("status", "not tried"),
                          "usable_coded_rows": False, **score(False, False, None, Counter())})
         return profile, [], []
-    prof, rows = parse_file(m["path"], ccn)
+    prof, rows = parse_file(str(ROOT / m["path"]), ccn)
     counts = write_parquet(ccn, rows)
     found = prof.format.startswith("CMS")
     valid = str(v.get("valid")) == "True"

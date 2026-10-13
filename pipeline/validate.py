@@ -48,7 +48,7 @@ def main() -> None:
     for (ccn, url), m in load_manifest().items():
         if m["status"] != "ok" or (only and ccn not in only):
             continue
-        existing[ccn] = run(ccn, m["path"], url)
+        existing[ccn] = run(ccn, str(ROOT / m["path"]), url)
         print(ccn, existing[ccn].get("valid"), existing[ccn].get("error_count"), existing[ccn].get("note"), flush=True)
         with open(OUT, "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=FIELDS)

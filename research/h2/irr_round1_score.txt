@@ -1,0 +1,73 @@
+canonical_payer: 136/200 = 68.0% agreement, Cohen's kappa = 0.289
+plan_type: 197/200 = 98.5% agreement, Cohen's kappa = 0.941
+target: 85% agreement on canonical_payer
+canonical_payer disagreements by type: {'plan names insurer': 50, 'other disagreement': 9, 'hospital name used as payer': 5}
+
+Disagreements (canonical_payer or plan_type):
+- CENTRAL STATES [91160093] | AZ BCBS BLUE CARD [1018]: A=other/commercial  B=Blue Cross Blue Shield of Arizona/commercial
+- INSURANCE DESIGN ADMINISTRATORS [91160235] | AZ CIGNA [52]: A=other/commercial  B=Cigna/commercial
+- SUMMIT ADMINISTRATORS [91160403] | AZ BCBS [124]: A=other/commercial  B=Blue Cross Blue Shield of Arizona/commercial
+- CENTRAL STATES [91160093] | AZ BCBS [124]: A=other/commercial  B=Blue Cross Blue Shield of Arizona/commercial
+- Aetna | Broad Network: A=Aetna/commercial  B=Banner Health plans/commercial
+- SIERRA HEALTH AND LIFE [91160385] | AZ CIGNA [39]: A=other/commercial  B=Cigna/commercial
+- GOVERNMENT EMPLOYEES HEALTH ASSOCIATION [1140007] | AZ GEHA AETNA FEDERAL RETIREE [1021]: A=other/commercial  B=Aetna/commercial
+- UNIFIED GROUP SERVICES [91160431] | AZ CIGNA [52]: A=other/commercial  B=Cigna/commercial
+- AMERIBEN [91170032] | AZ BCBS EMERGENCY SERVICES BY PLAN [1373]: A=other/commercial  B=Blue Cross Blue Shield of Arizona/commercial
+- ANGLE HEALTH [91160979] | AZ CIGNA [39]: A=other/commercial  B=Cigna/commercial
+- BOILERMAKERS NATIONAL FUND [91160079] | AZ CIGNA [39]: A=other/commercial  B=Cigna/commercial
+- PERSONIFY HEALTH [91160218] | AZ CIGNA [39]: A=other/commercial  B=Cigna/commercial
+- ALLIED BENEFIT SYSTEMS [91160025] | AZ AETNA ASA [1119]: A=other/commercial  B=Aetna/commercial
+- MAIL HANDLERS BENEFIT PLAN [1140008] | AZ AETNA NETWORK FEDERAL RETIREE [996]: A=other/commercial  B=Aetna/commercial
+- Aetna | Designated Group: A=Aetna/commercial  B=Banner Health plans/commercial
+- INSURANCE DESIGN ADMINISTRATORS [91160235] | AZ CIGNA [39]: A=other/commercial  B=Cigna/commercial
+- WESTERN GROWERS ASSOCIATION [91160533] | AZ BCBS [187]: A=other/commercial  B=Blue Cross Blue Shield of Arizona/commercial
+- PREFERREDONE ADMINISTRATIVE SERVICES [91160346] | AZ AETNA ASA [162]: A=other/commercial  B=Aetna/commercial
+- ROCHESTER PUBLIC SCHOOLS [91160362] | AZ BCBS BLUE CARD [1018]: A=other/commercial  B=Blue Cross Blue Shield of Arizona/commercial
+- ALAN STURM [91160019] | AZ BCBS [124]: A=other/commercial  B=Blue Cross Blue Shield of Arizona/commercial
+- AVERA HEALTH PLANS [91160065] | AZ UHC OPTUM [72]: A=other/commercial  B=UnitedHealthcare/commercial
+- BLUE CROSS BLUE SHIELD [91160554] | AZ CC COMPLEX CARE [768]: A=Blue Cross Blue Shield of Arizona/commercial  B=other/commercial
+- MIDLANDS CHOICE [91160289] | ALL OTHER PLANS [9]: A=other/commercial  B=other/rental network
+- ARCBEST CORPORATION [91160054] | AZ CIGNA [39]: A=other/commercial  B=Cigna/commercial
+- ASEA AFSCME HEALTH BENEFIT TRUST [91160057] | AZ AETNA [26]: A=other/commercial  B=Aetna/commercial
+- WELLNET [91160921] | AZ AETNA [26]: A=other/commercial  B=Aetna/commercial
+- PROFESSIONAL BENEFIT ADMINISTRATORS [91160351] | AZ CIGNA [52]: A=other/commercial  B=Cigna/commercial
+- S&S HEALTH ASU ATHLETES [91160673] | AZ AETNA ASA [1119]: A=other/commercial  B=Aetna/commercial
+- CAPITAL HEALTH PLAN [91160736] | AZ BCBS [124]: A=other/commercial  B=Blue Cross Blue Shield of Arizona/commercial
+- CERNER HEALTH PLAN [91160096] | AZ CIGNA [52]: A=other/commercial  B=Cigna/commercial
+- KAISER FOUNDATION HEALTH PLAN OF WASHINGTON OPTIONS [91160195] | AZ AETNA ASA [162]: A=other/commercial  B=Aetna/commercial
+- MEDICA [91160276] | MEDICA IFB MIDLANDS CHOICE IA AND NE [48]: A=other/commercial  B=other/rental network
+- MEDICAL MUTUAL [91160278] | AZ AETNA [26]: A=other/commercial  B=Aetna/commercial
+- AMERICAN POSTAL WORKERS UNION [91160043] | AZ CIGNA [39]: A=other/commercial  B=Cigna/commercial
+- AMERICAN TRUST ADMINISTRATORS [91160048] | AZ CIGNA [39]: A=other/commercial  B=Cigna/commercial
+- AETNA | QHP - OFFICE: A=Aetna/marketplace  B=other/marketplace
+- Blue Cross Blue Shield of Arizona | Exclusive Network: A=Blue Cross Blue Shield of Arizona/commercial  B=Banner Health plans/commercial
+- Carekin | Medicare Advantage: A=other/medicare advantage  B=Banner Health plans/medicare advantage
+- United Healthcare Community Care | Arizona Health Care Cost Containment System (AHCCCS): A=UnitedHealthcare/ahcccs  B=other/ahcccs
+- CIGNA | ALL PRODUCTS: A=Cigna/commercial  B=other/commercial
+- WORLD INSURANCE [91160466] | AZ CIGNA [52]: A=other/commercial  B=Cigna/commercial
+- 1199SEIU NATIONAL BENEFIT FUND [91160001] | AZ AETNA ASA [1119]: A=other/commercial  B=Aetna/commercial
+- HEALTHSMART BENEFIT SOLUTIONS [91160226] | AZ AETNA ASA [162]: A=other/commercial  B=Aetna/commercial
+- HUMANA BH | MEDICARE ADVANTAGE - MID-LEVEL: A=Humana/medicare advantage  B=other/medicare advantage
+- ARIZONA FOUNDATION FOR MEDICAL CARE TRANSPLANT [91160651] | AZ TX [62]: A=other/commercial  B=other/rental network
+- ALLEGIANCE [91160022] | AZ CIGNA [39]: A=other/commercial  B=Cigna/commercial
+- GENERIC COMMERCIAL [91160547] | AZ CIGNA [39]: A=other/commercial  B=Cigna/commercial
+- FRINGE BENEFIT SERVICES [91160173] | AZ CIGNA [52]: A=other/commercial  B=Cigna/commercial
+- Aetna | Advantage Medicare Managed Care Plan: A=Aetna/medicare advantage  B=other/medicare advantage
+- MARPAI HEALTH [91160891] | AZ CIGNA [39]: A=other/commercial  B=Cigna/commercial
+- HAP ALLIANCE HLTH LIFE/HLTH ALLIANCEPLAN [91160206] | AZ AETNA ASA [162]: A=other/commercial  B=Aetna/commercial
+- PERSONIFY HEALTH [91160073] | AZ AETNA ASA [1119]: A=other/commercial  B=Aetna/commercial
+- BANNER UNIVERSITY | AHCCCS MANAGED MEDICAID - PRIMARY CARE: A=Banner Health plans/ahcccs  B=other/ahcccs
+- OSCAR PPO [91160912] | AZ CIGNA [39]: A=Oscar/commercial  B=Cigna/commercial
+- MARPAI HEALTH [91160891] | AZ AETNA ASA [162]: A=other/commercial  B=Aetna/commercial
+- HEALTH PLANS INCORPORATED [91160214] | AZ UHC OPTUM [72]: A=other/commercial  B=UnitedHealthcare/commercial
+- SUMMIT ADMINISTRATORS [91170403] | AZ BCBS EMERGENCY SERVICES BY PLAN [1373]: A=other/commercial  B=UnitedHealthcare/commercial
+- ASSURANT HEALTH [91160060] | AZ CIGNA [39]: A=other/commercial  B=Cigna/commercial
+- OPTUM BEHAVIORAL HEALTH [91160328] | AZ UHC OPTUM [36]: A=other/commercial  B=UnitedHealthcare/commercial
+- IHC HEALTH SOLUTIONS [91160233] | AZ CIGNA [39]: A=other/commercial  B=Cigna/commercial
+- OXFORD HEALTH PLAN [91170331] | AZ UHC GAP EXCEPTION [1376]: A=other/commercial  B=UnitedHealthcare/commercial
+- MEDICAL MUTUAL [91160278] | AZ CIGNA [52]: A=other/commercial  B=Cigna/commercial
+- PERSONIFY HEALTH [91160181] | AZ BCBS [124]: A=other/commercial  B=Blue Cross Blue Shield of Arizona/commercial
+- UNITED MEDICAL RESOURCES [91160440] | AZ AETNA ASA [1119]: A=other/commercial  B=Aetna/commercial
+- AMERIHEALTH [91160051] | AZ CIGNA [52]: A=other/commercial  B=Cigna/commercial
+- ALAN STURM [91170019] | AZ BCBS EMERGENCY SERVICES BY PAYER [1294]: A=other/commercial  B=Blue Cross Blue Shield of Arizona/commercial
+- Soulistic Hospice | Commercial: A=other/commercial  B=Banner Health plans/commercial

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ClearTab results wireframe</title>
+<style>
+ body { font-family: system-ui, sans-serif; margin: 0 auto; max-width: 960px; padding: 16px; color: #222; background: #fff; }
+ .wf { border: 3px dashed #777; padding: 8px; text-align: center; font-weight: 700; letter-spacing: .1em; color: #555; }
+ form, .card, .box { border: 1px solid #999; border-radius: 6px; padding: 12px; margin: 12px 0; background: #f4f4f4; }
+ input, select, button { font-size: 16px; min-height: 44px; margin: 4px 0; width: 100%; box-sizing: border-box; }
+ .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px 0; }
+ .lab { font-size: 12px; text-transform: uppercase; color: #555; }
+ .s { font-size: 13px; color: #555; } .h { font-weight: 700; font-size: 17px; }
+ .tag { border: 1px solid #333; padding: 0 6px; font-size: 12px; border-radius: 3px; }
+ pre { white-space: pre-wrap; background: #fff; border: 1px solid #999; padding: 8px; font-size: 14px; }
+ @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }
+ @media (min-width: 800px) { .layout { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; } }
+</style></head><body>
+<div class=wf>WIREFRAME - LOW FIDELITY - GRAYSCALE - NOT THE FINAL DESIGN</div>
+<form><label>Procedure<input value="knee mri"></label>
+<label>Plan<select><option>UnitedHealthcare</option><option>No insurance (cash price)</option></select></label>
+<label>ZIP code<input value="85006" inputmode="numeric"></label><button type=button>Search</button></form>
+<div class=layout><main>
+<h2>knee MRI <span class=s>(CPT 73721) - Phoenix area - sorted by lowest price for your plan</span></h2>
+<div class=s>Sort: [Lowest price] [Nearest]</div>
+
+  <div class=card>
+    <div class=h>1. Valleywise Health Medical Center <span class=tag>Lowest</span></div>
+    <div class=s>Phoenix - 1.4 miles (straight line from your ZIP)</div>
+    <div class=grid>
+      <div><div class=lab>Your plan</div><b>$167</b><div class=s>negotiated rate, fixed dollar amount</div><div class=s>median of 9, $162 to $336</div></div>
+      <div><div class=lab>Cash price</div><b>$293</b><div class=s>discounted cash price</div></div>
+      <div><div class=lab>List price</div>$1,625<div class=s>gross charge</div></div>
+    </div>
+    <div class=s>Data: <b>Complete</b> (88.1/100) -
+      <details><summary>Where this number comes from</summary>
+      File: <a href="https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise">https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise...</a><br>
+      Downloaded 2026-10-12; file dated 2026-06-28; version 3.0.0</details></div>
+    <button>Prepare a call</button>
+  </div>
+  <div class=card>
+    <div class=h>2. Banner Desert Medical Center </div>
+    <div class=s>Mesa - 11.3 miles (straight line from your ZIP)</div>
+    <div class=grid>
+      <div><div class=lab>Your plan</div><b>$167</b><div class=s>negotiated rate, fixed dollar amount</div><div class=s>median of 2, $167 to $167</div></div>
+      <div><div class=lab>Cash price</div><b>$374</b><div class=s>discounted cash price</div></div>
+      <div><div class=lab>List price</div>$1,547<div class=s>gross charge</div></div>
+    </div>
+    <div class=s>Data: <b>Complete</b> (98.3/100) -
+      <details><summary>Where this number comes from</summary>
+      File: <a href="https://images.pricetransparency.healthcare/public-mrfs/banner/900054201_banner-desert-medical-center_standardcharges.csv">https://images.pricetransparency.healthcare/public-mrfs/banner/9000542...</a><br>
+      Downloaded 2026-10-12; file dated 2026-09-23; version 3.0.0</details></div>
+    <button>Prepare a call</button>
+  </div>
+  <div class=card>
+    <div class=h>3. Abrazo Central Campus </div>
+    <div class=s>Phoenix - 5.1 miles (straight line from your ZIP)</div>
+    <div class=grid>
+      <div><div class=lab>Your plan</div><b>$230</b><div class=s>negotiated rate, fixed dollar amount</div><div class=s>median of 10, $230 to $295</div></div>
+      <div><div class=lab>Cash price</div><b>Not published</b><div class=s>discounted cash price</div></div>
+      <div><div class=lab>List price</div>Not published<div class=s>gross charge</div></div>
+    </div>
+    <div class=s>Data: <b>Complete</b> (96.2/100) -
+      <details><summary>Where this number comes from</summary>
+      File: <a href="https://mrfs.hyvehealthcare.com/TenetHealth/621809851_vhs-of-phoenix-inc_standardcharges.json">https://mrfs.hyvehealthcare.com/TenetHealth/621809851_vhs-of-phoenix-i...</a><br>
+      Downloaded 2026-10-12; file dated 2026-07-23; version 3.0.0</details></div>
+    <button>Prepare a call</button>
+  </div>
+  <div class=card>
+    <div class=h>4. HonorHealth Scottsdale Osborn Medical Center </div>
+    <div class=s>Scottsdale - 7.4 miles (straight line from your ZIP)</div>
+    <div class=grid>
+      <div><div class=lab>Your plan</div><b>$373</b><div class=s>negotiated rate, fixed dollar amount</div><div class=s>median of 3, $257 to $525</div></div>
+      <div><div class=lab>Cash price</div><b>$4,322</b><div class=s>discounted cash price</div></div>
+      <div><div class=lab>List price</div>$4,322<div class=s>gross charge</div></div>
+    </div>
+    <div class=s>Data: <b>Complete</b> (96.1/100) -
+      <details><summary>Where this number comes from</summary>
+      File: <a href="https://www.honorhealth.com/sites/default/files/2023-12/860181654_honorhealthsomc_standardcharges.csv">https://www.honorhealth.com/sites/default/files/2023-12/860181654_hono...</a><br>
+      Downloaded 2026-10-12; file dated 2026-04-01; version 3.0.0</details></div>
+    <button>Prepare a call</button>
+  </div>
+  <div class=card>
+    <div class=h>5. HonorHealth Deer Valley Medical Center </div>
+    <div class=s>Phoenix - 14.4 miles (straight line from your ZIP)</div>
+    <div class=grid>
+      <div><div class=lab>Your plan</div><b>$373</b><div class=s>negotiated rate, fixed dollar amount</div><div class=s>median of 3, $257 to $525</div></div>
+      <div><div class=lab>Cash price</div><b>$4,322</b><div class=s>discounted cash price</div></div>
+      <div><div class=lab>List price</div>$4,322<div class=s>gross charge</div></div>
+    </div>
+    <div class=s>Data: <b>Complete</b> (96.0/100) -
+      <details><summary>Where this number comes from</summary>
+      File: <a href="https://www.honorhealth.com/sites/default/files/2023-12/860181654_honorhealthdvmc_standardcharges.csv">https://www.honorhealth.com/sites/default/files/2023-12/860181654_hono...</a><br>
+      Downloaded 2026-10-12; file dated 2026-04-01; version 3.0.0</details></div>
+    <button>Prepare a call</button>
+  </div>
+<div class=box><b>Hospitals near you without usable prices</b><ul><li>Abrazo Arrowhead Campus (Glendale): not checked yet</li><li>Abrazo Scottsdale Campus (Phoenix): not checked yet</li><li>Abrazo West Campus (Goodyear): not checked yet</li><li>Arizona General Hospital Laveen (Laveen): not checked yet</li><li>Arizona General Hospital Mesa (Mesa): not checked yet</li><li>Arizona Orthopedic and Surgical Specialty Hospital (Phoenix): blocked by robots.txt or site</li></ul>
+<div class=s>This is about the price file only, not about the quality of care.</div></div>
+</main><aside>
+<div class=box><b>What these numbers mean</b><p>These are prices the hospital published for its own part of the care, called the facility charge. They do not include the doctor&#x27;s fee, which is billed separately. The gross charge is the list price that almost no one pays. The cash price is what the hospital says it charges people who pay for themselves. A negotiated rate is the amount a hospital agreed with an insurance plan; what you pay depends on your deductible and coinsurance. Your final bill can be different. Call the hospital to confirm before your visit.</p>
+<p class=s>Financial help: [hospital financial assistance link] - [what ClearTab stores: nothing]</p></div>
+<div class=box><b>Call summary (opened from result 1)</b><pre>
+Calling: Valleywise Health Medical Center   (602) 344-5011
+Procedure: knee MRI (CPT 73721)
+Published cash price: $293   (file dated 2026-06-28)
+Published negotiated range for UnitedHealthcare: $162 - $336
+Questions to ask:
+ 1. What is the all-in estimate for CPT 73721, including every bill I will get?
+ 2. Is the doctor's (physician) fee included, or billed separately?
+ 3. Is this cash price available to me, and what do I need to do to get it?
+</pre><button>Copy</button> <button>Print</button></div>
+</aside></div>
+<p class=s>Generated 2026-10-13T02:24:21+00:00 from GET /search?q=knee mri&amp;plan=UnitedHealthcare&amp;zip=85006 on the
+local ClearTab database (api/make_wireframe.py). Real published figures; provisional payer mapping.</p>
+</body></html>

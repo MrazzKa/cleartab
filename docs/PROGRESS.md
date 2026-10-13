@@ -59,3 +59,43 @@ Each phase appends a summary of at most 15 lines.
 - Downloader now makes one request per file per run (F3); Phase 2 used HEAD + GET.
 - Correction to Phases 2-4: Valleywise downloaded on the 3rd attempt. H1 now 12 of 15 usable (8 systems); launch list re-selected under the same rules (77065, 66984 replace 72114, 10060; 44 CMS + 6, all >= 8 hospitals); dictionary 327 strings, coverage 72.6% (Valleywise 68.2%, Banner UMC Tucson 58.9% below 60%); provisional H2 median ratio 2.81 (40/50 >= 2), cash below median negotiated 7/50 (14%). Reports updated.
 - Mayo (21.5 GB) still downloading; not loaded. Human: run `python -m pipeline.run 030103` and `python -m pipeline.h1_profile 030103` when data/processed/downloads.csv shows it ok.
+
+## Phase 6 - Search API and screen specification (2026-10-12)
+- FastAPI (api/main.py): GET /search?q=&plan=&zip= (best-matching launch procedure via full-text + pg_trgm; up to 10 hospitals in the user's metro, sorted by applicable price; gross, cash, negotiated or allowed range with methodology labels; completeness; city; straight-line distance; provenance), GET /procedures/suggest, GET /plans. Logs keep the path only (no procedure or ZIP).
+- Latency (api/bench.py, 500 mixed requests over 14 hospitals / 33,991 price rows): search p95 9.6 ms over HTTP, 11.9 ms in-process (target 500 ms); suggest p95 4.9 ms (target 150 ms). Must be re-measured when more hospitals are loaded.
+- ZIP centroids: 2020 ZCTA internal points for 417 AZ ZCTAs from Census TIGERweb (the gazetteer on www2.census.gov is disallowed by its robots.txt when read strictly per RFC 9309). Hospital phones and addresses from CMS Hospital General Information; 37 of 46 geocoded by the Census Geocoder, the rest at their ZIP centroid (flagged in hospital_geo.csv).
+- docs/results_screen_spec.md, web/wireframes/results.html (grayscale, 5 real results, explainer, call summary). Explainer 91 words, Flesch-Kincaid 7.2; procedure descriptions rewritten so none is above grade 8 (mean 4.7).
+- research/h3/study_plan_draft.md (5 tasks, between-subjects, measures, recruitment, power note: 39 per arm for 50% vs 80%); research/accuracy_check/plan.md + phone_check.csv (10 pairs, 10 hospitals, both metros).
+- Data issue for a human: CMS lists CCN 030037 (registry: HonorHealth Tempe) at 1800 E Van Buren St, Phoenix.
+- Tests: 20 passing (pytest), ruff clean.
+
+## FINAL - Team summary (2026-10-12)
+- docs/WEEK8_SUMMARY.md written: per-phase status, key numbers, 10 open human tasks, 5-sentence paragraph for Dr. Li.
+- Branches: main (Phase 0) <- pipeline/phase1-registry <- ... <- api/phase6-search (stacked, one per phase); one PR per phase.
+- Still running at the time of writing: Mayo (21.5 GB) validation and parse in pipeline.run (log: data/raw/mayo_etl.log).
+
+## Addendum - Mayo loaded, repository published (2026-10-13)
+- Mayo (21.5 GB, 57.5 million rows) validated (0 errors), parsed and loaded: 109,424 price rows, completeness 94.8. H1 now 13 of 15 usable (9 systems); Mayo is the only file with records missing 2026 elements (11,886).
+- Out-of-memory fix: F4 normalization and the code frequency script now stream in batches (peak 3.1 GB; identical results for the other hospitals).
+- Launch list under the same rules: 66821 replaces 10140 (45 CMS + 5). Dictionary 2,391 strings; coverage 72.6% without Mayo, 8.6% with Mayo (Mayo 3.0%). H2 unchanged at 2.81; cash below median negotiated 5 of 50.
+- Database: 15 hospitals, 142,727 price rows; search p95 18.7 ms over HTTP.
+- GitHub: public repo MrazzKa/cleartab, 14 issues, 6 stacked PRs. Branch protection was not yet set; no CI run had been created yet.
+
+## Addendum - manual downloads loaded (2026-10-13)
+- Team member downloaded the robots.txt-blocked files by hand; TMC, Northwest, Oro Valley and Sahuarita loaded from data/raw/manual/ (no network). City of Hope's file is for Duarte, CA (not used); azosh.com shows a vendor page (not found). TMC Rincon Hospital has its own file but is not in the registry.
+- Northwest files are the first CMS CSV wide files in the sample; parsed values checked against the raw file.
+- H1: 17 of 19 usable (11 systems, 7 in Tucson); 18 of 18 template files valid.
+- Launch list under the same rules: 45331 replaces 31622; 51798 (bladder scan, a measurement) added to the exclusions.
+- Dictionary 2,502 strings (16 new aliases for TMC and Northwest spellings); coverage 66.0% pooled without Mayo, 12.8% with Mayo.
+- H2 now measurable in Tucson: Phoenix 2.81, Tucson 1.63, pooled 1.99. H2 not resolved until the dictionary is accepted by two raters.
+- Database: 19 hospitals, 13 systems, 174,071 price rows; search p95 39.3 ms over HTTP.
+- Rater files also provided as Excel with drop-down lists (irr_rater_A.xlsx, irr_rater_B.xlsx).
+
+## Addendum - inter-rater round 1 (2026-10-13)
+- Two team members labelled 200 payer strings independently: canonical_payer 136 of 200 = 68.0% (kappa 0.289), plan_type 98.5%. Below the 85% target, so the dictionary is not accepted.
+- 50 of 64 disagreements: employer fund or administrator plus a listed insurer's contract in the plan column (rater A "other", rater B the insurer). 5: Banner hospital used as the payer. 9 other.
+- Evidence for the contract reading: in the Mayo file all 136 payers under "AZ CIGNA [39]" have one rate per procedure. Dictionary now maps these 608 Mayo strings to the contract's insurer (medium confidence).
+- 11 missed spellings fixed ("UHC ...", "BCBS AZ ...", mostly Northwest). Coverage: 66.7% pooled without Mayo, 51.0% with Mayo (Mayo 48.3%).
+- H2 (provisional): Phoenix 2.81, Tucson 1.39, pooled 1.92. Identical with the contract rule switched off (--payer-rule).
+- Guide rewritten with explicit rules; round 2 sample drawn (seed 20261013, round 1 strings excluded); files research/h2/irr_round2_rater_A.xlsx and B.xlsx.
+- GitHub: ruleset "Protect main" active (2026-10-13): no deletion or force push; changes only through a pull request with 1 approval and the python, web and migrations checks passing. Team members still need to be added as collaborators so their approvals count; until then the repository admin can merge a pull request without approval (remove that bypass once they are added).
