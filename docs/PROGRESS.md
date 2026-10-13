@@ -42,3 +42,12 @@ Each phase appends a summary of at most 15 lines.
 - Per hospital: 50/50 at HonorHealth x2, St. Joseph's Phoenix, Abrazo Central; 47-49 at Chandler, Banner x2, East Valley; 30 Carondelet x2; 22 AZ Spine and Joint; 0 Exceptional (codes labelled CDM).
 - Excluded and why: listed in research/procedures/README.md (E&M, OB delivery, inpatient DRGs, cancer surgery, pediatric, < 8 hospitals).
 - Human: a clinician or Dr. Li should read the 50 plain names; reading level not measured with a tool.
+
+## Phase 4 - Normalization and payer matching, H2 groundwork (2026-10-12)
+- F4 targets and the H2 rule copied into research/h2/REPORT.md first. Canonical list: 11 insurers + "other"; AHCCCS plans from the AHCCCS Population by Contractor report (Sep 2026).
+- Payer dictionary (data/processed/payer_aliases.csv): 227 raw strings (target 150), deterministic rules only; 217 high, 10 medium confidence; all provisional.
+- Row coverage by canonical insurers: 75.2% overall (target 60%); per hospital 58.9% (Banner UMC Tucson, below target) to 100%.
+- Outlier rules: 74,323 rows dropped above gross, 15,561 under $1; 1,116,757 negotiated rows have no gross to check (flagged, kept). Log: data/processed/f4_flag_log.csv.
+- Provisional H2: median highest-to-lowest ratio 2.81 (50 procedures, Phoenix only, 7 hospitals); same-insurer sensitivity 3.33. Cash below median negotiated: 12 of 50 procedures (24%). Tucson cannot be measured (1 hospital with negotiated rates).
+- IRR: 200 strings sampled (seed 20261012), rater files, labeling guide and irr_score.py ready; not filled, no agreement estimated.
+- Human: two raters (suggest Timur and Artyom) label 200 rows independently, about 1-1.5 hours each, then run irr_score.py and resolve disagreements together (about 30 minutes). Spot-check the top surgical ratios in the source files.
