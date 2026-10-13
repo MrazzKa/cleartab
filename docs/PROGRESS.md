@@ -32,3 +32,13 @@ Each phase appends a summary of at most 15 lines.
 - Completeness score: equal weights 20 x 5, formula in REPORT.md; 11 hospitals >= 90. Limitation: the Table 10 components do not reward negotiated rates (Carondelet 98.7, Exceptional 80.0). PM and Dr. Li to decide.
 - Outputs: h1_file_profile.csv, h1_required_elements.csv, payer_strings.csv (raw payer/plan with row counts).
 - Human: manual downloads (MANUAL_DOWNLOADS.md, now 7 incl. Valleywise); decide on the score limitation; rerun `python -m pipeline.h1_profile 030103` when Mayo finishes.
+
+## Phase 3 - Launch procedure list (2026-10-12)
+- Source list: 70 CMS shoppable services (84 FR 65524 Table 3, from federalregister.gov) + all codes in the 11 usable H1 files (data/processed/code_frequency.csv, 20,666 codes).
+- CPT and HCPCS counted as one system (HonorHealth labels CPT codes "HCPCS"); labels kept as published.
+- Rules written in pipeline/select_procedures.py; 50 picked: imaging 15, laboratory 15, endoscopy 8, outpatient surgery 12. 42 are CMS shoppable codes, 8 most-published.
+- 47 of 50 are published by >= 8 of 11 hospitals; 3 endoscopies by 7 (no other endoscopy reaches 8).
+- Plain names, 2-4 synonyms and one-line descriptions written for all 50 (data/processed/procedure_text.csv); loaded into procedures (is_launch = true); full-text + trigram search works ("knee mri" -> 73721).
+- Per hospital: 50/50 at HonorHealth x2, St. Joseph's Phoenix, Abrazo Central; 47-49 at Chandler, Banner x2, East Valley; 30 Carondelet x2; 22 AZ Spine and Joint; 0 Exceptional (codes labelled CDM).
+- Excluded and why: listed in research/procedures/README.md (E&M, OB delivery, inpatient DRGs, cancer surgery, pediatric, < 8 hospitals).
+- Human: a clinician or Dr. Li should read the 50 plain names; reading level not measured with a tool.
