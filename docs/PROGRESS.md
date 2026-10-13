@@ -73,3 +73,10 @@ Each phase appends a summary of at most 15 lines.
 - docs/WEEK8_SUMMARY.md written: per-phase status, key numbers, 10 open human tasks, 5-sentence paragraph for Dr. Li.
 - Branches: main (Phase 0) <- pipeline/phase1-registry <- ... <- api/phase6-search (stacked, one per phase); one PR per phase.
 - Still running at the time of writing: Mayo (21.5 GB) validation and parse in pipeline.run (log: data/raw/mayo_etl.log).
+
+## Addendum - Mayo loaded, repository published (2026-10-13)
+- Mayo (21.5 GB, 57.5 million rows) validated (0 errors), parsed and loaded: 109,424 price rows, completeness 94.8. H1 now 13 of 15 usable (9 systems); Mayo is the only file with records missing 2026 elements (11,886).
+- Out-of-memory fix: F4 normalization and the code frequency script now stream in batches (peak 3.1 GB; identical results for the other hospitals).
+- Launch list under the same rules: 66821 replaces 10140 (45 CMS + 5). Dictionary 2,391 strings; coverage 72.6% without Mayo, 8.6% with Mayo (Mayo 3.0%). H2 unchanged at 2.81; cash below median negotiated 5 of 50.
+- Database: 15 hospitals, 142,727 price rows; search p95 18.7 ms over HTTP.
+- GitHub: public repo MrazzKa/cleartab, 14 issues, 6 stacked PRs. Branch protection pending GitHub Education; no CI run has been created yet.

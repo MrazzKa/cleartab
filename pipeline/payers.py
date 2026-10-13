@@ -81,7 +81,8 @@ PLAN_TYPE_RULES = [
 
 
 def norm(s: str) -> str:
-    s = (s or "").casefold().replace("&", " and ")
+    s = re.sub(r"\[\s*\d+\s*\]", " ", (s or ""))  # Mayo appends payer IDs: "AETNA [91160003]"
+    s = s.casefold().replace("&", " and ")
     s = re.sub(r"\(.*?\)", lambda m: " " + m.group(0)[1:-1] + " ", s)
     s = re.sub(r"[^a-z0-9 ]+", " ", s)
     return re.sub(r"\s+", " ", s).strip()

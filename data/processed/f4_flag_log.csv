@@ -1,68 +1,75 @@
 ccn,reason,rows,source_url,retrieved_at
-030010,under_1_dollar,410,data/raw/normalized/030010.parquet,2026-10-12T21:41:45+00:00
-030011,under_1_dollar,412,data/raw/normalized/030011.parquet,2026-10-12T21:41:45+00:00
-030022,above_gross,58923,data/raw/normalized/030022.parquet,2026-10-12T21:41:48+00:00
-030022,gross_from_code,37268,data/raw/normalized/030022.parquet,2026-10-12T21:41:48+00:00
-030022,methodology: algorithm,582638,data/raw/normalized/030022.parquet,2026-10-12T21:41:48+00:00
-030022,methodology: fixed dollar,991896,data/raw/normalized/030022.parquet,2026-10-12T21:41:48+00:00
-030022,methodology: per diem,179,data/raw/normalized/030022.parquet,2026-10-12T21:41:48+00:00
-030022,methodology: percent of charges,299414,data/raw/normalized/030022.parquet,2026-10-12T21:41:48+00:00
-030022,no_gross_to_check,651623,data/raw/normalized/030022.parquet,2026-10-12T21:41:48+00:00
-030022,under_1_dollar,116171,data/raw/normalized/030022.parquet,2026-10-12T21:41:48+00:00
-030024,above_gross,1811,data/raw/normalized/030024.parquet,2026-10-12T21:41:49+00:00
-030024,methodology: algorithm,134352,data/raw/normalized/030024.parquet,2026-10-12T21:41:49+00:00
-030024,methodology: fixed dollar,327128,data/raw/normalized/030024.parquet,2026-10-12T21:41:49+00:00
-030024,methodology: per diem,2307,data/raw/normalized/030024.parquet,2026-10-12T21:41:49+00:00
-030024,methodology: percent of charges,48496,data/raw/normalized/030024.parquet,2026-10-12T21:41:49+00:00
-030024,no_gross_to_check,114671,data/raw/normalized/030024.parquet,2026-10-12T21:41:49+00:00
-030024,under_1_dollar,1627,data/raw/normalized/030024.parquet,2026-10-12T21:41:49+00:00
-030030,above_gross,148,data/raw/normalized/030030.parquet,2026-10-12T21:41:50+00:00
-030030,gross_from_code,3,data/raw/normalized/030030.parquet,2026-10-12T21:41:50+00:00
-030030,methodology: algorithm,84,data/raw/normalized/030030.parquet,2026-10-12T21:41:50+00:00
-030030,methodology: fixed dollar,264924,data/raw/normalized/030030.parquet,2026-10-12T21:41:50+00:00
-030030,methodology: per diem,1452,data/raw/normalized/030030.parquet,2026-10-12T21:41:50+00:00
-030030,methodology: percent of charges,57732,data/raw/normalized/030030.parquet,2026-10-12T21:41:50+00:00
-030030,no_gross_to_check,262241,data/raw/normalized/030030.parquet,2026-10-12T21:41:50+00:00
-030030,under_1_dollar,4502,data/raw/normalized/030030.parquet,2026-10-12T21:41:50+00:00
-030036,above_gross,980,data/raw/normalized/030036.parquet,2026-10-12T21:41:51+00:00
-030036,methodology: algorithm,108132,data/raw/normalized/030036.parquet,2026-10-12T21:41:51+00:00
-030036,methodology: fixed dollar,252919,data/raw/normalized/030036.parquet,2026-10-12T21:41:51+00:00
-030036,methodology: per diem,95,data/raw/normalized/030036.parquet,2026-10-12T21:41:51+00:00
-030036,methodology: percent of charges,20767,data/raw/normalized/030036.parquet,2026-10-12T21:41:51+00:00
-030036,no_gross_to_check,123782,data/raw/normalized/030036.parquet,2026-10-12T21:41:51+00:00
-030036,under_1_dollar,1978,data/raw/normalized/030036.parquet,2026-10-12T21:41:51+00:00
-030038,above_gross,5287,data/raw/normalized/030038.parquet,2026-10-12T21:41:52+00:00
-030038,gross_from_code,50834,data/raw/normalized/030038.parquet,2026-10-12T21:41:52+00:00
-030038,methodology: algorithm,37359,data/raw/normalized/030038.parquet,2026-10-12T21:41:52+00:00
-030038,methodology: fixed dollar,248295,data/raw/normalized/030038.parquet,2026-10-12T21:41:52+00:00
-030038,methodology: percent of charges,2237,data/raw/normalized/030038.parquet,2026-10-12T21:41:52+00:00
-030038,no_gross_to_check,197461,data/raw/normalized/030038.parquet,2026-10-12T21:41:52+00:00
-030038,under_1_dollar,2263,data/raw/normalized/030038.parquet,2026-10-12T21:41:52+00:00
-030064,above_gross,26347,data/raw/normalized/030064.parquet,2026-10-12T21:41:52+00:00
-030064,gross_from_code,7908,data/raw/normalized/030064.parquet,2026-10-12T21:41:52+00:00
-030064,methodology: algorithm,10020,data/raw/normalized/030064.parquet,2026-10-12T21:41:52+00:00
-030064,methodology: fixed dollar,325940,data/raw/normalized/030064.parquet,2026-10-12T21:41:52+00:00
-030064,methodology: per diem,2383,data/raw/normalized/030064.parquet,2026-10-12T21:41:52+00:00
-030064,methodology: percent of charges,227441,data/raw/normalized/030064.parquet,2026-10-12T21:41:52+00:00
-030064,no_gross_to_check,107494,data/raw/normalized/030064.parquet,2026-10-12T21:41:52+00:00
-030064,under_1_dollar,1084,data/raw/normalized/030064.parquet,2026-10-12T21:41:52+00:00
-030065,above_gross,34306,data/raw/normalized/030065.parquet,2026-10-12T21:41:53+00:00
-030065,gross_from_code,4411,data/raw/normalized/030065.parquet,2026-10-12T21:41:53+00:00
-030065,methodology: algorithm,9768,data/raw/normalized/030065.parquet,2026-10-12T21:41:53+00:00
-030065,methodology: fixed dollar,303673,data/raw/normalized/030065.parquet,2026-10-12T21:41:53+00:00
-030065,methodology: per diem,3534,data/raw/normalized/030065.parquet,2026-10-12T21:41:53+00:00
-030065,methodology: percent of charges,195238,data/raw/normalized/030065.parquet,2026-10-12T21:41:53+00:00
-030065,no_gross_to_check,106814,data/raw/normalized/030065.parquet,2026-10-12T21:41:53+00:00
-030065,under_1_dollar,937,data/raw/normalized/030065.parquet,2026-10-12T21:41:53+00:00
-030092,above_gross,5440,data/raw/normalized/030092.parquet,2026-10-12T21:41:54+00:00
-030092,gross_from_code,50855,data/raw/normalized/030092.parquet,2026-10-12T21:41:54+00:00
-030092,methodology: algorithm,38925,data/raw/normalized/030092.parquet,2026-10-12T21:41:54+00:00
-030092,methodology: fixed dollar,249069,data/raw/normalized/030092.parquet,2026-10-12T21:41:54+00:00
-030092,methodology: percent of charges,2195,data/raw/normalized/030092.parquet,2026-10-12T21:41:54+00:00
-030092,no_gross_to_check,198214,data/raw/normalized/030092.parquet,2026-10-12T21:41:54+00:00
-030092,under_1_dollar,2263,data/raw/normalized/030092.parquet,2026-10-12T21:41:54+00:00
-030107,above_gross,4,data/raw/normalized/030107.parquet,2026-10-12T21:41:54+00:00
-030107,methodology: fixed dollar,6085,data/raw/normalized/030107.parquet,2026-10-12T21:41:54+00:00
-030107,no_gross_to_check,6080,data/raw/normalized/030107.parquet,2026-10-12T21:41:54+00:00
-030152,under_1_dollar,20,data/raw/normalized/030152.parquet,2026-10-12T21:41:54+00:00
-030153,under_1_dollar,65,data/raw/normalized/030153.parquet,2026-10-12T21:41:55+00:00
+030010,under_1_dollar,410,data/raw/normalized/030010.parquet,2026-10-13T00:59:26+00:00
+030011,under_1_dollar,412,data/raw/normalized/030011.parquet,2026-10-13T00:59:27+00:00
+030022,above_gross,58923,data/raw/normalized/030022.parquet,2026-10-13T00:59:35+00:00
+030022,gross_from_code,37268,data/raw/normalized/030022.parquet,2026-10-13T00:59:35+00:00
+030022,methodology: algorithm,582638,data/raw/normalized/030022.parquet,2026-10-13T00:59:35+00:00
+030022,methodology: fixed dollar,991896,data/raw/normalized/030022.parquet,2026-10-13T00:59:35+00:00
+030022,methodology: per diem,179,data/raw/normalized/030022.parquet,2026-10-13T00:59:35+00:00
+030022,methodology: percent of charges,299414,data/raw/normalized/030022.parquet,2026-10-13T00:59:35+00:00
+030022,no_gross_to_check,651623,data/raw/normalized/030022.parquet,2026-10-13T00:59:35+00:00
+030022,under_1_dollar,116171,data/raw/normalized/030022.parquet,2026-10-13T00:59:35+00:00
+030024,above_gross,1811,data/raw/normalized/030024.parquet,2026-10-13T00:59:38+00:00
+030024,methodology: algorithm,134352,data/raw/normalized/030024.parquet,2026-10-13T00:59:38+00:00
+030024,methodology: fixed dollar,327128,data/raw/normalized/030024.parquet,2026-10-13T00:59:38+00:00
+030024,methodology: per diem,2307,data/raw/normalized/030024.parquet,2026-10-13T00:59:38+00:00
+030024,methodology: percent of charges,48496,data/raw/normalized/030024.parquet,2026-10-13T00:59:38+00:00
+030024,no_gross_to_check,114671,data/raw/normalized/030024.parquet,2026-10-13T00:59:38+00:00
+030024,under_1_dollar,1627,data/raw/normalized/030024.parquet,2026-10-13T00:59:38+00:00
+030030,above_gross,148,data/raw/normalized/030030.parquet,2026-10-13T00:59:40+00:00
+030030,gross_from_code,3,data/raw/normalized/030030.parquet,2026-10-13T00:59:40+00:00
+030030,methodology: algorithm,84,data/raw/normalized/030030.parquet,2026-10-13T00:59:40+00:00
+030030,methodology: fixed dollar,264924,data/raw/normalized/030030.parquet,2026-10-13T00:59:40+00:00
+030030,methodology: per diem,1452,data/raw/normalized/030030.parquet,2026-10-13T00:59:40+00:00
+030030,methodology: percent of charges,57732,data/raw/normalized/030030.parquet,2026-10-13T00:59:40+00:00
+030030,no_gross_to_check,262241,data/raw/normalized/030030.parquet,2026-10-13T00:59:40+00:00
+030030,under_1_dollar,4502,data/raw/normalized/030030.parquet,2026-10-13T00:59:40+00:00
+030036,above_gross,980,data/raw/normalized/030036.parquet,2026-10-13T00:59:42+00:00
+030036,methodology: algorithm,108132,data/raw/normalized/030036.parquet,2026-10-13T00:59:42+00:00
+030036,methodology: fixed dollar,252919,data/raw/normalized/030036.parquet,2026-10-13T00:59:42+00:00
+030036,methodology: per diem,95,data/raw/normalized/030036.parquet,2026-10-13T00:59:42+00:00
+030036,methodology: percent of charges,20767,data/raw/normalized/030036.parquet,2026-10-13T00:59:42+00:00
+030036,no_gross_to_check,123782,data/raw/normalized/030036.parquet,2026-10-13T00:59:42+00:00
+030036,under_1_dollar,1978,data/raw/normalized/030036.parquet,2026-10-13T00:59:42+00:00
+030038,above_gross,5287,data/raw/normalized/030038.parquet,2026-10-13T00:59:44+00:00
+030038,gross_from_code,50834,data/raw/normalized/030038.parquet,2026-10-13T00:59:44+00:00
+030038,methodology: algorithm,37359,data/raw/normalized/030038.parquet,2026-10-13T00:59:44+00:00
+030038,methodology: fixed dollar,248295,data/raw/normalized/030038.parquet,2026-10-13T00:59:44+00:00
+030038,methodology: percent of charges,2237,data/raw/normalized/030038.parquet,2026-10-13T00:59:44+00:00
+030038,no_gross_to_check,197461,data/raw/normalized/030038.parquet,2026-10-13T00:59:44+00:00
+030038,under_1_dollar,2263,data/raw/normalized/030038.parquet,2026-10-13T00:59:44+00:00
+030064,above_gross,26347,data/raw/normalized/030064.parquet,2026-10-13T00:59:46+00:00
+030064,gross_from_code,7908,data/raw/normalized/030064.parquet,2026-10-13T00:59:46+00:00
+030064,methodology: algorithm,10020,data/raw/normalized/030064.parquet,2026-10-13T00:59:46+00:00
+030064,methodology: fixed dollar,325940,data/raw/normalized/030064.parquet,2026-10-13T00:59:46+00:00
+030064,methodology: per diem,2383,data/raw/normalized/030064.parquet,2026-10-13T00:59:46+00:00
+030064,methodology: percent of charges,227441,data/raw/normalized/030064.parquet,2026-10-13T00:59:46+00:00
+030064,no_gross_to_check,107494,data/raw/normalized/030064.parquet,2026-10-13T00:59:46+00:00
+030064,under_1_dollar,1084,data/raw/normalized/030064.parquet,2026-10-13T00:59:46+00:00
+030065,above_gross,34306,data/raw/normalized/030065.parquet,2026-10-13T00:59:48+00:00
+030065,gross_from_code,4411,data/raw/normalized/030065.parquet,2026-10-13T00:59:48+00:00
+030065,methodology: algorithm,9768,data/raw/normalized/030065.parquet,2026-10-13T00:59:48+00:00
+030065,methodology: fixed dollar,303673,data/raw/normalized/030065.parquet,2026-10-13T00:59:48+00:00
+030065,methodology: per diem,3534,data/raw/normalized/030065.parquet,2026-10-13T00:59:48+00:00
+030065,methodology: percent of charges,195238,data/raw/normalized/030065.parquet,2026-10-13T00:59:48+00:00
+030065,no_gross_to_check,106814,data/raw/normalized/030065.parquet,2026-10-13T00:59:48+00:00
+030065,under_1_dollar,937,data/raw/normalized/030065.parquet,2026-10-13T00:59:48+00:00
+030092,above_gross,5440,data/raw/normalized/030092.parquet,2026-10-13T00:59:50+00:00
+030092,gross_from_code,50855,data/raw/normalized/030092.parquet,2026-10-13T00:59:50+00:00
+030092,methodology: algorithm,38925,data/raw/normalized/030092.parquet,2026-10-13T00:59:50+00:00
+030092,methodology: fixed dollar,249069,data/raw/normalized/030092.parquet,2026-10-13T00:59:50+00:00
+030092,methodology: percent of charges,2195,data/raw/normalized/030092.parquet,2026-10-13T00:59:50+00:00
+030092,no_gross_to_check,198214,data/raw/normalized/030092.parquet,2026-10-13T00:59:50+00:00
+030092,under_1_dollar,2263,data/raw/normalized/030092.parquet,2026-10-13T00:59:50+00:00
+030103,above_gross,58470,data/raw/normalized/030103.parquet,2026-10-13T01:02:55+00:00
+030103,gross_from_code,18225,data/raw/normalized/030103.parquet,2026-10-13T01:02:55+00:00
+030103,methodology: algorithm,89010,data/raw/normalized/030103.parquet,2026-10-13T01:02:55+00:00
+030103,methodology: fixed dollar,147449,data/raw/normalized/030103.parquet,2026-10-13T01:02:55+00:00
+030103,methodology: percent of charges,51713452,data/raw/normalized/030103.parquet,2026-10-13T01:02:55+00:00
+030103,no_gross_to_check,33642,data/raw/normalized/030103.parquet,2026-10-13T01:02:55+00:00
+030103,under_1_dollar,72554,data/raw/normalized/030103.parquet,2026-10-13T01:02:55+00:00
+030107,above_gross,4,data/raw/normalized/030107.parquet,2026-10-13T01:02:56+00:00
+030107,methodology: fixed dollar,6085,data/raw/normalized/030107.parquet,2026-10-13T01:02:56+00:00
+030107,no_gross_to_check,6080,data/raw/normalized/030107.parquet,2026-10-13T01:02:56+00:00
+030152,under_1_dollar,20,data/raw/normalized/030152.parquet,2026-10-13T01:02:56+00:00
+030153,under_1_dollar,65,data/raw/normalized/030153.parquet,2026-10-13T01:02:57+00:00

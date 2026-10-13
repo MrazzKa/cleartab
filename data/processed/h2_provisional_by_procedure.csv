@@ -1,51 +1,51 @@
 code,metro,hospitals,ratio,same_payer_ratio,row_ratio,plain_name,source_url,retrieved_at
-10140,Phoenix,8,23.803571428571427,18.74684208684699,4839.0,draining a fluid pocket under the skin,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-19120,Phoenix,7,8.411019849418206,12.40689294198172,10576.3,breast lump removal,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-20611,Phoenix,8,9.642857142857142,6.355285741529464,4225.0,joint injection or fluid removal with ultrasound,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-29826,Phoenix,8,15.030910509573255,25.316501776120717,7704.0,shoulder arthroscopy (bone shaving),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-29881,Phoenix,8,7.861974134086518,8.683237148353427,8715.0,knee arthroscopy (meniscus),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-31622,Phoenix,7,8.610551075268816,14.87315188172043,6689.0,bronchoscopy,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-43235,Phoenix,7,5.256954476423306,6.541226802978108,5444.0,upper endoscopy,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-43239,Phoenix,7,3.327955756776893,4.252826269324491,5444.0,upper endoscopy with biopsy,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-45330,Phoenix,7,8.013648771610555,8.110611919927207,4225.0,flexible sigmoidoscopy,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-45378,Phoenix,7,4.468994788253284,5.898944075087994,5444.0,colonoscopy,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-45380,Phoenix,7,4.473220673492044,5.647206118169484,5444.0,colonoscopy with biopsy,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-45385,Phoenix,7,4.256384976525822,5.373462441314555,5444.0,colonoscopy with polyp removal,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-45391,Phoenix,6,7.5597319229682265,7.640475534385703,4839.0,colonoscopy with ultrasound,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-47562,Phoenix,7,10.125951070147222,11.434082046729861,18194.0,gallbladder removal (laparoscopic),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-49505,Phoenix,7,8.484199260556528,9.559228897399073,8715.0,inguinal hernia repair,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-55700,Phoenix,7,39.66325660699062,15.323698208287432,6689.0,prostate biopsy,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-62322,Phoenix,7,7.578993610223642,10.70447284345048,4225.0,lower back epidural injection,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-62323,Phoenix,8,4.477673763565571,4.95076481835564,4225.0,lower back epidural injection with imaging,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-64483,Phoenix,8,7.653283724149866,7.294245766879786,4674.0,lower back nerve root injection,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-66984,Phoenix,6,6.6567996649661145,7.527648780487805,13354.0,cataract surgery,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-70450,Phoenix,7,1.6161508704061895,3.346236477102484,2324.7,head CT scan,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-70553,Phoenix,7,1.6094993808597204,3.5203297252262145,4134.9,brain MRI with and without contrast,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-71045,Phoenix,8,1.8180937621077102,4.679898371850827,739.91,chest x-ray (1 view),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-71046,Phoenix,8,1.4191743535460457,3.592638483710977,739.91,chest x-ray (2 views),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-72110,Phoenix,7,1.7918491074435838,2.9778626775144454,805.83,lower back x-ray,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-72148,Phoenix,7,1.806289308176101,3.6108812841076503,2867.2,lower back MRI,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-72193,Phoenix,7,2.2254270512461494,3.1036858769995748,2906.4,CT scan of pelvis with contrast,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-73721,Phoenix,6,3.582323034806414,3.237314161652306,5301.1,knee MRI,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-74177,Phoenix,7,1.6773236247934895,3.6335566315289523,3875.9,CT scan of belly and pelvis with contrast,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-76700,Phoenix,7,1.8194238761763724,3.026168853220497,1607.9,abdominal ultrasound,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-76805,Phoenix,7,1.9688060236643956,2.826678390861222,885.52,pregnancy ultrasound,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-76830,Phoenix,7,1.7142344926496953,2.405452592688939,919.1,pelvic ultrasound (vaginal),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-77065,Phoenix,5,2.3948094682093197,2.5323609845031907,657.25,diagnostic mammogram (one breast),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-77066,Phoenix,6,2.389955134596211,2.498337544886288,840.43,diagnostic mammogram (both breasts),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-77067,Phoenix,6,2.1207952605683302,2.543007222586999,694.87,screening mammogram,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-80048,Phoenix,8,2.8120893561103806,2.6549095207393076,226.8,basic metabolic panel,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-80053,Phoenix,8,2.8126315789473684,2.6550480769230766,240.8,comprehensive metabolic panel,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-80061,Phoenix,8,2.811618257261411,2.9753412566951605,352.1,cholesterol test (lipid panel),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-80069,Phoenix,7,2.8117797695262485,2.6545011708531066,278.6,kidney function panel,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-80076,Phoenix,8,2.812244897959184,2.6555422221279352,205.1,liver function test,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-81001,Phoenix,8,2.814035087719298,2.6552785519585926,114.8,urine test with microscope (automated),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-81002,Phoenix,7,2.8115015974440896,2.254508346533447,42.38,urine dipstick test,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-81003,Phoenix,8,2.802955665024631,2.6549726775956284,77.7,urine test (automated),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-84153,Phoenix,8,2.8114803625377642,2.4432110113453005,310.85,PSA blood test,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-84154,Phoenix,7,2.511178247734139,2.4432110113453005,84.55,free PSA blood test,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-84443,Phoenix,8,2.810846560846561,2.9746031746031747,312.2,thyroid test (TSH),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-85025,Phoenix,8,2.8125894134477827,2.654787909938465,176.4,complete blood count with differential,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-85027,Phoenix,8,2.8127147766323026,2.6556543631810143,134.4,complete blood count,data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-85610,Phoenix,8,2.8108808290155443,2.9766491614740644,119.0,blood clotting test (PT/INR),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
-85730,Phoenix,8,2.8114602587800372,2.9731334202921262,143.5,blood clotting test (PTT),data/raw/normalized/*_f4.parquet,2026-10-12T21:45:10+00:00
+19120,Phoenix,7,8.411019849418206,12.40689294198172,10576.3,breast lump removal,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+20611,Phoenix,8,9.642857142857142,6.355285741529464,4225.0,joint injection or fluid removal with ultrasound,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+29826,Phoenix,8,15.030910509573255,25.316501776120717,7704.0,shoulder arthroscopy (bone shaving),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+29881,Phoenix,8,7.861974134086518,8.683237148353427,8715.0,knee arthroscopy (meniscus),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+31622,Phoenix,7,8.610551075268816,14.87315188172043,6689.0,bronchoscopy,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+43235,Phoenix,7,5.256954476423306,6.541226802978108,5444.0,upper endoscopy,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+43239,Phoenix,7,3.327955756776893,4.252826269324491,5444.0,upper endoscopy with biopsy,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+45330,Phoenix,7,8.013648771610555,8.110611919927207,4225.0,flexible sigmoidoscopy,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+45378,Phoenix,7,4.468994788253284,5.898944075087994,5444.0,colonoscopy,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+45380,Phoenix,7,4.473220673492044,5.647206118169484,5444.0,colonoscopy with biopsy,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+45385,Phoenix,7,4.256384976525822,5.373462441314555,5444.0,colonoscopy with polyp removal,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+45391,Phoenix,6,7.5597319229682265,7.640475534385703,4839.0,colonoscopy with ultrasound,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+47562,Phoenix,7,10.125951070147222,11.434082046729861,18194.0,gallbladder removal (laparoscopic),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+49505,Phoenix,7,8.484199260556528,9.559228897399073,8715.0,inguinal hernia repair,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+55700,Phoenix,7,39.66325660699062,15.323698208287432,6689.0,prostate biopsy,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+62322,Phoenix,7,7.578993610223642,10.70447284345048,4225.0,lower back epidural injection,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+62323,Phoenix,8,4.477673763565571,4.95076481835564,4225.0,lower back epidural injection with imaging,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+64483,Phoenix,8,7.653283724149866,7.294245766879786,4674.0,lower back nerve root injection,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+66821,Phoenix,6,3.5094386565075415,5.638950809787666,4839.0,laser treatment after cataract surgery,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+66984,Phoenix,6,6.6567996649661145,7.527648780487805,13354.0,cataract surgery,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+70450,Phoenix,7,1.6161508704061895,3.346236477102484,2324.7,head CT scan,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+70553,Phoenix,7,1.6094993808597204,3.5203297252262145,4134.9,brain MRI with and without contrast,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+71045,Phoenix,8,1.8180937621077102,4.679898371850827,739.91,chest x-ray (1 view),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+71046,Phoenix,8,1.4191743535460457,3.592638483710977,739.91,chest x-ray (2 views),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+72110,Phoenix,7,1.7918491074435838,2.9778626775144454,805.83,lower back x-ray,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+72148,Phoenix,7,1.806289308176101,3.6108812841076503,2867.2,lower back MRI,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+72193,Phoenix,7,2.2254270512461494,3.1036858769995748,2906.4,CT scan of pelvis with contrast,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+73721,Phoenix,6,3.582323034806414,3.237314161652306,5301.1,knee MRI,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+74177,Phoenix,7,1.6773236247934895,3.6335566315289523,3875.9,CT scan of belly and pelvis with contrast,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+76700,Phoenix,7,1.8194238761763724,3.026168853220497,1607.9,abdominal ultrasound,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+76805,Phoenix,7,1.9688060236643956,2.826678390861222,885.52,pregnancy ultrasound,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+76830,Phoenix,7,1.7142344926496953,2.405452592688939,919.1,pelvic ultrasound (vaginal),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+77065,Phoenix,5,2.3948094682093197,2.5323609845031907,657.25,diagnostic mammogram (one breast),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+77066,Phoenix,6,2.389955134596211,2.498337544886288,840.43,diagnostic mammogram (both breasts),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+77067,Phoenix,6,2.1207952605683302,2.543007222586999,694.87,screening mammogram,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+80048,Phoenix,9,2.8120893561103806,2.6549095207393076,226.8,basic metabolic panel,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+80053,Phoenix,9,2.8126315789473684,2.6550480769230766,240.8,comprehensive metabolic panel,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+80061,Phoenix,9,2.811618257261411,2.9753412566951605,352.1,cholesterol test (lipid panel),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+80069,Phoenix,8,2.8117797695262485,2.6545011708531066,278.6,kidney function panel,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+80076,Phoenix,9,2.812244897959184,2.6555422221279352,205.1,liver function test,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+81001,Phoenix,9,2.814035087719298,2.6552785519585926,114.8,urine test with microscope (automated),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+81002,Phoenix,7,2.8115015974440896,2.254508346533447,42.38,urine dipstick test,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+81003,Phoenix,9,2.802955665024631,2.6549726775956284,77.7,urine test (automated),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+84153,Phoenix,9,2.8114803625377642,2.4432110113453005,310.85,PSA blood test,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+84154,Phoenix,8,2.511178247734139,2.4432110113453005,84.55,free PSA blood test,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+84443,Phoenix,9,2.810846560846561,2.9746031746031747,312.2,thyroid test (TSH),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+85025,Phoenix,9,2.8125894134477827,2.654787909938465,176.4,complete blood count with differential,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+85027,Phoenix,9,2.8127147766323026,2.6556543631810143,134.4,complete blood count,data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+85610,Phoenix,9,2.8108808290155443,2.9766491614740644,119.0,blood clotting test (PT/INR),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00
+85730,Phoenix,9,2.8114602587800372,2.9731334202921262,143.5,blood clotting test (PTT),data/raw/normalized/*_f4.parquet,2026-10-13T01:03:03+00:00

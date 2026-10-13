@@ -18,18 +18,20 @@ for path in glob.glob("data/raw/normalized/*.parquet"):
     ccn = path[-14:-8]
     if ccn not in usable:
         continue
-    frames.append(
-        pl.scan_parquet(path)
-        .filter(pl.col("usable_code") & (pl.col("amount").is_not_null() | pl.col("percentage").is_not_null()))
-        .with_columns(SYSTEM.alias("code_system"))
-        .group_by("code_system", "code")
-        .agg(pl.lit(ccn).alias("ccn"),
-             (pl.col("price_type") == "cash").any().alias("has_cash"),
-             (pl.col("price_type") == "negotiated_dollar").any().alias("has_neg_dollar"),
-             (pl.col("price_type") == "negotiated_dollar").sum().alias("neg_dollar_rows"),
-             pl.col("setting").mode().first().alias("setting"),
-             pl.col("description").mode().first().alias("description"))
-        .collect())
+    base = (pl.scan_parquet(path)
+            .filter(pl.col("usable_code") & (pl.col("amount").is_not_null() | pl.col("percentage").is_not_null()))
+            .with_columns(SYSTEM.alias("code_system")))
+    # Most common setting per code, computed as a separate streaming group_by (mode() is not streamable).
+    setting = (base.group_by("code_system", "code", "setting").len().collect(engine="streaming")
+               .sort(["len", "setting"], descending=[True, False]).unique(["code_system", "code"], keep="first")
+               .drop("len"))
+    agg = (base.group_by("code_system", "code")
+           .agg((pl.col("price_type") == "cash").any().alias("has_cash"),
+                (pl.col("price_type") == "negotiated_dollar").any().alias("has_neg_dollar"),
+                (pl.col("price_type") == "negotiated_dollar").sum().alias("neg_dollar_rows"),
+                pl.col("description").first().alias("description"))
+           .collect(engine="streaming"))
+    frames.append(agg.join(setting, on=["code_system", "code"], how="left").with_columns(pl.lit(ccn).alias("ccn")))
 allc = pl.concat(frames)
 freq = (allc.group_by("code_system", "code")
         .agg(pl.len().alias("hospitals"), pl.col("has_cash").sum().alias("with_cash"),

@@ -54,7 +54,7 @@ def ensure_payers(cur) -> dict[str, int]:
     return dict(cur.fetchall())
 
 
-def load_hospital(conn, ccn: str, m: dict, profile: dict, f4: pl.DataFrame, payer_ids: dict, proc_ids: dict) -> int:
+def load_hospital(conn, ccn: str, m: dict, profile: dict, f4: pl.LazyFrame | None, payer_ids: dict, proc_ids: dict) -> int:
     with conn.cursor() as cur:
         cur.execute("SELECT id FROM hospitals WHERE ccn = %s", (ccn,))
         hid = cur.fetchone()[0]
@@ -72,8 +72,9 @@ def load_hospital(conn, ccn: str, m: dict, profile: dict, f4: pl.DataFrame, paye
         sfid = cur.fetchone()[0]
         cur.execute("DELETE FROM prices WHERE hospital_id = %s", (hid,))   # idempotent reload of this hospital
         rows = 0
-        if f4.height:
+        if f4 is not None:
             launch = (f4.filter(pl.col("code").is_in(list(proc_ids)) & pl.col("code_type").is_in(["CPT", "HCPCS"]))
+                      .collect(engine="streaming")
                       .with_columns(pl.col("code").replace_strict(proc_ids).alias("procedure_id"),
                                     pl.col("canonical_payer").replace_strict(payer_ids, default=None).alias("payer_id"),
                                     pl.concat_str([pl.lit("{"), pl.concat_str([
@@ -156,9 +157,9 @@ def main() -> None:
             cache[key] = entry
             CACHE.write_text(json.dumps(cache, indent=1, default=str))
             t = time.monotonic()
-            f4 = pl.DataFrame()
+            f4 = None
             if profile.get("format", "").startswith("CMS"):
-                f4, log = normalize_file(str(parquet), alias)
+                f4, log, _ = normalize_file(str(parquet), alias)
                 st["flags"] = "; ".join(f"{k}={n}" for k, n in sorted(log.items()) if not k.startswith("methodology"))
             st["t_normalize_s"] = round(time.monotonic() - t, 1)
             t = time.monotonic()

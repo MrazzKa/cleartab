@@ -26,7 +26,7 @@ survive the normalization rules in Feature 4.
 
 ## Results (PROVISIONAL - the payer dictionary has not been accepted by two raters yet)
 
-Run 2026-10-12 on the 12 usable H1 files (including Valleywise, which downloaded in the first ETL run). Reproduce: `python -m pipeline.payers`, `python -m pipeline.normalize`,
+Run 2026-10-13 on the 13 usable H1 files (including Valleywise and Mayo). Reproduce: `python -m pipeline.payers`, `python -m pipeline.normalize`,
 `PYTHONPATH=. python research/h2/h2_provisional.py`.
 
 ### Canonical insurers (pipeline/payers.py)
@@ -42,13 +42,18 @@ page (https://www.azahcccs.gov/AHCCCS/Initiatives/AHCCCSCompleteCare/) still lis
 award, including Care1st; the newer report was used.
 
 ### Dictionary and coverage
-- data/processed/payer_aliases.csv: **327** raw payer + plan strings (target 150 or more), all mapped by
-  deterministic rules: 304 high confidence, 23 medium (each has a note, for example "APIPA is the former name
+- data/processed/payer_aliases.csv: **2,391** raw payer + plan strings (target 150 or more; 2,064 of them
+  from Mayo), all mapped by deterministic rules: 2,368 high confidence, 23 medium (each has a note, for example "APIPA is the former name
   of UnitedHealthcare Community Plan in AHCCCS"). All rows are rater_status = provisional.
 - Rental networks (MultiPlan, First Health, "Medical Rental"), workers compensation plans, government
   programs, IPAs, employers and small Medicare Advantage plans map to "other".
-- Row coverage by canonical insurers (negotiated rows after outlier rules): **72.6% overall** (3,260,178 of
-  4,493,442), target 60%. Per hospital: Arizona Spine and Joint 100%, HonorHealth Osborn 95.7%, HonorHealth
+- Row coverage by canonical insurers (negotiated rows after outlier rules): **8.6% with Mayo** (4,823,218 of
+  56,312,455) and **72.6% without Mayo** (3,260,178 of 4,493,442); target 60%. Mayo alone has 51.8 million
+  negotiated rows, 12 times all other hospitals together, and only **3.0%** of them belong to the 11 Arizona
+  insurers: its payers are mostly national third-party administrators and out-of-state plans (United Medical
+  Resources, Meritain, EMI Health, Allied Benefit Systems and many more). A pooled row share is therefore
+  dominated by one file; the team should decide whether Table 9's 60% rule is applied per hospital (then Mayo
+  and Banner UMC Tucson fall back to cash and gross only) or to the pooled dataset. Per hospital without Mayo: Arizona Spine and Joint 100%, HonorHealth Osborn 95.7%, HonorHealth
   Deer Valley 95.1%, Abrazo Central 90.6%, Chandler Regional 78.8%, Valleywise 68.2%, St. Joseph's Phoenix
   66.9%, Banner Desert 65.2%, **Banner UMC Tucson 58.9% (below 60%)**. Carondelet x2, East Valley and Exceptional publish no
   negotiated rows. Under the Table 9 rule, Banner UMC Tucson would fall back to cash and gross only unless
@@ -57,25 +62,29 @@ award, including Care1st; the newer report was used.
 ### Rows dropped or flagged (data/processed/f4_flag_log.csv)
 | Reason | Rows | Action |
 |---|---|---|
-| above_gross (negotiated dollar above the gross charge) | 133,246 | dropped |
-| under_1_dollar (dollar amount under $1) | 131,732 | dropped |
+| above_gross (negotiated dollar above the gross charge) | 191,716 | dropped |
+| under_1_dollar (dollar amount under $1) | 204,286 | dropped |
 | unparseable | 0 | dropped |
-| gross_from_code (item had no gross; compared with the highest gross for the same code) | 151,279 | kept, flagged |
-| no_gross_to_check (no gross anywhere for the code) | 1,768,380 | kept, flagged |
-| methodology: fixed dollar / percent of charges / algorithm / per diem (negotiated rows) | 2,969,929 / 853,520 / 921,278 / 9,950 | only fixed dollar can be a headline price |
+| gross_from_code (item had no gross; compared with the highest gross for the same code) | 169,504 | kept, flagged |
+| no_gross_to_check (no gross anywhere for the code) | 1,802,022 | kept, flagged |
+| methodology: fixed dollar / percent of charges / algorithm / per diem (negotiated rows) | 3,117,378 / 52,566,972 / 1,010,288 / 9,950 | only fixed dollar can be a headline price |
 
 Valleywise alone has 116,171 rows under $1 (114,474 negotiated dollar, 1,528 gross, 169 cash; values from
 $0.01 to $0.99, median $0.43, labelled "fee schedule"; examples are professional-fee items such as
 "PF I&D COMPLEX DRAINAGE WND" at $0.01) and 58,923 rows above gross. What these values mean is not known; they
 are dropped as Table 9 requires.
 
+Mayo labels 51.7 million of its negotiated rows "percent of total billed charges" while also giving a dollar
+figure (for example 90% of the gross charge); like Banner's, these are percent of charges and never a headline
+price.
+
 Note: Banner files carry a dollar figure on rows whose methodology is "percent of total billed charges";
 these are labelled percent of charges and are not headline prices, as Table 9 requires.
 
 ### Provisional H2 measures (data/processed/h2_provisional_by_procedure.csv)
 Comparable rate = negotiated dollar, methodology fixed dollar, surviving the outlier rules, facility billing,
-outpatient or both, canonical insurer. 12,436 comparable rows from 9 hospitals (8 Phoenix, 1 Tucson).
-- **Median highest-to-lowest ratio across launch procedures: 2.81** (interquartile range 2.39 to 7.56), from
+outpatient or both, canonical insurer. 12,183 comparable rows from 10 hospitals (9 Phoenix, 1 Tucson).
+- **Median highest-to-lowest ratio across launch procedures: 2.81** (interquartile range 2.39 to 6.66), from
   50 procedure-metro pairs, all in Phoenix. 40 of 50 procedures have a ratio of 2 or more.
 - Tucson: no ratio can be computed, because only Banner UMC Tucson publishes negotiated rates among the
   sampled Tucson hospitals (Carondelet publishes none; Northwest and TMC were not downloadable).
@@ -83,8 +92,8 @@ outpatient or both, canonical insurer. 12,436 comparable rows from 9 hospitals (
   median 2,596, driven by isolated very low rates (for example a $1.00 Aetna rate for a metabolic panel at
   Abrazo Central). The row-level figure is not a credible measure and is shown only to document why hospital
   medians are used.
-- Cash below the median negotiated rate: **7 of 50 procedures (14%)** when the median hospital cash price is
-  compared with the median comparable negotiated rate; 39 of 282 hospital-procedure pairs (14%) when each
+- Cash below the median negotiated rate: **5 of 50 procedures (10%)** when the median hospital cash price is
+  compared with the median comparable negotiated rate; 34 of 289 hospital-procedure pairs (12%) when each
   hospital's cash price is compared with its own median negotiated rate.
 - Caution: the largest ratios are surgical (prostate biopsy 39.7, fluid drainage 23.8, shoulder arthroscopy
   15.0, gallbladder removal 10.1). A human should check a few of these rows in the source files before the
@@ -98,7 +107,8 @@ the ratio may change; the decision is not expected to flip unless it falls below
 
 ## Inter-rater test (not run yet)
 - Sample: research/h2/make_irr_sample.py, seed **20261012**: 100 strings drawn with probability
-  proportional to row count, then 100 drawn uniformly from the rest, shuffled (200 of the 327 strings).
+  proportional to row count, then 100 drawn uniformly from the rest, shuffled (200 of the 2,391 strings; most
+  are Mayo administrator names, so the test covers the hard cases).
 - Files: research/h2/irr_rater_A.csv and irr_rater_B.csv (identical, label columns empty),
   research/h2/labeling_guide.md, research/h2/irr_score.py (percent agreement, Cohen's kappa, disagreements).
 - The rater files are empty; agreement has not been estimated.

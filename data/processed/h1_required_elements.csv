@@ -97,3 +97,10 @@ ccn,hospital,element,status,value_or_count,source_url,retrieved_at
 030108,The CORE Institute Specialty Hospital,10th_percentile,not applicable (no CMS file),0,https://www.thecoreinstitutehospital.com/wp-content/uploads/2026/09/THE-CORE-INSTITUTE-SPECIALTY-HOSPITAL-STANDARDCHARGES.csv,2026-10-12T20:56:50+00:00
 030108,The CORE Institute Specialty Hospital,90th_percentile,not applicable (no CMS file),0,https://www.thecoreinstitutehospital.com/wp-content/uploads/2026/09/THE-CORE-INSTITUTE-SPECIALTY-HOSPITAL-STANDARDCHARGES.csv,2026-10-12T20:56:50+00:00
 030108,The CORE Institute Specialty Hospital,count,not applicable (no CMS file),0,https://www.thecoreinstitutehospital.com/wp-content/uploads/2026/09/THE-CORE-INSTITUTE-SPECIALTY-HOSPITAL-STANDARDCHARGES.csv,2026-10-12T20:56:50+00:00
+030103,Mayo Clinic Hospital (Phoenix),org_npi,present,1154392231,https://mcorgstatic.blob.core.windows.net/cms-price/860800150_mayo-clinic-arizona_standardcharges.csv,2026-10-12T21:28:06+00:00
+030103,Mayo Clinic Hospital (Phoenix),attester_name,present,Richard Toner,https://mcorgstatic.blob.core.windows.net/cms-price/860800150_mayo-clinic-arizona_standardcharges.csv,2026-10-12T21:28:06+00:00
+030103,Mayo Clinic Hospital (Phoenix),attestation_statement,present,True,https://mcorgstatic.blob.core.windows.net/cms-price/860800150_mayo-clinic-arizona_standardcharges.csv,2026-10-12T21:28:06+00:00
+030103,Mayo Clinic Hospital (Phoenix),median_amount,present,1333008,https://mcorgstatic.blob.core.windows.net/cms-price/860800150_mayo-clinic-arizona_standardcharges.csv,2026-10-12T21:28:06+00:00
+030103,Mayo Clinic Hospital (Phoenix),10th_percentile,present,1333008,https://mcorgstatic.blob.core.windows.net/cms-price/860800150_mayo-clinic-arizona_standardcharges.csv,2026-10-12T21:28:06+00:00
+030103,Mayo Clinic Hospital (Phoenix),90th_percentile,present,1333008,https://mcorgstatic.blob.core.windows.net/cms-price/860800150_mayo-clinic-arizona_standardcharges.csv,2026-10-12T21:28:06+00:00
+030103,Mayo Clinic Hospital (Phoenix),count,present,1393277,https://mcorgstatic.blob.core.windows.net/cms-price/860800150_mayo-clinic-arizona_standardcharges.csv,2026-10-12T21:28:06+00:00

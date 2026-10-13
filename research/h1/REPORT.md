@@ -26,13 +26,14 @@ Default sample from the master prompt with logged replacements (pipeline/h1_down
 - Valleywise Health Medical Center: the download portal closed the connection on the first two GET attempts,
   so The CORE Institute Specialty Hospital was added as a replacement. On the third attempt (the first ETL
   run, Phase 5) the file downloaded normally, so Valleywise is included and CORE stays in the sample too.
-- Mayo Clinic Hospital (Phoenix): the file is 21.5 GB. The first transfer broke at 560 MB; it is resuming at
-  about 1 to 3 MB/s and was not finished when this report was written. It is counted as "not downloaded".
+- Mayo Clinic Hospital (Phoenix): the file is 21.5 GB. The first transfer broke at 560 MB and was resumed
+  (HTTP Range with If-Range on the ETag, so the same file version). Validation and parsing took several hours;
+  the profile was added to the H1 tables from the ETL cache (research/h1/backfill_from_cache.py).
 - Tucson Medical Center: not added; no file in data/raw/manual/ yet.
 
-15 hospitals attempted across 11 health system labels, 14 files downloaded, 13 in the CMS template
-(6 CMS JSON, 7 CMS CSV tall, 0 CMS CSV wide), 1 non-standard (CORE: its own column layout, not the CMS
-template). All 13 template files declare version 3.0.0 and all 13 pass the official CMS validator
+15 hospitals attempted across 11 health system labels, 15 files downloaded, 14 in the CMS template
+(6 CMS JSON, 8 CMS CSV tall, 0 CMS CSV wide), 1 non-standard (CORE: its own column layout, not the CMS
+template). All 14 template files declare version 3.0.0 and all 14 pass the official CMS validator
 (hpt-validator-cli 1.10.8, validator 2.6.0, data dictionary 3.0.0) with 0 errors.
 
 ### Definition of "usable coded rows"
@@ -57,26 +58,28 @@ every hospital that passes has over 1,000 such codes, and every one that fails h
 | East Valley ER & Hospital | Nutex | CMS CSV tall | 4/1/2026 | 7,954 | 2,361 | no negotiated rates | 100.0 |
 | Exceptional Community Hospital - Maricopa | Exceptional Healthcare | CMS CSV tall | 2/1/2026 | 4,790 | 0 (see note) | no negotiated rates | 80.0 |
 | The CORE Institute Specialty Hospital | Independent | non-standard | - | 0 | 0 | - | 0 |
-| Mayo Clinic Hospital (Phoenix) | Mayo Clinic | not downloaded (in progress) | - | - | - | - | 0 |
+| Mayo Clinic Hospital (Phoenix) | Mayo Clinic | CMS CSV tall | 08/14/2026 | 57,479,558 | 7,490 | 99.97% / 0.03% / 0% | 94.8 |
 
 Shares of negotiated records: a record is counted as dollar when it has a dollar amount, else percent, else
 algorithm. Note on Exceptional: 2,176 of its 4,790 rows carry a 5-character value that looks like a CPT
 code, but every code is labelled type "CDM". The parser does not relabel codes (hard rule 7), so the file
 has no usable code. This is reported to the team, not fixed. Valleywise scores 88.1 mainly because only 63%
-of its rows carry a CPT, HCPCS or MS-DRG code (C3 = 12.7).
+of its rows carry a CPT, HCPCS or MS-DRG code (C3 = 12.7); Mayo scores 94.8 for the same reason (74%, C3 = 14.8).
 
 ### CY 2026 elements
-- Organizational NPI (type_2_npi), attester name and attestation statement: present in 13 of 13 template files.
-- Median, 10th percentile, 90th percentile and count: present in all 8 files that have percent or algorithm
+- Organizational NPI (type_2_npi), attester name and attestation statement: present in 14 of 14 template files.
+- Median, 10th percentile, 90th percentile and count: present in all 9 files that have percent or algorithm
   rates; not applicable in the 5 files that have none (St. Mary's, St. Joseph's Tucson, Arizona Spine and
   Joint, East Valley, Exceptional).
-- Files missing or empty on at least one applicable 2026 element: 0 of 13 (0%).
+- Files missing or empty on at least one applicable 2026 element (as a column or key): 0 of 14 (0%).
 - At record level, most percent or algorithm records carry no median: St. Joseph's Phoenix 163,731 of
   180,400, Chandler Regional 108,189 of 124,863, Abrazo Central 57,730 of 57,732, Valleywise 554,394 of
   557,162, HonorHealth Osborn 33,711 of 39,596, HonorHealth Deer Valley 35,301 of 41,120, Banner UMC Tucson
-  8,705 of 9,116, Banner Desert 9,033 of 9,244. In every one of these records the file reports an allowed
-  count of 0 (no paid claims in the look-back period), so the median is legitimately absent rather than
-  omitted. (Here a record counts if it has any percent or algorithm rate, even when a dollar figure is also
+  8,705 of 9,116, Banner Desert 9,033 of 9,244. In all of these the file reports an allowed count of 0 (no paid claims in the look-back period),
+  so the median is legitimately absent rather than omitted. **Exception: Mayo**, 71,229 of 78,026 records
+  without a median; 59,343 report a count of 0, but **11,886 carry neither a median nor a count**. Those
+  records omit an applicable CY 2026 element even though the columns exist; the CMS validator does not flag
+  them. (Here a record counts if it has any percent or algorithm rate, even when a dollar figure is also
   given, so the totals differ from pct_algo_records in the profile.)
 
 ### Completeness score (Feature 5)
@@ -87,8 +90,8 @@ C4 = 20 x (gross + cash records + negotiated records with a dollar amount + perc
 with a median) / (gross + cash + all negotiated records); C5 = 20 x (applicable 2026 elements present) /
 (applicable 2026 elements). Labels: complete 80-100, partial 1-79, not published 0.
 
-Bands: 11 hospitals at 90 or above, 2 at 80-89 (Valleywise 88.1, Exceptional 80.0), 0 at 1-79, 2 at 0 (CORE
-non-standard, Mayo not downloaded).
+Bands: 12 hospitals at 90 or above, 2 at 80-89 (Valleywise 88.1, Exceptional 80.0), 0 at 1-79, 1 at 0 (CORE
+non-standard).
 
 Limitation the team should decide on: the five components in proposal Table 10 do not reward publishing
 payer-specific negotiated rates. The two Carondelet hospitals publish only gross and cash prices and still
@@ -97,21 +100,23 @@ every other component is full. Options: keep the formula (it measures what Table
 "negotiated rates present" inside C4. Changing it is a scope decision for the PM and Dr. Li.
 
 ## Verdict
-**H1 decision rule: PROCEED.** 12 of the 15 hospitals attempted (12 of 14 downloaded files) yield usable
-coded rows, across 8 health system labels (Carondelet, HonorHealth, Dignity Health, Abrazo, Valleywise, USPI,
-Banner Health, Nutex), which meets "at least 8 of 12". 10 of these 12 are non-Banner.
+**H1 decision rule: PROCEED.** 13 of the 15 hospitals attempted yield usable coded rows, across 9 health
+system labels (Carondelet, HonorHealth, Dignity Health, Abrazo, Valleywise, Mayo Clinic, USPI, Banner Health,
+Nutex), which meets "at least 8 of 12". 11 of these 13 are non-Banner.
 
 Sensitivity: if the two robots.txt-blocked Northwest hospitals are counted as failures instead of being
-replaced, the count of usable hospitals is still 12 (of 17 attempted), above the absolute threshold of 8.
+replaced, the count of usable hospitals is still 13 (of 17 attempted), above the absolute threshold of 8.
 
 Second half of the hypothesis ("a substantial share still omit at least one CY 2026 element"): **not
-supported in this sample.** 0 of 13 template files omit an applicable 2026 element, and missing medians are
-explained by an allowed count of 0. Problems that do exist are about access and usefulness rather than
-missing elements: 3 of 15 attempted hospitals gave no usable file (non-standard layout, mislabelled codes,
-a 21.5 GB file), 4 of 13 template files contain no negotiated rates at all, and 6 of the 46 registry
+supported at file level, partly at record level.** 0 of 14 template files lack an applicable 2026 element as
+a column, and in 8 of 9 files every missing median is explained by an allowed count of 0. Only Mayo has
+records (11,886, 15% of its percent or algorithm records) that carry neither. One file in 14 is not a
+"substantial share". Problems that do exist are about access and usefulness rather than missing elements:
+2 of 15 attempted hospitals gave no usable file (non-standard layout, mislabelled codes), 4 of 14 template
+files contain no negotiated rates at all, and 6 of the 46 registry
 hospitals block or refuse automated access (Phase 1). This should be reported as found, and it is worth
 discussing with Dr. Li which hypothesis carries the paper.
 
-Consequence for H2 and F4: comparisons of negotiated rates can draw on 9 hospitals in 6 systems (HonorHealth
-x2, Dignity x2, Abrazo, Valleywise, USPI, Banner x2), of which only Banner UMC Tucson is in Tucson; cash and
-gross comparisons can draw on all 12.
+Consequence for H2 and F4: comparisons of negotiated rates can draw on 10 hospitals in 7 systems (HonorHealth
+x2, Dignity x2, Abrazo, Valleywise, Mayo, USPI, Banner x2), of which only Banner UMC Tucson is in Tucson; cash
+and gross comparisons can draw on all 13.

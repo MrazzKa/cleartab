@@ -9,6 +9,7 @@ def test_kappa_perfect_and_chance():
 
 def test_rules():
     assert norm("BCBS - AZ") == "bcbs az"
+    assert norm("AETNA [91160003]") == "aetna"
     assert match("Aetna", "Medical Rental")["canonical_payer"] == "other"          # rental network
     assert match("BCBS - AZ", "Commercial|Workers Comp")["plan_type"] == "workers comp"
     assert match("UNITED HEALTHCARE", "UNITED HEALTHCARE APIPA")["plan_type"] == "ahcccs"

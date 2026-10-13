@@ -6,8 +6,10 @@ import polars as pl
 
 KEY = ["code", "code_type", "setting", "billing_class", "modifiers", "description", "payer_name", "plan_name"]
 print("ccn     pct_algo  no_median  of_which_count0  of_which_1to10  of_which_no_count")
-for path in sorted(glob.glob("data/raw/normalized/*.parquet")):
-    df = pl.read_parquet(path).with_columns(pl.col(KEY).fill_null(""))
+for path in sorted(p for p in glob.glob("data/raw/normalized/*.parquet") if not p.endswith("_f4.parquet")):
+    df = (pl.scan_parquet(path).filter(pl.col("price_type").is_in(
+        ["negotiated_percent", "negotiated_algorithm", "allowed_median", "allowed_count"]))
+          .with_columns(pl.col(KEY).fill_null("")).collect(engine="streaming"))
     pa = df.filter(pl.col("price_type").is_in(["negotiated_percent", "negotiated_algorithm"])).select(KEY).unique()
     if pa.height == 0:
         continue

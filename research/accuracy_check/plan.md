@@ -18,11 +18,11 @@ quote does not require an insurance ID and can be asked without personal data.
 | 6 | Tucson | Banner UMC Tucson | CT of belly and pelvis with contrast (74177) | $428.87 |
 | 7 | Phoenix | HonorHealth Scottsdale Osborn | complete blood count with differential (85025) | $281.00 |
 | 8 | Phoenix | Banner Desert Medical Center | abdominal ultrasound (76700) | $277.76 |
-| 9 | Phoenix | East Valley ER & Hospital | gallbladder removal, laparoscopic (47562) | $1,022.22 |
+| 9 | Phoenix | Mayo Clinic Hospital (Phoenix) | gallbladder removal, laparoscopic (47562) | $2,486.25 |
 | 10 | Phoenix | Arizona Spine and Joint Hospital | knee arthroscopy, meniscus (29881) | $3,207.64 |
 
 Figures are the median of the hospital's published cash items for that code, as shown by the API on
-2026-10-12. Re-run make_pairs.py right before calling so the CSV holds what the site shows that day.
+2026-10-13 (after Mayo was loaded). Re-run make_pairs.py right before calling so the CSV holds what the site shows that day.
 
 ## Call script (caller states they are a student; no personal or insurance details are given)
 1. "Hello, I am a student at the University of Arizona working on a class project about hospital prices. I am
