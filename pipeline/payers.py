@@ -35,6 +35,11 @@ ALIASES = {
     "arizona physicians ipa": ("UnitedHealthcare", "medium",
                                "APIPA is the former name of UnitedHealthcare Community Plan in AHCCCS"),
     "humana": ("Humana", "high", ""),
+    "humana bh": ("Humana", "medium", "Humana behavioral health product"),
+    "united bh": ("UnitedHealthcare", "medium", "UnitedHealthcare behavioral health product"),
+    "banner university": ("Banner Health plans", "high", ""),
+    "health net of arizona": (CENTENE, "high", ""),
+    "arizona complete health": (CENTENE, "high", ""),
     "banner health": ("Banner Health plans", "high", ""),
     "banner": ("Banner Health plans", "high", ""),
     "banner university health plan": ("Banner Health plans", "high", ""),
@@ -67,7 +72,7 @@ PLAN_TYPE_RULES = [
     (re.compile(r"medicaid|ahcccs|\bltc\b|managed care program|apipa"), "ahcccs"),
     (re.compile(r"medicare|advantage|\bdual\b|care improvement plus|university care advantage|\bma\b"),
      "medicare advantage"),
-    (re.compile(r"exchange|\bhix\b|marketplace|\baca\b|\bifp\b|hmox|ppox"), "marketplace"),
+    (re.compile(r"exchange|\bhix\b|marketplace|\baca\b|\bifp\b|\bqhp\b|hmox|ppox"), "marketplace"),
     (re.compile(r"tricare|government|community care network|veterans|federal prison"), "government"),
     (re.compile(r"commer|hmo|ppo|epo|all plans|all other plans|navigate|options|compass|core|doctor|localplus|"
                 r"surefit|lifesource|localflex|focus|neighborhood|alliance|hpn|network|signature|savings|"

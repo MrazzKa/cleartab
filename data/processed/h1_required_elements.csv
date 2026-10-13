@@ -48,6 +48,13 @@ ccn,hospital,element,status,value_or_count,source_url,retrieved_at
 030030,Abrazo Central Campus,10th_percentile,present,2,https://mrfs.hyvehealthcare.com/TenetHealth/621809851_vhs-of-phoenix-inc_standardcharges.json,2026-10-12T19:30:59+00:00
 030030,Abrazo Central Campus,90th_percentile,present,2,https://mrfs.hyvehealthcare.com/TenetHealth/621809851_vhs-of-phoenix-inc_standardcharges.json,2026-10-12T19:30:59+00:00
 030030,Abrazo Central Campus,count,present,57732,https://mrfs.hyvehealthcare.com/TenetHealth/621809851_vhs-of-phoenix-inc_standardcharges.json,2026-10-12T19:30:59+00:00
+030022,Valleywise Health Medical Center,org_npi,present,1073576740 | 1770167108,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+030022,Valleywise Health Medical Center,attester_name,present,"Stephen Purves, CEO",https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+030022,Valleywise Health Medical Center,attestation_statement,present,TRUE,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+030022,Valleywise Health Medical Center,median_amount,present,3095,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+030022,Valleywise Health Medical Center,10th_percentile,present,3095,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+030022,Valleywise Health Medical Center,90th_percentile,present,3095,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+030022,Valleywise Health Medical Center,count,present,596560,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
 030107,Arizona Spine and Joint Hospital,org_npi,present,1396745832,https://mrfs.hyvehealthcare.com/USPI/364399746_arizona-spine-and-joint-hospital-llc_standardcharges.json,2026-10-12T19:31:02+00:00
 030107,Arizona Spine and Joint Hospital,attester_name,present,Geoffrey Vines,https://mrfs.hyvehealthcare.com/USPI/364399746_arizona-spine-and-joint-hospital-llc_standardcharges.json,2026-10-12T19:31:02+00:00
 030107,Arizona Spine and Joint Hospital,attestation_statement,present,True,https://mrfs.hyvehealthcare.com/USPI/364399746_arizona-spine-and-joint-hospital-llc_standardcharges.json,2026-10-12T19:31:02+00:00

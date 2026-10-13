@@ -83,6 +83,59 @@ def score(found: bool, valid: bool, prof, counts: Counter) -> dict:
     return {**c, "completeness_score": total, "completeness_label": "complete" if total >= 80 else "partial"}
 
 
+def process_hospital(ccn: str, r: dict, m: dict | None, v: dict) -> tuple[dict, list[dict], list[dict]]:
+    """Parse one downloaded file to parquet and return (profile row, 2026 element rows, payer string rows)."""
+    elements: list[dict] = []
+    payers: list[dict] = []
+    base = {"ccn": ccn, "hospital": r["name"], "health_system": r["health_system"], "metro": r["metro"],
+            "source_url": r["mrf_url"], "retrieved_at": (m or {}).get("retrieved_at", now_utc())}
+    if not m or m["status"] != "ok":
+        profile = ({**base, "format": "not downloaded", "download_status": (m or {}).get("status", "not tried"),
+                         "usable_coded_rows": False, **score(False, False, None, Counter())})
+        return profile, [], []
+    prof, rows = parse_file(m["path"], ccn)
+    counts = write_parquet(ccn, rows)
+    found = prof.format.startswith("CMS")
+    valid = str(v.get("valid")) == "True"
+    usable = found and counts["_priced_codes"] >= USABLE_MIN_CODES
+    neg_total = sum(prof.negotiated[k] for k in ("dollar", "percent", "algorithm"))
+    codes = {t: len(c) for t, c in prof.codes.items()}
+    profile = ({
+        **base, "format": prof.format, "download_status": "ok", "schema_version": prof.schema_version,
+        "sha256": m["sha256"], "size_bytes": m["size_bytes"], "file_last_updated": prof.last_updated_on,
+    "org_npi": prof.org_npi, "attester_name": prof.attester_name,
+    "attestation_present": prof.attestation_statement == "present",
+        "http_last_modified": m["http_last_modified"], "source_items": prof.source_items, "rows": prof.rows,
+        "distinct_cpt": codes.get("CPT", 0), "distinct_hcpcs": codes.get("HCPCS", 0),
+        "distinct_ms_drg": codes.get("MS-DRG", 0),
+        "distinct_other_codes": "; ".join(f"{t}={n}" for t, n in sorted(codes.items())
+                                          if t not in USABLE_CODE_TYPES),
+        "priced_usable_codes": counts["_priced_codes"],
+        "share_rows_usable_code": round(prof.usable_rows / prof.rows, 4) if prof.rows else 0,
+        "gross_rows": counts["gross"], "cash_rows": counts["cash"], "negotiated_records": neg_total,
+        "share_negotiated_dollar": round(prof.negotiated["dollar"] / neg_total, 4) if neg_total else "",
+        "share_negotiated_percent": round(prof.negotiated["percent"] / neg_total, 4) if neg_total else "",
+        "share_negotiated_algorithm": round(prof.negotiated["algorithm"] / neg_total, 4) if neg_total else "",
+        "pct_algo_records": prof.pct_algo_total, "pct_algo_with_median": prof.pct_algo_with_median,
+        "validator_valid": v.get("valid", "not run"), "validator_errors": v.get("error_count", ""),
+        "validator_alerts": v.get("alert_count", ""),
+        "flags": "; ".join(f"{k}={n}" for k, n in prof.flags.items()),
+        "usable_coded_rows": usable, **score(found, valid, prof, counts),
+    })
+    for e in ELEMENTS_2026:
+        elements.append({"ccn": ccn, "hospital": r["name"], "element": e,
+                         "status": prof.element_status(e) if found else "not applicable (no CMS file)",
+                         "value_or_count": {"org_npi": prof.org_npi, "attester_name": prof.attester_name,
+                                            "attestation_statement": prof.attestation_confirmed}.get(
+                             e, prof.element_filled.get(e, 0)),
+                         "source_url": r["mrf_url"], "retrieved_at": base["retrieved_at"]})
+    for (payer, plan), n in prof.payer_strings.items():
+        payers.append({"raw_payer": payer, "raw_plan": plan, "hospital": r["name"], "ccn": ccn, "row_count": n,
+                       "source_url": r["mrf_url"], "retrieved_at": base["retrieved_at"]})
+    print(ccn, prof.format, prof.rows, counts["_priced_codes"], profile["completeness_score"], flush=True)
+    return profile, elements, payers
+
+
 def main() -> None:
     only = set(sys.argv[1:])
     with open(REGISTRY_CSV, newline="") as f:
@@ -112,53 +165,10 @@ def main() -> None:
             elements += old_elems.get(ccn, [])
             payers += old_payers.get(ccn, [])
             continue
-        r, m = reg[ccn], manifest.get(ccn)
-        base = {"ccn": ccn, "hospital": r["name"], "health_system": r["health_system"], "metro": r["metro"],
-                "source_url": r["mrf_url"], "retrieved_at": (m or {}).get("retrieved_at", now_utc())}
-        if not m or m["status"] != "ok":
-            profiles.append({**base, "format": "not downloaded", "download_status": (m or {}).get("status", "not tried"),
-                             "usable_coded_rows": False, **score(False, False, None, Counter())})
-            print(ccn, "not downloaded", flush=True)
-            continue
-        prof, rows = parse_file(m["path"], ccn)
-        counts = write_parquet(ccn, rows)
-        found = prof.format.startswith("CMS")
-        v = validator.get(ccn, {})
-        valid = str(v.get("valid")) == "True"
-        usable = found and counts["_priced_codes"] >= USABLE_MIN_CODES
-        neg_total = sum(prof.negotiated[k] for k in ("dollar", "percent", "algorithm"))
-        codes = {t: len(c) for t, c in prof.codes.items()}
-        profiles.append({
-            **base, "format": prof.format, "download_status": "ok", "schema_version": prof.schema_version,
-            "sha256": m["sha256"], "size_bytes": m["size_bytes"], "file_last_updated": prof.last_updated_on,
-            "http_last_modified": m["http_last_modified"], "source_items": prof.source_items, "rows": prof.rows,
-            "distinct_cpt": codes.get("CPT", 0), "distinct_hcpcs": codes.get("HCPCS", 0),
-            "distinct_ms_drg": codes.get("MS-DRG", 0),
-            "distinct_other_codes": "; ".join(f"{t}={n}" for t, n in sorted(codes.items())
-                                              if t not in USABLE_CODE_TYPES),
-            "priced_usable_codes": counts["_priced_codes"],
-            "share_rows_usable_code": round(prof.usable_rows / prof.rows, 4) if prof.rows else 0,
-            "gross_rows": counts["gross"], "cash_rows": counts["cash"], "negotiated_records": neg_total,
-            "share_negotiated_dollar": round(prof.negotiated["dollar"] / neg_total, 4) if neg_total else "",
-            "share_negotiated_percent": round(prof.negotiated["percent"] / neg_total, 4) if neg_total else "",
-            "share_negotiated_algorithm": round(prof.negotiated["algorithm"] / neg_total, 4) if neg_total else "",
-            "pct_algo_records": prof.pct_algo_total, "pct_algo_with_median": prof.pct_algo_with_median,
-            "validator_valid": v.get("valid", "not run"), "validator_errors": v.get("error_count", ""),
-            "validator_alerts": v.get("alert_count", ""),
-            "flags": "; ".join(f"{k}={n}" for k, n in prof.flags.items()),
-            "usable_coded_rows": usable, **score(found, valid, prof, counts),
-        })
-        for e in ELEMENTS_2026:
-            elements.append({"ccn": ccn, "hospital": r["name"], "element": e,
-                             "status": prof.element_status(e) if found else "not applicable (no CMS file)",
-                             "value_or_count": {"org_npi": prof.org_npi, "attester_name": prof.attester_name,
-                                                "attestation_statement": prof.attestation_confirmed}.get(
-                                 e, prof.element_filled.get(e, 0)),
-                             "source_url": r["mrf_url"], "retrieved_at": base["retrieved_at"]})
-        for (payer, plan), n in prof.payer_strings.items():
-            payers.append({"raw_payer": payer, "raw_plan": plan, "hospital": r["name"], "ccn": ccn, "row_count": n,
-                           "source_url": r["mrf_url"], "retrieved_at": base["retrieved_at"]})
-        print(ccn, prof.format, prof.rows, counts["_priced_codes"], profiles[-1]["completeness_score"], flush=True)
+        p, e, py = process_hospital(ccn, reg[ccn], manifest.get(ccn), validator.get(ccn, {}))
+        profiles.append(p)
+        elements += e
+        payers += py
 
     for path, data in ((prof_path, profiles), (elem_path, elements), (payer_path, payers)):
         cols = list(dict.fromkeys(k for d in data for k in d))

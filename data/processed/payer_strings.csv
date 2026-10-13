@@ -232,6 +232,106 @@ ARIZONA PRIORITY CARE MEDICARE ADVANTAGE IPA,ARIZONA PRIORITY CARE MEDICARE ADVA
 HUMANA,HUMANA MEDICARE,Abrazo Central Campus,030030,5,https://mrfs.hyvehealthcare.com/TenetHealth/621809851_vhs-of-phoenix-inc_standardcharges.json,2026-10-12T19:30:59+00:00
 PRESBYTERIAN MEDICARE ADVANTAGE,PRESBYTERIAN MEDICARE ADVANTAGE,Abrazo Central Campus,030030,5,https://mrfs.hyvehealthcare.com/TenetHealth/621809851_vhs-of-phoenix-inc_standardcharges.json,2026-10-12T19:30:59+00:00
 TRICARE,TRICARE TRADITIONAL,Abrazo Central Campus,030030,5,https://mrfs.hyvehealthcare.com/TenetHealth/621809851_vhs-of-phoenix-inc_standardcharges.json,2026-10-12T19:30:59+00:00
+AETNA,ALL PRODUCTS - TELEHEALTH,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+AETNA,MEDICAL RENTAL - TELEHEALTH,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+AETNA,MEDICAL RENTAL - OFFICE,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+AETNA,ALL PRODUCTS,Valleywise Health Medical Center,030022,46599,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+AETNA,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,30061,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+AETNA,QHP - OFFICE,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+AETNA,ALL PRODUCTS - OFFICE,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+AETNA,QHP - TELEHEALTH,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+ALIGNMENT HEALTH,MEDICARE ADVANTAGE - NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+ALIGNMENT HEALTH,MEDICARE ADVANTAGE - FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+ANTIDOTE,INDIVIDUAL EXCHANGE,Valleywise Health Medical Center,030022,33989,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+ARIZONA COMPLETE HEALTH,MEDICARE ADVANTAGE - NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+ARIZONA COMPLETE HEALTH,INDIVIDUAL EXCHANGE,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+ARIZONA COMPLETE HEALTH,MEDICARE ADVANTAGE - FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+BANNER UNIVERSITY,MEDICARE ADVANTAGE - NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+BANNER UNIVERSITY,AHCCCS MANAGED MEDICAID - SPECIALIST,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+BANNER UNIVERSITY,AHCCCS MANAGED MEDICAID - PRIMARY CARE,Valleywise Health Medical Center,030022,6686,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+BANNER UNIVERSITY,MEDICARE ADVANTAGE - FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+BCBS,MEDICARE ADVANTAGE - FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+BCBS,ALL PRODUCTS,Valleywise Health Medical Center,030022,41927,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+BCBS,MEDICARE ADVANTAGE - NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+CIGNA,EVERNORTH BH,Valleywise Health Medical Center,030022,16631,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+CIGNA,ALL PRODUCTS,Valleywise Health Medical Center,030022,44937,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+CIGNA,IFP,Valleywise Health Medical Center,030022,31041,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+COVENTRY,WORKERS COMP,Valleywise Health Medical Center,030022,18878,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+CREIGHTON,ALL PRODUCTS,Valleywise Health Medical Center,030022,30061,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+DEVOTED,MEDICARE ADVANTAGE - PCP_NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+DEVOTED,MEDICARE ADVANTAGE - SPECIALIST_FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+DEVOTED,MEDICARE ADVANTAGE - SPECIALIST_NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+DEVOTED,MEDICARE ADVANTAGE - PCP_FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+EMPLOYERS HEALTH NETWORK,ALL PRODUCTS,Valleywise Health Medical Center,030022,30061,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+ETERNAL HEALTH,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,16631,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+GOLD KIDNEY,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,30061,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HEALTH CHOICE,MEDICARE ADVANTAGE - NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HEALTH CHOICE,MEDICARE ADVANTAGE - FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HEALTH CHOICE,INDIVIDUAL EXCHANGE,Valleywise Health Medical Center,030022,30061,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HEALTH NET OF ARIZONA,MEDICARE ADVANTAGE - PHYSICIAN,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HEALTH NET OF ARIZONA,AHCCCS MANAGED MEDICAID,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HEALTH NET OF ARIZONA,MEDICARE ADVANTAGE - MID-LEVEL,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HUMANA,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,30061,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HUMANA BH,MEDICARE ADVANTAGE - CLINICAL,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HUMANA BH,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,29304,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HUMANA BH,MEDICARE ADVANTAGE - MID-LEVEL,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+IMPERIAL HEALTH,MEDICARE ADVANTAGE - FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+IMPERIAL HEALTH,INDIVIDUAL EXCHANGE,Valleywise Health Medical Center,030022,30061,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+IMPERIAL HEALTH,MEDICARE ADVANTAGE - NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+MERCY CARE,MEDICARE ADVANTAGE - NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+MERCY CARE,AHCCCS MANAGED MEDICAID,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+MERCY CARE,MEDICARE ADVANTAGE - FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+MOLINA,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,30061,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+MOLINA,AHCCCS MANAGED MEDICAID,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+NAPHCARE INC,ALL PRODUCTS - FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+NAPHCARE INC,MEDICARE ADVANTAGE - FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+NAPHCARE INC,MEDICARE ADVANTAGE - NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+NAPHCARE INC,ALL PRODUCTS - NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+OSCAR,ALL PRODUCTS NON-PCP - FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+OSCAR,ALL PRODUCTS PCP - FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+OSCAR,ALL PRODUCTS PCP - NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+OSCAR,ALL PRODUCTS NON-PCP - NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+PROVIDER NETWORK OF AMERICA,ALL PRODUCTS,Valleywise Health Medical Center,030022,16631,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+TRIWEST VA,ALL PRODUCTS - NON-FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+TRIWEST VA,ALL PRODUCTS - FACILITY,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+UNITED BH,AHCCCS MANAGED MEDICAID,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+UNITED BH,ALL PRODUCTS,Valleywise Health Medical Center,030022,3346,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+UNITED BH,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,3351,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+UNITED HEALTHCARE,NAVIGATE,Valleywise Health Medical Center,030022,23662,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+UNITED HEALTHCARE,AHCCCS MANAGED MEDICAID,Valleywise Health Medical Center,030022,3343,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+UNITED HEALTHCARE,ALL PRODUCTS,Valleywise Health Medical Center,030022,23642,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+UNITED HEALTHCARE,INDIVIDUAL EXCHANGE,Valleywise Health Medical Center,030022,24040,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+VERDA,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,30061,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+BANNER UNIVERSITY,AHCCCS MANAGED MEDICAID - PEDIATRIC,Valleywise Health Medical Center,030022,24120,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+BANNER UNIVERSITY,AHCCCS MANAGED MEDICAID - ADULT,Valleywise Health Medical Center,030022,24120,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HEALTH CHOICE,AHCCCS MANAGED MEDICAID - PEDIATRIC,Valleywise Health Medical Center,030022,30116,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HEALTH CHOICE,AHCCCS MANAGED MEDICAID - ADULT,Valleywise Health Medical Center,030022,30116,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HEALTH NET OF ARIZONA,AHCCCS MANAGED MEDICAID - PEDIATRIC,Valleywise Health Medical Center,030022,24120,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HEALTH NET OF ARIZONA,AHCCCS MANAGED MEDICAID - ADULT,Valleywise Health Medical Center,030022,24120,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+MERCY CARE,AHCCCS MANAGED MEDICAID - PEDIATRIC,Valleywise Health Medical Center,030022,24120,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+MERCY CARE,AHCCCS MANAGED MEDICAID - ADULT,Valleywise Health Medical Center,030022,24120,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+MOLINA,AHCCCS MANAGED MEDICAID - PEDIATRIC,Valleywise Health Medical Center,030022,24120,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+MOLINA,AHCCCS MANAGED MEDICAID - ADULT,Valleywise Health Medical Center,030022,24120,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+UNITED HEALTHCARE,AHCCCS MANAGED MEDICAID - PEDIATRIC,Valleywise Health Medical Center,030022,24120,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+UNITED HEALTHCARE,AHCCCS MANAGED MEDICAID - ADULT,Valleywise Health Medical Center,030022,24120,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+UNITED BH,AHCCCS MANAGED MEDICAID - ADULT,Valleywise Health Medical Center,030022,22860,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+UNITED BH,AHCCCS MANAGED MEDICAID - PEDIATRIC,Valleywise Health Medical Center,030022,22860,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+AETNA,QHP,Valleywise Health Medical Center,030022,43256,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+AETNA,MEDICAL RENTAL,Valleywise Health Medical Center,030022,43256,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+ALIGNMENT HEALTH,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,26718,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+BANNER UNIVERSITY,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,26718,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+BCBS,INDIVIDUAL EXCHANGE,Valleywise Health Medical Center,030022,38652,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+BCBS,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,30646,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+BCBS,WORKERS COMP,Valleywise Health Medical Center,030022,38584,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+CENTIVO,ALL PRODUCTS,Valleywise Health Medical Center,030022,25992,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+DEVOTED,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,26718,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HEALTH CHOICE,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,26718,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+HEALTH NET OF ARIZONA,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,26718,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+IMPERIAL HEALTH,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,26718,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+MERCY CARE,MEDICARE ADVANTAGE,Valleywise Health Medical Center,030022,26718,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+NAPHCARE INC,ALL PRODUCTS,Valleywise Health Medical Center,030022,26718,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+OSCAR,ALL PRODUCTS,Valleywise Health Medical Center,030022,27478,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
+TRIWEST VA,ALL PRODUCTS,Valleywise Health Medical Center,030022,26718,https://valleywise.pt.panaceainc.com/MRFDownload/valleywise/valleywise,2026-10-12T21:35:32+00:00
 CIGNA,All Plans,Arizona Spine and Joint Hospital,030107,1201,https://mrfs.hyvehealthcare.com/USPI/364399746_arizona-spine-and-joint-hospital-llc_standardcharges.json,2026-10-12T19:31:02+00:00
 United Healthcare,Exchange,Arizona Spine and Joint Hospital,030107,1221,https://mrfs.hyvehealthcare.com/USPI/364399746_arizona-spine-and-joint-hospital-llc_standardcharges.json,2026-10-12T19:31:02+00:00
 United Healthcare,Navigate,Arizona Spine and Joint Hospital,030107,1221,https://mrfs.hyvehealthcare.com/USPI/364399746_arizona-spine-and-joint-hospital-llc_standardcharges.json,2026-10-12T19:31:02+00:00
