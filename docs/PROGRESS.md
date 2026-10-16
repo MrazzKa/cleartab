@@ -99,3 +99,12 @@ Each phase appends a summary of at most 15 lines.
 - H2 (provisional): Phoenix 2.81, Tucson 1.39, pooled 1.92. Identical with the contract rule switched off (--payer-rule).
 - Guide rewritten with explicit rules; round 2 sample drawn (seed 20261013, round 1 strings excluded); files research/h2/irr_round2_rater_A.xlsx and B.xlsx.
 - GitHub: ruleset "Protect main" active (2026-10-13): no deletion or force push; changes only through a pull request with 1 approval and the python, web and migrations checks passing. Team members still need to be added as collaborators so their approvals count; until then the repository admin can merge a pull request without approval (remove that bypass once they are added).
+
+## Advisor follow-up Part 1 - data pack for Dr. Li (2026-10-15)
+- Part 0 (round 2 labels, Banner accuracy row, TMC Rincon) postponed until the round 2 files arrive.
+- `python -m research.advisor_pack --zip` builds exports/advisor_pack/ and exports/ClearTab_advisor_pack_2026-10-16.zip (3.2 MB; 93 MB unzipped).
+- Contents: README, hospitals.csv (46, with C1-C5 for the 19 sampled), source_files.csv (19: URL, sha256, size, format, schema, file date, validator), prices_launch_procedures.csv (174,071 rows, same as the prices table, dropped rows kept with drop_reason), payer_aliases.csv (2,502), h1_tables/, h2_tables/ (incl. both reports), samples/.
+- samples/: 50 raw records per hospital (reservoir sampling, seed 20261016-<CCN>), shown next to the stored normalized rows; 19 of 19 hospitals.
+- exports/ is gitignored: the prices file is 84 MB and several systems' terms restrict reproduction, so the pack is shared privately. No raw hospital files in the pack.
+- Finding from the samples: 8 parsed gross/cash values are missing from the pipeline output (Banner UMC Tucson, HonorHealth Deer Valley, TMC, Mayo, 2 each). In tall CSVs the parser keeps gross and cash once per (code, description, setting, billing class, modifiers); some files list two chargemaster lines with that key and different prices (HonorHealth CBC 85025: $23 and $281).
+- Affected launch-procedure keys: HonorHealth Deer Valley 7 of 91, HonorHealth Osborn 7 of 91, TMC 2 of 163, Mayo 1 of 140; Banner x2, Valleywise, East Valley, Exceptional 0. Not fixed: fixing means re-parsing all tall files (Mayo about 35 min per pass) and may move cash figures and H2. Team decision.
