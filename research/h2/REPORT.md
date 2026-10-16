@@ -24,7 +24,7 @@ Measurement: ratio of highest to lowest comparable rate per code per metro, and 
 launch procedures where the cash price is below the median negotiated rate. Measured only on rows that
 survive the normalization rules in Feature 4.
 
-## Results (PROVISIONAL - the payer dictionary has not been accepted by two raters yet)
+## Results (FINAL - payer dictionary accepted after inter-rater round 2, 2026-10-16)
 
 Run 2026-10-13 on the 17 usable H1 hospitals (14 of them publish negotiated rates); updated the same day after
 inter-rater round 1. Reproduce: `python -m pipeline.payers`, `python -m pipeline.normalize`,
@@ -45,7 +45,8 @@ the newer report was used.
 ### Dictionary and coverage
 - data/processed/payer_aliases.csv: **2,502** raw payer + plan strings (target 150 or more; 2,064 from Mayo),
   all mapped by deterministic rules: 1,856 high confidence, 646 medium (each with a note, for example "no state
-  given; read as BCBS of Arizona because the files are Arizona hospitals"). All rows are provisional.
+  given; read as BCBS of Arizona because the files are Arizona hospitals"). Accepted 2026-10-16 (round 2: 96.0%),
+  except 9 strings pending joint review (data/processed/payer_review.csv).
 - Changes after inter-rater round 1 (2026-10-13):
   - Brand words "UHC" and "BCBS AZ" / "BCBSAZ" in the payer column now match their insurer. This fixed 11
     strings the rules had missed, for example "UHC Navigate", "UHC Health Exchange", "NODE BCBS AZ MCR ADV" in
@@ -90,7 +91,7 @@ Table 9 requires. Mayo labels 51.7 million negotiated rows "percent of total bil
 a dollar figure (for example 90% of the gross charge); like Banner's, these are percent of charges and never a
 headline price.
 
-### Provisional H2 measures (data/processed/h2_provisional_by_procedure.csv)
+### H2 measures (data/processed/h2_provisional_by_procedure.csv; file name kept, figures final)
 Comparable rate = negotiated dollar, methodology fixed dollar, surviving the outlier rules, facility billing,
 outpatient or both, canonical insurer. 16,820 comparable rows from 14 hospitals (9 Phoenix, 5 Tucson); 99
 procedure-metro pairs with at least 2 hospitals (50 Phoenix, 49 Tucson).
@@ -118,15 +119,16 @@ procedure-metro pairs with at least 2 hospitals (50 Phoenix, 49 Tucson).
   labelled percent of charges, so none of them is a comparable fixed dollar rate. The rule decides coverage
   and what the product shows for Mayo, not the H2 verdict.
 
-### Provisional verdict
-On provisional data the pooled median across launch procedures and metros is 1.92, under the rule of 2, while
-Phoenix alone (2.81) meets it and Tucson alone (1.39) does not. **H2 is not resolved yet:** the proposal does
-not accept the dictionary below 85% inter-rater agreement, and round 1 reached 68%. It becomes final after
-(1) round 2 reaches 85% or higher, (2) disagreements are resolved and the dictionary is marked accepted, and
-(3) the script is re-run. Both readings of the rule that split the round 1 raters give the same H2 figures, so
-the direction of the result (pooled under 2, Phoenix over 2, Tucson under 2) is not expected to change. The team should also confirm with Dr. Li that "the median across the launch
-procedures" means pooling both metros, as computed here, rather than deciding per metro. If the final pooled
-median stays under 2, Table 13 says the project reframes around interpretation and provenance.
+### Verdict (final, 2026-10-16)
+**H2 decision rule: NOT MET.** With the accepted dictionary the pooled median highest-to-lowest ratio across the
+launch procedures and both metros is **1.92** (95% CI 1.82 - 2.40, bootstrap over procedures,
+research/h2/advisor_followup.md), under the pre-registered threshold of 2. Re-running normalization with the
+accepted dictionary changed no canonical insurer and no H2 figure. Phoenix alone is 2.81 and Tucson alone 1.39;
+the per-metro results and the subsampling check (Tucson's lower ratio is largely explained by its 3 independent
+health systems) are in advisor_followup.md. Cash below the median negotiated rate: 1 of 50 procedures.
+Per Table 13 the project reframes around interpretation and provenance: what a published price means, what it
+excludes, and which hospitals publish nothing. Confirming with Dr. Li on 2026-10-16 that the pooled median stays
+the decision rule (his reply of 2026-10-14 asked to keep it as pre-registered).
 
 ## Inter-rater test
 ### Round 1 (2026-10-13): 68%, below the 85% target
@@ -155,7 +157,22 @@ median stays under 2, Table 13 says the project reframes around interpretation a
   rewritten with explicit rules for each disagreement type (research/h2/labeling_guide.md), the dictionary
   adopted the network contract rule on the evidence above, and a fresh sample is labelled in round 2.
 
-### Round 2 (files ready, not labelled yet)
+### Round 2 (2026-10-16): 96.0%, target met, dictionary accepted
 - Sample: make_irr_sample.py round 2, seed **20261013**, same method, drawn from the 2,302 strings not used in
-  round 1. Files: research/h2/irr_round2_rater_A.xlsx and irr_round2_rater_B.xlsx (CSV copies alongside).
-- Score with `python -m research.h2.irr_score` once both files are saved.
+  round 1. The same two team members labelled the strings independently with the rewritten guide. Labels:
+  research/h2/irr_round2_rater_A.csv and irr_round2_rater_B.csv (source columns checked unchanged, no empty labels);
+  output: research/h2/irr_round2_score.txt. Reproduce: `python -m research.h2.irr_score`.
+- **canonical_payer: 192 of 200 = 96.0%, Cohen's kappa 0.939.** plan_type: 198 of 200 = 99.0%, kappa 0.959.
+- Decision under the pre-written rule (85%): **the dictionary is accepted** (payer_aliases.csv rater_status
+  "accepted" for 2,493 of 2,502 strings).
+- 8 canonical_payer disagreements (2 "hospital name used as payer", 1 "plan names insurer", 5 other), plus 1 string
+  where both raters agree with each other but not with the dictionary (Arizona Physicians IPA / Medicaid: raters
+  other, dictionary UnitedHealthcare, because the guide lists APIPA as a UnitedHealthcare brand). These 9 strings
+  (0.46% of source rows) are listed in data/processed/payer_review.csv with status "pending" and keep their rule
+  mapping until the two raters settle them together; no label was changed by anyone else.
+- Dictionary against the raters: on the 192 strings both raters agree on, the dictionary matches 191
+  (canonical_payer). For plan_type, the code returned "unknown" for employer plans, funds and administrators,
+  while the guide says "commercial"; both raters chose commercial in 137 of 200 strings. The code now follows the
+  guide (pipeline/payers.py plan_type; self pay stays unknown): the dictionary matches the raters' agreed plan_type
+  in 196 of 198 strings in round 2 (was 59) and 189 of 197 in round 1 (was 55). 1,662 strings moved from unknown to
+  commercial; no canonical_payer changed. plan_type is not used by H2, coverage or the search API.

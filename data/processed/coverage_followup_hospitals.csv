@@ -1,15 +1,15 @@
 ccn,hospital,metro,negotiated_rows,canonical_rows,payer_strings,ci_low,ci_high,coverage,source_url,retrieved_at
-030107,Arizona Spine and Joint Hospital,Phoenix,6081,6081,5,1.0,1.0,1.0,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-030038,HonorHealth Scottsdale Osborn Medical Center,Phoenix,280639,268453,39,0.8919882247919576,0.9852606173488518,0.9565776673947669,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-030092,HonorHealth Deer Valley Medical Center,Phoenix,282784,268912,41,0.8808774087436121,0.9818962712289278,0.9509448908000453,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-030030,Abrazo Central Campus,Phoenix,319839,289840,56,0.817843163074869,0.9641533041181617,0.9062059348609769,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-030006,Tucson Medical Center,Tucson,1969041,1604182,16,0.6212202576061914,1.0,0.8147021824329712,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-030036,Chandler Regional Medical Center,Phoenix,379003,298672,29,0.6111847637672332,0.9464113160393622,0.7880465326131983,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-030022,Valleywise Health Medical Center,Phoenix,1700730,1159701,100,0.5481332774364401,0.8104178853961053,0.6818842497045386,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-030024,St. Joseph's Hospital and Medical Center,Phoenix,508867,340658,35,0.5055535195050499,0.8292550705036356,0.669444078708189,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-030065,Banner Desert Medical Center,Phoenix,477050,310884,56,0.507988125336829,0.8008725216949937,0.6516801173881145,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-030064,Banner - University Medical Center Tucson,Tucson,538449,316977,62,0.439053298661323,0.7367611302906768,0.5886852793857914,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-030148,Northwest Medical Center Sahuarita,Tucson,608455,347351,47,0.4084451863416989,0.7264101723483496,0.5708737704513892,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-030103,Mayo Clinic Hospital (Phoenix),Phoenix,51819013,25008033,2064,0.454916158397447,0.5114746218336523,0.4826034220296708,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-030085,Northwest Medical Center,Tucson,1001428,449425,62,0.30147903253618646,0.60001671452179,0.4487841362534301,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-030114,Oro Valley Hospital,Tucson,974812,372546,67,0.24774517163954424,0.519321946853103,0.38217215216882844,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
+030107,Arizona Spine and Joint Hospital,Phoenix,6081,6081,5,1.0,1.0,1.0,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+030038,HonorHealth Scottsdale Osborn Medical Center,Phoenix,280639,268453,39,0.8919882247919576,0.9852606173488518,0.9565776673947669,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+030092,HonorHealth Deer Valley Medical Center,Phoenix,282784,268912,41,0.8808774087436121,0.9818962712289278,0.9509448908000453,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+030030,Abrazo Central Campus,Phoenix,319839,289840,56,0.817843163074869,0.9641533041181617,0.9062059348609769,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+030006,Tucson Medical Center,Tucson,1969041,1604182,16,0.6212202576061914,1.0,0.8147021824329712,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+030036,Chandler Regional Medical Center,Phoenix,379003,298672,29,0.6111847637672332,0.9464113160393622,0.7880465326131983,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+030022,Valleywise Health Medical Center,Phoenix,1700730,1159701,100,0.5481332774364401,0.8104178853961053,0.6818842497045386,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+030024,St. Joseph's Hospital and Medical Center,Phoenix,508867,340658,35,0.5055535195050499,0.8292550705036356,0.669444078708189,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+030065,Banner Desert Medical Center,Phoenix,477050,310884,56,0.507988125336829,0.8008725216949937,0.6516801173881145,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+030064,Banner - University Medical Center Tucson,Tucson,538449,316977,62,0.439053298661323,0.7367611302906768,0.5886852793857914,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+030148,Northwest Medical Center Sahuarita,Tucson,608455,347351,47,0.4084451863416989,0.7264101723483496,0.5708737704513892,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+030103,Mayo Clinic Hospital (Phoenix),Phoenix,51819013,25008033,2064,0.454916158397447,0.5114746218336523,0.4826034220296708,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+030085,Northwest Medical Center,Tucson,1001428,449425,62,0.30147903253618646,0.60001671452179,0.4487841362534301,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+030114,Oro Valley Hospital,Tucson,974812,372546,67,0.24774517163954424,0.519321946853103,0.38217215216882844,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00

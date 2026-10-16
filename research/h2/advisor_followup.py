@@ -10,7 +10,7 @@ research/h2/fig_ratios_by_metro.svg, research/h2/fig_subsample.svg; numbers prin
 Comparable rate and ratio: exactly as research/h2/h2_provisional.py (fixed dollar negotiated rate of a canonical
 insurer, facility or blank billing class, outpatient or both, not dropped; ratio = highest / lowest hospital median
 per procedure and metro, pairs with >= 2 hospitals). The script checks that it reproduces that file's ratios.
-PROVISIONAL: the payer dictionary is not accepted yet (inter-rater round 2 pending).
+Payer dictionary accepted 2026-10-16 (inter-rater round 2: 96.0%).
 """
 import csv
 
@@ -83,7 +83,7 @@ def fig_ratios(rat: pl.DataFrame, procs: dict) -> str:
     b = ['<text x="16" y="24" font-size="15" font-weight="600" fill="#0b0b0b">Highest-to-lowest price ratio per '
          'procedure, by metro</text>',
          '<text x="16" y="42" font-size="12" fill="#52514e">Hospital median fixed-dollar negotiated rates; log scale; '
-         'PROVISIONAL payer dictionary</text>']
+         'payer dictionary accepted 2026-10-16</text>']
     for t in (1, 2, 5, 10, 20, 50):
         b.append(f'<line x1="{x(t):.1f}" y1="{top - 6}" x2="{x(t):.1f}" y2="{h - 48}" stroke="#e4e3df"/>'
                  f'<text x="{x(t):.1f}" y="{h - 32}" font-size="11" fill="#52514e" text-anchor="middle">{t}</text>')
@@ -119,8 +119,8 @@ def fig_subsample(panels: list[tuple[str, np.ndarray, float, float, str]]) -> st
     x = lambda v: left + (v - lo) / (hi - lo) * pw  # noqa: E731
     b = ['<text x="16" y="24" font-size="15" font-weight="600" fill="#0b0b0b">Phoenix cut down to Tucson\'s size: '
          f'median ratio in {len(panels[0][1]):,} random draws</text>',
-         '<text x="16" y="42" font-size="12" fill="#52514e">Same procedures in both metros; PROVISIONAL payer '
-         'dictionary</text>']
+         '<text x="16" y="42" font-size="12" fill="#52514e">Same procedures in both metros; payer dictionary '
+         'accepted 2026-10-16</text>']
     for p_i, (label, draws, ref, phx, level) in enumerate(panels):
         top = top0 + p_i * (ph + gap) + 18
         counts, edges = np.histogram(draws, bins=np.arange(lo, hi + 0.05, 0.05))
@@ -158,7 +158,7 @@ def main() -> None:
     rat = (hosp.group_by("code", "metro").agg(pl.len().alias("hospitals"), pl.col("system").n_unique().alias("systems"),
                                               (pl.col("med").max() / pl.col("med").min()).alias("ratio"))
            .filter(pl.col("hospitals") >= 2).sort("metro", "code"))
-    # reproduction check against the committed provisional file
+    # reproduction check against the committed H2 file
     old = pl.read_csv(PROCESSED / "h2_provisional_by_procedure.csv", schema_overrides={"code": pl.Utf8})
     chk = rat.join(old.select("code", "metro", pl.col("ratio").alias("old")), on=["code", "metro"], how="full")
     assert chk.height == old.height == rat.height and (chk["ratio"] - chk["old"]).abs().max() < 1e-9, "not reproduced"

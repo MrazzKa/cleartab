@@ -137,3 +137,12 @@ Each phase appends a summary of at most 15 lines.
 
 ## Advisor follow-up Part 5 - meeting brief (2026-10-16)
 - One-page brief written for Friday (kept local, not committed). Advisor pack rebuilt with the follow-up tables, reports and charts (3.3 MB zip).
+
+## Advisor follow-up Part 0 step 1 - inter-rater round 2, dictionary accepted, H2 final (2026-10-16)
+- Round 2 (seed 20261013, 200 fresh strings, same two raters, rewritten guide): canonical_payer 192/200 = 96.0% (kappa 0.939), plan_type 99.0%. Target 85% met: dictionary accepted (2,493 of 2,502 strings).
+- Labels saved as research/h2/irr_round2_rater_A.csv and B.csv (source columns unchanged), score in irr_round2_score.txt; blank xlsx templates removed.
+- 9 strings pending joint review by the raters (data/processed/payer_review.csv, 0.46% of rows): 8 disagreements and 1 where both raters differ from the dictionary (Arizona Physicians IPA / Medicaid). No label changed by anyone else.
+- plan_type rule now follows the guide (employer plans, funds, administrators = commercial; self pay = unknown): matches the raters' agreed plan_type in 196/198 (was 59). 1,662 strings unknown -> commercial; no canonical change; plan_type is not used by H2, coverage or the API.
+- Normalization re-run on all 19 files: f4_coverage, f4_flag_log and every H2 ratio identical apart from timestamps. Database prices unchanged (they store the canonical insurer only), so no reload.
+- **H2 final: NOT MET.** Pooled median 1.92 (95% CI 1.82-2.40) < 2; Phoenix 2.81, Tucson 1.39; cash below median negotiated 1 of 50. Per Table 13 the project reframes around interpretation and provenance (to confirm with Dr. Li). Coverage final: 51.0% pooled with Mayo, 66.7% without, 70.7% mean of hospitals.
+- Reports (H2 REPORT, advisor_followup, coverage_followup), charts, brief and advisor pack updated to final.

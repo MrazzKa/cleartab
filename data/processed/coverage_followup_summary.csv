@@ -1,7 +1,7 @@
 analysis,group,hospitals,pooled,pooled_ci,mean_of_hospitals,mean_ci,p_pooled_ge_60,p_mean_ge_60,hospitals_below_60,source_url,retrieved_at
-main: all hospitals incl. Mayo,Phoenix,9,0.5011516296677703,48.7% - 82.0%,0.7874874326110556,67.7% - 89.1%,,,,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-main: all hospitals incl. Mayo,Tucson,5,0.6069066618750104,42.2% - 74.9%,0.561043504138482,43.7% - 69.3%,,,,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-main: all hospitals incl. Mayo,both metros,14,0.509999303225661,48.8% - 73.5%,0.7066146010137079,60.5% - 80.2%,0.3125,0.9795,5,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-sensitivity: Mayo excluded,Phoenix,8,0.7441735042261769,69.0% - 87.6%,0.8255979339337287,73.1% - 91.8%,,,,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-sensitivity: Mayo excluded,Tucson,5,0.6069066618750104,42.3% - 74.9%,0.561043504138482,43.7% - 69.6%,,,,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
-sensitivity: Mayo excluded,both metros,13,0.6669131523664064,55.3% - 76.5%,0.7238462301663261,61.6% - 82.4%,0.874,0.9895,4,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T06:08:14+00:00
+main: all hospitals incl. Mayo,Phoenix,9,0.5011516296677703,48.7% - 82.0%,0.7874874326110556,67.7% - 89.1%,,,,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+main: all hospitals incl. Mayo,Tucson,5,0.6069066618750104,42.2% - 74.9%,0.561043504138482,43.7% - 69.3%,,,,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+main: all hospitals incl. Mayo,both metros,14,0.509999303225661,48.8% - 73.5%,0.7066146010137079,60.5% - 80.2%,0.3125,0.9795,5,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+sensitivity: Mayo excluded,Phoenix,8,0.7441735042261769,69.0% - 87.6%,0.8255979339337287,73.1% - 91.8%,,,,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+sensitivity: Mayo excluded,Tucson,5,0.6069066618750104,42.3% - 74.9%,0.561043504138482,43.7% - 69.6%,,,,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00
+sensitivity: Mayo excluded,both metros,13,0.6669131523664064,55.3% - 76.5%,0.7238462301663261,61.6% - 82.4%,0.874,0.9895,4,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-10-16T10:09:32+00:00

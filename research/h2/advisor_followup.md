@@ -1,7 +1,7 @@
 # H2 follow-up for Dr. Li (meeting 2026-10-16)
 
-**PROVISIONAL.** All figures use the payer dictionary of 2026-10-13, which is not accepted yet (inter-rater round
-1: 68%, target 85%; round 2 not scored). They become final only after round 2 passes and the scripts are re-run.
+**FINAL.** The payer dictionary was accepted on 2026-10-16 (inter-rater round 2: 96.0% agreement, kappa 0.94;
+target 85%). Re-running normalization with it changed no canonical insurer and no figure below.
 
 Reproduce: `python -m research.h2.fetch_context` (public context data), then `python -m research.h2.advisor_followup`
 (seed 20261016; repeated runs give identical output). The script first checks that it reproduces every ratio in
@@ -19,8 +19,8 @@ launch procedure and metro with at least 2 hospitals: ratio = highest / lowest h
 
 CI: bootstrap, 10,000 draws, resampling the 50 procedures (a procedure carries its Phoenix and Tucson ratios
 together, so the two metros' ratios for the same code are not treated as independent). In 21.7% of draws the
-pooled median is 2 or more. **Under the pre-registered rule (median of at least 2) H2 is not met on provisional
-data, but the CI includes 2.** Table 13 then says the project reframes around interpretation and provenance.
+pooled median is 2 or more. **Under the pre-registered rule (median of at least 2) H2 is not met; the CI includes
+2.** Table 13 then says the project reframes around interpretation and provenance.
 
 ## 2. Secondary: per metro
 | Metro | Median ratio | 95% CI | Procedures | Ratio >= 2 | Hospitals with comparable rates | Hospitals per procedure | Systems per procedure |
@@ -165,7 +165,7 @@ Table view of the chart (data/processed/h2_followup_ratios.csv):
 | chest x-ray (2 views) (71046) | 1.42 | 8 / 6 | 1.37 | 5 / 3 |
 
 ## Limitations
-- Provisional payer dictionary (see top).
+- 9 payer strings (0.46% of source rows) are pending joint review by the raters (data/processed/payer_review.csv).
 - 14 hospitals with comparable rates; Tucson has 3 systems. Every per-metro statement rests on few price setters.
 - Parser issue found while building the advisor pack: in tall CSV files, a second chargemaster line with the same
   code, description, setting and modifiers keeps only the first line's gross and cash (docs/PROGRESS.md). It

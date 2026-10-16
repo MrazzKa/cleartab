@@ -13,7 +13,7 @@ one of the 11 canonical insurers. Same definition as data/processed/f4_coverage.
 - Per hospital: point coverage, plus a descriptive interval that resamples the hospital's payer strings (each
   string with all its rows), 2,000 draws.
 - Main analysis includes Mayo; the sensitivity analysis excludes it.
-PROVISIONAL: the payer dictionary is not accepted yet (inter-rater round 2 pending).
+Payer dictionary accepted 2026-10-16 (inter-rater round 2: 96.0%).
 Writes data/processed/coverage_followup_strings.csv and coverage_followup_summary.csv.
 """
 import csv

@@ -1,6 +1,7 @@
 # Payer coverage with clustered CIs and the Mayo sensitivity check (meeting 2026-10-16)
 
-**PROVISIONAL.** Uses the payer dictionary of 2026-10-13, not yet accepted (inter-rater round 2 pending).
+**FINAL.** Uses the payer dictionary accepted on 2026-10-16 (inter-rater round 2: 96.0%; 9 strings, 0.46% of
+source rows, pending joint review).
 
 Reproduce: `python -m research.h2.coverage_followup` (seed 20261016). Outputs:
 data/processed/coverage_followup_hospitals.csv, coverage_followup_summary.csv, coverage_followup_strings.csv.

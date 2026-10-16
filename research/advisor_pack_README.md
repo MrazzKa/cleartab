@@ -6,8 +6,8 @@ files the pipeline writes. Nothing in it was edited by hand.
 
 **Data date.** Hospital files were downloaded on 2026-10-12 and 2026-10-13. The dates the hospitals put
 inside their files (`last_updated_on`) range from 2026-02-01 to 2026-09-25 (see `source_files.csv`). The payer
-dictionary is the post-round-1 version of 2026-10-13 and is **provisional**: inter-rater round 1 reached 68%
-(target 85%), round 2 is not scored yet, so H2 figures in `h2_tables/` are provisional too.
+dictionary was **accepted on 2026-10-16**: inter-rater round 2 reached 96.0% (target 85%; round 1 was 68%), so
+H2 figures in `h2_tables/` are final. 9 strings (0.46% of rows) are pending joint review by the raters.
 
 **Not included.** Raw hospital files (up to 21.5 GB each). Their URLs, sha256 and sizes are in
 `source_files.csv`, so anyone can download the same files and check the hash. Several hospital systems
