@@ -108,3 +108,32 @@ Each phase appends a summary of at most 15 lines.
 - exports/ is gitignored: the prices file is 84 MB and several systems' terms restrict reproduction, so the pack is shared privately. No raw hospital files in the pack.
 - Finding from the samples: 8 parsed gross/cash values are missing from the pipeline output (Banner UMC Tucson, HonorHealth Deer Valley, TMC, Mayo, 2 each). In tall CSVs the parser keeps gross and cash once per (code, description, setting, billing class, modifiers); some files list two chargemaster lines with that key and different prices (HonorHealth CBC 85025: $23 and $281).
 - Affected launch-procedure keys: HonorHealth Deer Valley 7 of 91, HonorHealth Osborn 7 of 91, TMC 2 of 163, Mayo 1 of 140; Banner x2, Valleywise, East Valley, Exceptional 0. Not fixed: fixing means re-parsing all tall files (Mayo about 35 min per pass) and may move cash figures and H2. Team decision.
+
+## Advisor follow-up Part 0 (partial) - accuracy row and TMC Rincon (2026-10-16)
+- Round 2 payer labeling: not scored yet; the two files have not arrived. H2 and coverage stay provisional.
+- Accuracy check pair 1, Banner UMC Phoenix, knee MRI 73721 (research/accuracy_check/accuracy_log.csv, plan.md). Not in the H1 sample, so its file (dated 2026-09-25, validator 0 errors) was downloaded once and processed into data/raw/accuracy/ by research/accuracy_check/published_figures.py; H1/H2 inputs unchanged.
+- (a) file: gross $1,547.00, cash $297.02, negotiated fixed dollar $140.78 - $1,119.73 (median $166.84, 22 rows). (b) Banner estimator 2026-10-13 (GFE, facility only, ID UNO5FC2Q): total $1,547.00, self-pay $355.81. (c) phone: no quote without a patient record.
+- Gap: same gross and same facility-only scope; the estimator applies exactly 23% of gross (77% off), the file's cash price is 80.8% off. Reason unknown; to ask on the next call.
+- TMC Rincon: separate location (license H13332, 5755 S. Houghton Rd) with its own file, 94% identical to TMC's; same NPI as TMC and no CCN in CMS Hospital General Information. Not added to the CCN-keyed registry; recorded in research/registry/compliance_findings.md. Needs a location key below the CCN (team decision).
+
+## Advisor follow-up Part 2 - H2 as Dr. Li asked (2026-10-16, provisional dictionary)
+- research/h2/advisor_followup.py (reproduces h2_provisional ratios exactly; seed 20261016, deterministic) and advisor_followup.md with two SVG charts.
+- Primary pooled median 1.92, 95% CI 1.82-2.40 (10,000 bootstrap draws over procedures); 21.7% of draws >= 2.
+- Phoenix 2.81 (2.81-3.90), 9 hospitals / 7 systems, median 7 hospitals per procedure; Tucson 1.39 (1.25-1.74), 5 hospitals / 3 systems, median 5.
+- Phoenix cut to Tucson's hospital count per procedure (1,000 draws): 2.53 (2.12-2.81), never as low as Tucson. Cut to Tucson's system count: 1.66 (1.49-1.86). Tucson system level 1.20.
+- Exploratory: price index follows the system (HonorHealth 1.41, Dignity 0.86-0.98, Northwest 1.17-1.28); beds rank correlation -0.31 (n = 14). Context from CMS HGI and POS (research/h2/fetch_context.py, data/processed/hospital_context.csv).
+- Not obtained: ZIP income and uninsured rate. The Census API now requires a key (redirect to missing_key.html); add CENSUS_API_KEY to .env and re-run fetch_context.
+- Some CMS ownership labels look inconsistent (HonorHealth Osborn "Proprietary", Abrazo "Physician"); reported as published.
+
+## Advisor follow-up Part 3 - payer coverage, clustered CIs, Mayo sensitivity (2026-10-16, provisional)
+- research/h2/coverage_followup.py and coverage_followup.md; counts equal f4_coverage.csv; cluster bootstrap over hospitals, 2,000 draws.
+- With Mayo (main): pooled 51.0% (48.8-73.5), mean of hospitals 70.7% (60.5-80.2), 5 of 14 below 60%.
+- Without Mayo (sensitivity): pooled 66.7% (55.3-76.5), mean 72.4% (61.6-82.4), 4 of 13 below 60%.
+- Only the pooled verdict flips (Mayo has 85% of rows). Tucson's mean is 56.1% either way (three Northwest hospitals).
+
+## Advisor follow-up Part 4 - completeness score options (2026-10-16)
+- research/h1/completeness_options.py and .md; no option picked. C1, C2, C5 are 20 for all but CORE, so only C3 and C4 separate hospitals.
+- A equal weights; B no negotiated rates means a cap of 50 (only the 4 cash-only hospitals move); C patient-weighted (50 x share of launch procedures with a usable price + 10 per component). C lifts Valleywise and TMC, drops Carondelet and the specialty hospital Arizona Spine and Joint (5 to 17).
+
+## Advisor follow-up Part 5 - meeting brief (2026-10-16)
+- One-page brief written for Friday (kept local, not committed). Advisor pack rebuilt with the follow-up tables, reports and charts (3.3 MB zip).

@@ -31,10 +31,14 @@ SEED = 20261016
 N_SAMPLE = 50
 ITEM = ["code", "code_type", "setting", "billing_class", "modifiers", "description"]
 H1_TABLES = ["h1_file_profile.csv", "h1_required_elements.csv", "h1_validator.csv", "downloads.csv",
-             "code_frequency.csv", "procedure_selection.csv", "robots_snapshots.csv"]
+             "code_frequency.csv", "procedure_selection.csv", "robots_snapshots.csv", "completeness_options.csv"]
 H2_TABLES = ["h2_provisional_by_procedure.csv", "h2_payer_rule_by_procedure.csv", "f4_coverage.csv",
-             "f4_flag_log.csv", "payer_strings.csv", "procedures.csv"]
-H2_RESEARCH = ["irr_round1_rater_A.csv", "irr_round1_rater_B.csv", "irr_round1_score.txt", "labeling_guide.md"]
+             "f4_flag_log.csv", "payer_strings.csv", "procedures.csv", "h2_followup_ratios.csv",
+             "h2_followup_subsample.csv", "h2_followup_hospital_index.csv", "hospital_context.csv",
+             "coverage_followup_hospitals.csv", "coverage_followup_summary.csv", "coverage_followup_strings.csv"]
+H2_RESEARCH = ["irr_round1_rater_A.csv", "irr_round1_rater_B.csv", "irr_round1_score.txt", "labeling_guide.md",
+               "advisor_followup.md", "coverage_followup.md", "fig_ratios_by_metro.svg", "fig_subsample.svg"]
+H1_RESEARCH = ["completeness_options.md"]
 
 
 def read(name: str) -> list[dict]:
@@ -297,7 +301,8 @@ def main() -> None:
         shutil.copy(PROCESSED / "payer_aliases.csv", OUT / "payer_aliases.csv")
         counts["payer_aliases.csv"] = len(read("payer_aliases.csv"))
         for sub, names, base in (("h1_tables", H1_TABLES, PROCESSED), ("h2_tables", H2_TABLES, PROCESSED),
-                                 ("h2_tables", H2_RESEARCH, ROOT / "research" / "h2")):
+                                 ("h2_tables", H2_RESEARCH, ROOT / "research" / "h2"),
+                                 ("h1_tables", H1_RESEARCH, ROOT / "research" / "h1")):
             (OUT / sub).mkdir(parents=True, exist_ok=True)
             for n in names:
                 shutil.copy(base / n, OUT / sub / n)

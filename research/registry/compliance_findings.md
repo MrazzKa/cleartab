@@ -43,3 +43,20 @@ CORE, City of Hope, TMC and AZOSH are still "Not checked" and need a human read.
 Note for the team: proposal reference [20] and the Feature 3 legal-basis paragraph cite 45 CFR 180.50(b)(3)
 for "accessible without barriers" and 180.50(d) for the .txt file. The current text puts these at (d)(3)
 and (d)(6). The data-use memo already uses (d)(3) and (d)(6). Fix the citation in the paper.
+
+## TMC Rincon Hospital: own price file, no own CMS certification number (checked 2026-10-15)
+- File (downloaded by a team member from the TMC price page): 860137568-1174512792_tucson-medical-center_standardcharges.csv,
+  510,613,118 bytes, last_updated_on 2026-04-30, location_name "Tucson Medical Center Rincon Hospital",
+  5755 S. Houghton Road, Tucson, AZ 85747, Arizona license H13332, type 2 NPI 1174512792 (the same NPI as TMC).
+- Its rows are the same 1.94 million rows as TMC's file in a different order, except about 117,000 rows (6%) whose
+  prices differ, for example Q4433 Devoted Medicare Advantage $136.04 at Rincon and $139.27 at TMC.
+- CMS Hospital General Information lists 10 facilities in Tucson and none of them is Rincon
+  (https://data.cms.gov/provider-data/api/1/datastore/query/xubh-q36u/0, citytown = TUCSON, retrieved 2026-10-15).
+  Rincon therefore has no CCN of its own; it appears to bill under TMC (030006).
+- Public reports describe a general hospital with medical/surgical, telemetry and maternity beds and four operating
+  rooms, opened in 2024 (https://www.kold.com/2020/11/10/tucson-medical-center-build-new-bed-hospital-southeast-side,
+  https://www.insidetucsonbusiness.com/news/tmc-health-fetes-completion-of-rincon-hospital/article_365c7bc2-f2b5-11ee-ba23-8f770924b08e.html).
+  TMC's own page gives 29 beds, the announcements 60 (https://www.rincon.tmcaz.com/locations/76082); bed count not resolved.
+- Decision: **not added to the registry for now.** The registry, database and analysis files are keyed by CCN and
+  the registry is built from CMS Hospital General Information, where Rincon has no row. Adding it needs a
+  location key below the CCN (a team decision). Until then the TMC result stands for both campuses.

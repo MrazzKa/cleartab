@@ -1,0 +1,20 @@
+ccn,hospital,metro,c1,c2,c3,c4,c5,has_negotiated_rates,launch_procedures_with_usable_price,launch_share,score_a_equal,score_b_negotiated_required,score_c_patient,rank_a,rank_b,rank_c,source_url,retrieved_at
+030153,East Valley ER & Hospital,Phoenix,20.0,20.0,20.0,20.0,20.0,false,48,0.96,100.0,50.0,98.0,1,15,3,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030011,St. Joseph's Hospital (Tucson),Tucson,20.0,20.0,18.7,20.0,20.0,false,30,0.6,98.7,50.0,79.3,2,15,15,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030010,St. Mary's Hospital,Tucson,20.0,20.0,18.7,20.0,20.0,false,30,0.6,98.7,50.0,79.3,2,15,15,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030064,Banner - University Medical Center Tucson,Tucson,20.0,20.0,18.6,19.8,20.0,true,46,0.92,98.4,98.4,95.2,4,1,7,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030107,Arizona Spine and Joint Hospital,Phoenix,20.0,20.0,18.3,20.0,20.0,true,19,0.38,98.3,98.3,68.2,5,2,17,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030065,Banner Desert Medical Center,Phoenix,20.0,20.0,18.5,19.8,20.0,true,44,0.88,98.3,98.3,93.2,5,2,9,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030036,Chandler Regional Medical Center,Phoenix,20.0,20.0,19.2,18.6,20.0,true,48,0.96,97.8,97.8,96.9,7,4,6,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030024,St. Joseph's Hospital and Medical Center,Phoenix,20.0,20.0,19.3,17.6,20.0,true,50,1.0,96.9,96.9,98.5,8,5,1,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030030,Abrazo Central Campus,Phoenix,20.0,20.0,19.6,16.6,20.0,true,50,1.0,96.2,96.2,98.1,9,6,2,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030038,HonorHealth Scottsdale Osborn Medical Center,Phoenix,20.0,20.0,18.3,17.8,20.0,true,50,1.0,96.1,96.1,98.0,10,7,3,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030092,HonorHealth Deer Valley Medical Center,Phoenix,20.0,20.0,18.3,17.7,20.0,true,50,1.0,96.0,96.0,98.0,11,8,3,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030103,Mayo Clinic Hospital (Phoenix),Phoenix,20.0,20.0,14.8,20.0,20.0,true,43,0.86,94.8,94.8,90.4,12,9,11,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030148,Northwest Medical Center Sahuarita,Tucson,20.0,20.0,11.5,20.0,20.0,true,44,0.88,91.5,91.5,89.8,13,10,13,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030085,Northwest Medical Center,Tucson,20.0,20.0,11.3,19.9,20.0,true,45,0.9,91.2,91.2,90.6,14,11,10,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030114,Oro Valley Hospital,Tucson,20.0,20.0,11.2,19.8,20.0,true,44,0.88,91.0,91.0,89.5,15,12,14,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030022,Valleywise Health Medical Center,Phoenix,20.0,20.0,12.7,15.4,20.0,true,50,1.0,88.1,88.1,94.0,16,13,8,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030006,Tucson Medical Center,Tucson,20.0,20.0,14.4,6.0,20.0,true,50,1.0,80.4,80.4,90.2,17,14,12,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030152,Exceptional Community Hospital - Maricopa,Phoenix,20.0,20.0,0.0,20.0,20.0,false,0,0.0,80.0,50.0,40.0,18,15,18,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
+030108,The CORE Institute Specialty Hospital,Phoenix,0.0,0.0,0.0,0.0,0.0,false,0,0.0,0.0,0.0,0.0,19,19,19,data/processed/h1_file_profile.csv; data/raw/normalized/<ccn>_f4.parquet,2026-10-16T06:09:07+00:00
