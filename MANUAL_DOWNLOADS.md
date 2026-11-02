@@ -24,6 +24,20 @@ download.
 Valleywise (030022) was removed from this list: its portal refused two GET requests on 2026-10-12 but the
 third, in the first ETL run, succeeded.
 
+## CMS NCCI procedure-to-procedure (PTP) edits (bill check)
+
+The PTP tables used by the bill check (`billcheck/reference.py`) sit behind the AMA CPT license click-through
+on cms.gov, so a team member downloads them by hand after reading and accepting the license:
+
+1. Open https://www.cms.gov/medicare/coding-billing/national-correct-coding-initiative-ncci-edits/medicare-ncci-procedure-procedure-ptp-edits
+2. Under the current quarter, download the four **Hospital** files (f1-f4) and the four **Practitioner** files
+   (f1-f4); accept the license when asked.
+3. Put the zip files, unchanged, in `data/raw/manual/ncci_ptp/` (gitignored). Do not commit them: CPT content is
+   AMA copyrighted.
+4. Record the download in the table below. The API picks the files up on its next start.
+
+The MUE tables have no click-through and are downloaded by `python -m billcheck.fetch_reference`.
+
 ## Record of manual downloads
 
 | CCN | Downloaded by | Date | Page where the link was | File name | Notes |

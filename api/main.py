@@ -217,3 +217,32 @@ EXPLAINER = ("These are prices the hospital published for its own part of the ca
              "themselves. A negotiated rate is the amount a hospital agreed with an insurance plan; what you pay "
              "depends on your deductible and coinsurance. Your final bill can be different. Call the hospital to "
              "confirm before your visit.")
+
+
+# ---------------------------------------------------------------- v2: bill check (Features 7 and 8)
+from billcheck import demo_cases, run_check  # noqa: E402
+from billcheck.models import CheckRequest, CheckResult  # noqa: E402
+
+
+@app.post("/bill/check", response_model=CheckResult)
+def bill_check(req: CheckRequest):
+    """Check an EOB and a bill. The body is never logged or stored (only the path is logged)."""
+    if req.context.hospital_ccn:
+        with pool.connection() as conn:
+            return run_check(req, conn)
+    return run_check(req)
+
+
+@app.get("/bill/cases")
+def bill_cases():
+    """Synthetic demo cases (made-up patients; prices from the hospitals' published files)."""
+    return {"cases": demo_cases()}
+
+
+@app.get("/hospitals")
+def hospitals():
+    with pool.connection() as conn:
+        rows = conn.execute("""SELECT h.ccn, h.name, h.city, h.metro, h.health_system, h.phone, h.status,
+                                      EXISTS (SELECT 1 FROM prices p WHERE p.hospital_id = h.id) AS has_prices
+                               FROM hospitals h ORDER BY h.metro, h.name""").fetchall()
+    return {"hospitals": rows}
