@@ -1,0 +1,73 @@
+group,value,hospitals,pairs,triples,share_pairs_any_insurer_above_cash,pairs_ci_low,pairs_ci_high,share_triples_above_cash,triples_ci_low,triples_ci_high,median_excess_dollars_when_above,median_excess_pct_of_cash_when_above,source_url,retrieved_at
+main,commercial + marketplace,12,437,2867,0.5057,0.2972,0.7319,0.2292,0.1113,0.3667,56.31,0.4664,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+sensitivity,highest cash row,12,437,2867,0.4874,0.2793,0.7017,0.21,0.0928,0.3312,68.8,0.4126,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+reference,AHCCCS + Medicare Advantage + government,12,427,3095,0.1593,,,0.0969,,,8.96,0.2887,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+plan_type,commercial,12,437,1683,0.4783,,,0.2496,,,96.4,0.7112,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+plan_type,marketplace,12,425,1184,0.2353,,,0.2002,,,19.37,0.2844,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+metro,Phoenix,7,242,1774,0.6116,,,0.2475,,,80.13,0.3939,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+metro,Tucson,5,195,1093,0.3744,,,0.1995,,,25.04,0.667,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+system,Banner Health,2,62,423,0.8387,,,0.5532,,,18.7,0.8279,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+system,Dignity Health (CommonSpirit),2,71,363,0.831,,,0.3581,,,282.57,0.8324,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+system,HonorHealth,2,74,731,0.0,,,0.0,,,,,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+system,Northwest Healthcare,3,133,689,0.2632,,,0.09,,,228.42,0.2277,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+system,TMC Health,1,31,185,0.3871,,,0.1459,,,25.7,0.7695,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+system,USPI (independent site),1,18,53,1.0,,,0.4717,,,212.9,7.2167,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+system,Valleywise Health,1,48,423,0.9375,,,0.4232,,,37.66,0.1461,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+canonical_payer,Aetna,11,363,579,0.2617,,,0.1917,,,174.62,0.5608,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+canonical_payer,Blue Cross Blue Shield of Arizona,11,269,348,0.3941,,,0.3161,,,65.96,0.4493,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+canonical_payer,"Centene (Arizona Complete Health, Ambetter, Health Net, Wellcare)",8,286,286,0.2448,,,0.2448,,,117.98,0.8324,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+canonical_payer,Cigna,12,382,542,0.2984,,,0.2509,,,124.72,0.5672,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+canonical_payer,Health Choice Arizona,5,173,173,0.4046,,,0.4046,,,10.11,0.0435,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+canonical_payer,Humana,2,74,74,0.0,,,0.0,,,,,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+canonical_payer,Oscar,5,150,150,0.2733,,,0.2733,,,4.09,0.2444,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+canonical_payer,UnitedHealthcare,12,423,715,0.2104,,,0.1664,,,33.11,0.2587,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,19120 breast lump removal,5,5,29,0.6,,,0.2069,,,1954.12,0.519,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,20611 joint injection or fluid removal with ultrasound,11,11,52,0.6364,,,0.3269,,,732.13,1.7597,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,29826 shoulder arthroscopy (bone shaving),3,3,15,0.0,,,0.0,,,,,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,29881 knee arthroscopy (meniscus),5,5,30,0.6,,,0.2333,,,449.78,0.0787,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,43235 upper endoscopy,5,5,31,0.6,,,0.4839,,,569.0,0.3978,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,43239 upper endoscopy with biopsy,6,6,40,0.3333,,,0.225,,,475.0,0.4214,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,45330 flexible sigmoidoscopy,7,7,51,0.5714,,,0.2549,,,473.09,0.18,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,45331 flexible sigmoidoscopy with biopsy,5,5,31,0.6,,,0.3548,,,958.55,0.5608,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,45378 colonoscopy,5,5,31,1.0,,,0.5484,,,562.82,0.3915,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,45380 colonoscopy with biopsy,5,5,31,0.6,,,0.3548,,,453.55,0.2691,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,45385 colonoscopy with polyp removal,5,5,31,0.6,,,0.3548,,,453.55,0.3089,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,45391 colonoscopy with ultrasound,1,1,9,1.0,,,0.6667,,,166.55,0.1134,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,47562 gallbladder removal (laparoscopic),4,4,27,0.25,,,0.0741,,,390.66,0.0527,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,49505 inguinal hernia repair,4,4,27,0.25,,,0.0741,,,131.18,0.0299,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,55700 prostate biopsy,4,4,23,0.5,,,0.2174,,,1176.0,0.25,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,62322 lower back epidural injection,5,5,23,0.6,,,0.5217,,,450.6,0.8745,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,62323 lower back epidural injection with imaging,10,10,45,0.8,,,0.5556,,,431.26,0.5968,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,64483 lower back nerve root injection,8,8,46,0.75,,,0.413,,,438.26,0.6142,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,66821 laser treatment after cataract surgery,1,1,6,1.0,,,1.0,,,812.15,1.2033,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,66984 cataract surgery,2,2,13,1.0,,,0.8462,,,1155.97,0.548,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,70450 head CT scan,11,11,66,0.4545,,,0.1667,,,107.94,0.3156,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,70553 brain MRI with and without contrast,11,11,65,0.5455,,,0.1692,,,410.31,0.454,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,71045 chest x-ray (1 view),12,12,75,0.75,,,0.2667,,,55.85,0.6478,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,71046 chest x-ray (2 views),12,12,82,0.75,,,0.2439,,,38.75,0.3837,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,72110 lower back x-ray,11,11,79,0.5455,,,0.1772,,,58.14,0.5297,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,72148 lower back MRI,11,11,64,0.4545,,,0.2344,,,59.76,0.2041,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,72193 CT scan of pelvis with contrast,11,11,66,0.5455,,,0.2424,,,222.73,0.4273,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,73721 knee MRI,10,10,51,0.4,,,0.1569,,,68.18,0.1413,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,74177 CT scan of belly and pelvis with contrast,11,11,65,0.5455,,,0.2308,,,185.39,0.3107,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,76700 abdominal ultrasound,11,11,71,0.3636,,,0.0986,,,66.4,0.2733,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,76805 pregnancy ultrasound,11,11,73,0.5455,,,0.1507,,,110.49,0.4463,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,76830 pelvic ultrasound (vaginal),11,11,73,0.5455,,,0.1096,,,120.95,0.3777,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,77065 diagnostic mammogram (one breast),8,8,62,0.625,,,0.1774,,,41.92,0.1518,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,77066 diagnostic mammogram (both breasts),9,9,67,0.6667,,,0.2537,,,82.73,0.45,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,77067 screening mammogram,9,9,67,0.6667,,,0.2836,,,31.7,0.1253,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,80048 basic metabolic panel,12,12,85,0.25,,,0.0706,,,2.97,0.3052,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,80053 comprehensive metabolic panel,12,12,85,0.25,,,0.0706,,,3.71,0.3056,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,80061 cholesterol test (lipid panel),12,12,85,0.4167,,,0.2588,,,4.68,0.3028,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,80069 kidney function panel,11,11,82,0.1818,,,0.061,,,2.17,0.2174,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,80076 liver function test,12,12,85,0.25,,,0.0706,,,2.86,0.3048,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,81001 urine test with microscope (automated),12,12,83,0.3333,,,0.1687,,,2.01,0.7283,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,81002 urine dipstick test,11,11,76,0.5455,,,0.2763,,,2.8,0.8316,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,81003 urine test (automated),12,12,85,0.4167,,,0.2588,,,1.94,1.0972,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,84153 PSA blood test,12,12,83,0.5833,,,0.3012,,,18.7,2.0419,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,84154 free PSA blood test,11,11,76,0.5455,,,0.4211,,,19.06,1.8378,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,84443 thyroid test (TSH),12,12,85,0.5,,,0.2706,,,13.18,0.8324,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,85025 complete blood count with differential,12,12,85,0.4167,,,0.2,,,5.91,0.9348,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,85027 complete blood count,12,12,85,0.4167,,,0.1882,,,4.37,0.8184,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,85610 blood clotting test (PT/INR),12,12,85,0.4167,,,0.1882,,,2.4,0.4664,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
+procedure,85730 blood clotting test (PTT),12,12,85,0.5,,,0.2118,,,3.64,0.6386,data/raw/normalized/<ccn>_f4.parquet,2026-10-22T10:15:15+00:00
