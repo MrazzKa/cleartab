@@ -140,7 +140,7 @@ export const api = {
 }
 
 export interface ReadResult {
-  document_type: 'eob' | 'bill' | 'both' | 'other'; provider_type: string; statement_date: string | null
+  document_type: 'eob' | 'bill' | 'both' | 'other'; provider_type: string; provider_name: string | null; statement_date: string | null
   claim_number: string | null; balance_due: number | null; patient_payments: number | null
   you_owe_total: number | null; unreadable: string[]; note: string
 }

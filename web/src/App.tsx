@@ -3,13 +3,14 @@ import Assistance from './pages/Assistance'
 import BillCheck from './pages/BillCheck'
 import Home from './pages/Home'
 import Prices from './pages/Prices'
+import Visits from './pages/Visits'
 import { useLang, useT } from './i18n'
 
-type Route = 'home' | 'bill' | 'help' | 'prices'
+type Route = 'home' | 'bill' | 'help' | 'prices' | 'visits'
 
 const routeFromHash = (): Route => {
   const h = window.location.hash.replace('#/', '')
-  return h === 'bill' || h === 'help' || h === 'prices' ? h : 'home'
+  return h === 'bill' || h === 'help' || h === 'prices' || h === 'visits' ? h : 'home'
 }
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
         <nav aria-label="Main">
           {link('help', t('Lower my bill'))}
           {link('bill', t('Check my bill'))}
+          {link('visits', t('My visits'))}
           {link('prices', t('Prices'))}
           <button type="button" className="lang" onClick={() => setLang(lang === 'en' ? 'es' : 'en')}
             aria-label={lang === 'en' ? 'Ver en español' : 'View in English'}>{lang === 'en' ? 'Español' : 'English'}</button>
@@ -43,6 +45,7 @@ export default function App() {
         {route === 'bill' && <BillCheck />}
         {route === 'help' && <Assistance />}
         {route === 'prices' && <Prices />}
+        {route === 'visits' && <Visits />}
       </main>
       <footer>
         <p>{t('ClearTab compares what you enter with published rules and prices. It is not legal or medical advice. Nothing you enter is stored, and there are no accounts.')}</p>

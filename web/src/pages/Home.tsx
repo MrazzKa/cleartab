@@ -17,6 +17,10 @@ export default function Home() {
           <span>{t('I think it’s wrong')}</span>
           <small>{t('Compare the bill with your insurance statement and the hospital’s own prices. Ambulance bills too. Get a letter to send.')}</small>
         </a>
+        <a className="choice" href="#/visits">
+          <span>{t('I have a pile of bills from one visit')}</span>
+          <small>{t('Put every bill, EOB and receipt in one place and see whom you really owe. Saved only on your phone.')}</small>
+        </a>
         <a className="choice" href="#/prices">
           <span>{t('I want a price before care')}</span>
           <small>{t('What Tucson and Phoenix hospitals published for 50 common procedures.')}</small>

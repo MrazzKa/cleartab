@@ -24,6 +24,7 @@ patient_payments and bill_lines.
 Return one JSON object with exactly these keys:
 {"document_type": "eob" | "bill" | "both" | "other",
  "provider_type": "facility" | "professional" | "ambulance" | "unknown",
+ "provider_name": string or null,          // the hospital, doctor group or ambulance company that billed
  "statement_date": "YYYY-MM-DD" or null,
  "claim_number": string or null,
  "balance_due": number or null,            // bill: amount due / balance / pay this amount
@@ -64,6 +65,7 @@ class ReadLine(BaseModel):
 class ReadResult(BaseModel):
     document_type: str = "other"
     provider_type: str = "unknown"
+    provider_name: str | None = Field(None, max_length=120)
     statement_date: str | None = None
     claim_number: str | None = None
     balance_due: float | None = None
