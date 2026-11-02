@@ -18,8 +18,11 @@ MAX_BYTES = 8 * 1024 * 1024
 TYPES = {"image/jpeg", "image/png", "image/webp"}
 
 PROMPT = """You read photos of US medical billing documents. Copy what is printed; do not calculate or guess.
+The photos may show an explanation of benefits (EOB) from an insurer, a bill from a provider, or both. Fill every
+section for every document you see: EOB values go in you_owe_total and eob_lines, bill values go in balance_due,
+patient_payments and bill_lines.
 Return one JSON object with exactly these keys:
-{"document_type": "eob" | "bill" | "other",
+{"document_type": "eob" | "bill" | "both" | "other",
  "provider_type": "facility" | "professional" | "ambulance" | "unknown",
  "statement_date": "YYYY-MM-DD" or null,
  "claim_number": string or null,
