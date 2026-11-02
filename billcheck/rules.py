@@ -472,11 +472,13 @@ class Checker:
         owed = self.eob_owe() if self.eob and self.ctx.coverage == "insured" else None
         if counts["error"]:
             verdict = "likely_errors"
-            headline = (f"We found {counts['error']} likely error(s)"
+            n = counts["error"]
+            headline = (f"We found {n} likely error{'s' if n > 1 else ''}"
                         + (f" worth up to {money(at_stake)}." if at_stake else "."))
         elif counts["warning"]:
             verdict = "questions"
-            headline = f"{counts['warning']} thing(s) to ask about before you pay."
+            n = counts["warning"]
+            headline = f"{n} thing{'s' if n > 1 else ''} to ask about before you pay."
         else:
             verdict = "looks_right"
             headline = "Nothing in what you entered looks wrong."

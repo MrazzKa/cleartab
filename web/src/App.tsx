@@ -1,35 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react'
+import Assistance from './pages/Assistance'
+import BillCheck from './pages/BillCheck'
+import Home from './pages/Home'
+import Prices from './pages/Prices'
 
-function App() {
-  const [count, setCount] = useState(0)
+type Route = 'home' | 'bill' | 'help' | 'prices'
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+const routeFromHash = (): Route => {
+  const h = window.location.hash.replace('#/', '')
+  return h === 'bill' || h === 'help' || h === 'prices' ? h : 'home'
 }
 
-export default App
+export default function App() {
+  const [route, setRoute] = useState<Route>(routeFromHash)
+  useEffect(() => {
+    const on = () => { setRoute(routeFromHash()); window.scrollTo(0, 0) }
+    window.addEventListener('hashchange', on)
+    return () => window.removeEventListener('hashchange', on)
+  }, [])
+
+  const link = (r: Route, label: string) => (
+    <a href={r === 'home' ? '#/' : `#/${r}`} aria-current={route === r ? 'page' : undefined}>{label}</a>
+  )
+
+  return (
+    <div className="shell">
+      <header className="topbar">
+        <a className="brand" href="#/">Clear<span>Tab</span></a>
+        <nav aria-label="Main">
+          {link('bill', 'Check a bill')}
+          {link('help', 'Help paying')}
+          {link('prices', 'Look up a price')}
+        </nav>
+      </header>
+      <main>
+        {route === 'home' && <Home />}
+        {route === 'bill' && <BillCheck />}
+        {route === 'help' && <Assistance />}
+        {route === 'prices' && <Prices />}
+      </main>
+      <footer>
+        <p>ClearTab compares what you enter with published rules and prices. It is not legal or medical advice.
+          Nothing you enter is stored, and there are no accounts.</p>
+        <p>Free and open source. University of Arizona ISTA 498 capstone, Team Trace, 2026.</p>
+      </footer>
+    </div>
+  )
+}

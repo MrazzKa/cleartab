@@ -146,3 +146,12 @@ Each phase appends a summary of at most 15 lines.
 - Normalization re-run on all 19 files: f4_coverage, f4_flag_log and every H2 ratio identical apart from timestamps. Database prices unchanged (they store the canonical insurer only), so no reload.
 - **H2 final: NOT MET.** Pooled median 1.92 (95% CI 1.82-2.40) < 2; Phoenix 2.81, Tucson 1.39; cash below median negotiated 1 of 50. Per Table 13 the project reframes around interpretation and provenance (to confirm with Dr. Li). Coverage final: 51.0% pooled with Mayo, 66.7% without, 70.7% mean of hospitals.
 - Reports (H2 REPORT, advisor_followup, coverage_followup), charts, brief and advisor pack updated to final.
+
+## v2 prototype: bill check and financial assistance (2026-11-02)
+- Direction changed within the same topic (instructor, 2026-10-27): from comparing prices before care to checking a bill after care. Plan: docs/PLAN_V2.md.
+- Evidence: Campus Health insurance office interview (main pain is reading the EOB and checking the bill); KFF 2022: 41% of US adults have medical or dental debt, 44% of them did not pay a bill in full because they were not sure it was correct; only 2 of 19 hospitals publish physician fees.
+- billcheck/: rule engine (EOB arithmetic, bill vs EOB, duplicates, CMS MUE units, CMS NCCI pairs, allowed vs published rate, self-pay vs cash price, No Surprises Act) with sources on every finding; dispute letter and phone script by template. POST /bill/check, GET /bill/cases (6 synthetic cases, prices from real files).
+- CMS MUE tables (2026 Q4) downloaded by `python -m billcheck.fetch_reference`; NCCI PTP tables need the AMA license click-through (MANUAL_DOWNLOADS.md), pair check skipped until then.
+- Financial assistance: policies of 8 systems covering 41 of 46 registry hospitals (data/processed/assistance_policies.json, 2026 HHS guidelines). Free care up to about 200% FPL at Banner, HonorHealth, Dignity and Mayo; Tenet and Northwest do not publish income limits; TMC's grid still uses 2025 guidelines. Same Banner policy: free care below 200% in Arizona, up to 250% in Colorado (state law). Second reader pending.
+- Web: home, bill check with examples and results, dispute kit, assistance finder, price lookup; mobile to 390 px checked.
+- Tests: 34 passed; ruff, eslint and tsc clean.
