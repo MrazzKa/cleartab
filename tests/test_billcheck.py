@@ -182,3 +182,23 @@ def test_reader_parses_model_json(monkeypatch):
     import pytest
     with pytest.raises(reader.ReaderError):
         reader.read_document([(b"x", "image/jpeg")])
+
+
+def test_ambulance_rates_from_adhs_schedule():
+    from billcheck.ambulance import find, parse
+    sample = """139 fp
+Alliance Ambulance of Arizona, LLC
+dba ABC Ambulance ( 1,047.08)      ( 932.33)         ( 14.36)   ( 233.08)      00117 04/17/26 Yes
+90 fp Action Medical Service Inc. - Ganado ( 1,644.37)      ( 1,644.37)      ( 20.33)   ( 411.07)      00117 04/17/26 No"""
+    rows = parse(sample)
+    assert [r["con"] for r in rows] == ["139", "90"]
+    assert rows[0]["als"] == 1047.08 and rows[0]["bls"] == 932.33 and rows[0]["mileage"] == 14.36
+    assert rows[0]["supplies_separate"] == "Yes" and rows[1]["entity"] == "Action Medical Service Inc. - Ganado"
+    if find("108"):     # built from the ADHS PDF (python -m billcheck.ambulance)
+        req = {"context": {"coverage": "insured", "ambulance": "ground", "ambulance_con": "108", "transported": False},
+               "bill": {"provider_type": "ambulance", "balance_due": 1950,
+                        "lines": [{"code": "A0427", "amount": 1950}, {"code": "A0425", "units": 4, "amount": 180}]}}
+        res = check(CheckRequest(**req))
+        over = [f for f in res.findings if f.rule == "ambulance_over_rate"]
+        assert len(over) == 2 and all(f.severity == "error" for f in over)
+        assert rules(res)["ambulance_no_transport"] == "warning"

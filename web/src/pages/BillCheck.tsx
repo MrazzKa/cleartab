@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { api, money, reader, shrinkPhoto } from '../api'
+import { ambulanceServices, api, money, reader, shrinkPhoto } from '../api'
+import type { AmbulanceService } from '../api'
 import type { CheckRequest, CheckResult } from '../api'
 import DetailedCheck from './DetailedCheck'
 import Results from './Results'
@@ -17,6 +18,10 @@ interface Answers {
   emergency?: boolean
   ambulance?: 'none' | 'ground' | 'air'
   network?: 'in' | 'out' | 'unknown'
+  con?: string
+  level?: 'als' | 'bls' | 'unknown'
+  miles?: number | null
+  transported?: boolean
 }
 
 const num = (v: string) => (v.trim() === '' ? null : Number(v))
@@ -58,7 +63,8 @@ export default function BillCheck() {
   const [reading, setReading] = useState(false)
   const [readNote, setReadNote] = useState('')
 
-  useEffect(() => { reader.status().then(setCanRead) }, [])
+  const [services, setServices] = useState<AmbulanceService[]>([])
+  useEffect(() => { reader.status().then(setCanRead); ambulanceServices().then(setServices) }, [])
 
   const onPhotos = async (files: FileList | null) => {
     if (!files || files.length === 0) return
@@ -98,6 +104,8 @@ export default function BillCheck() {
       context: {
         coverage: insured ? 'insured' : 'self_pay', network: a.network ?? 'unknown', emergency: !!a.emergency,
         ambulance: a.ambulance ?? 'none', good_faith_estimate: insured ? null : a.gfe ?? null,
+        ambulance_con: a.ambulance === 'ground' ? a.con || null : null, ambulance_level: a.level ?? 'unknown',
+        ambulance_miles: a.miles ?? null, transported: a.ambulance === 'ground' ? a.transported ?? null : null,
         gfe_received: !insured && a.gfe != null,
       },
       eob: insured && hasEob ? { lines: [], you_owe_total: a.eobOwe ?? null } : null,
@@ -195,6 +203,30 @@ export default function BillCheck() {
               <button key={v} type="button" aria-pressed={(a.ambulance ?? 'none') === v} onClick={() => set({ ambulance: v })}>{l}</button>
             ))}
           </div>
+          {a.ambulance === 'ground' && (
+            <div className="card stack">
+              <p className="small muted">Arizona sets the most each ambulance service may charge (A.R.S. 36-2239). Tell us
+                which one sent the bill and we’ll compare.</p>
+              <label className="field">Ambulance service (name on the bill)
+                <select value={a.con ?? ''} onChange={(e) => set({ con: e.target.value })}>
+                  <option value="">Not sure / not listed</option>
+                  {services.map((x) => <option key={x.con} value={x.con}>{x.entity.includes(' dba ') ? x.entity.split(' dba ').slice(-1)[0] : x.entity}</option>)}
+                </select>
+              </label>
+              <div className="seg" role="group" aria-label="Level of care">
+                {([['als', 'Advanced (ALS)'], ['bls', 'Basic (BLS)'], ['unknown', "Don't know"]] as const).map(([v, l]) => (
+                  <button key={v} type="button" aria-pressed={(a.level ?? 'unknown') === v} onClick={() => set({ level: v })}>{l}</button>
+                ))}
+              </div>
+              <label className="field">Miles driven, if the bill shows them
+                <input type="number" inputMode="decimal" min="0" value={a.miles ?? ''} onChange={(e) => set({ miles: num(e.target.value) })} />
+              </label>
+              <div className="seg" role="group" aria-label="Were you taken to the hospital?">
+                <button type="button" aria-pressed={a.transported !== false} onClick={() => set({ transported: true })}>Taken to hospital</button>
+                <button type="button" aria-pressed={a.transported === false} onClick={() => set({ transported: false })}>Not taken / I refused</button>
+              </div>
+            </div>
+          )}
           <div className="row">
             <button type="button" onClick={run} disabled={busy}>{busy ? 'Checking…' : 'Check my bill'}</button>
           </div>

@@ -38,6 +38,10 @@ export interface Context {
   network: 'in' | 'out' | 'unknown'
   emergency: boolean
   ambulance: 'none' | 'ground' | 'air'
+  ambulance_con?: string | null
+  ambulance_level?: 'als' | 'bls' | 'ccs' | 'unknown'
+  ambulance_miles?: number | null
+  transported?: boolean | null
   good_faith_estimate?: number | null
   gfe_received: boolean
   today?: string | null
@@ -155,6 +159,10 @@ export async function shrinkPhoto(file: File): Promise<{ data: string; type: str
   const url = c.toDataURL('image/jpeg', 0.85)
   return { data: url.split(',')[1], type: 'image/jpeg' }
 }
+
+export interface AmbulanceService { con: string; entity: string; rate_group: string; als: number; bls: number | null; mileage: number }
+export const ambulanceServices = () =>
+  call<{ services: AmbulanceService[] }>('/ambulance/services').then((x) => x.services).catch(() => [] as AmbulanceService[])
 
 export const money = (x: number | null | undefined) =>
   x == null ? '-' : x.toLocaleString('en-US', { style: 'currency', currency: 'USD' })

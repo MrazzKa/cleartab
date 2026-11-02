@@ -431,6 +431,88 @@ class Checker:
                      explanation=f"Estimate {money(x.good_faith_estimate)}, billed {money(total)}.",
                      sources=[src("nsa_dispute")])
 
+    # ------------------------------------------------------------------ Arizona ground ambulance (ADHS rates)
+    BASE_CODES = {"A0427": "als", "A0433": "als", "A0429": "bls", "A0434": "ccs"}
+    MILEAGE_CODE = "A0425"
+
+    def ambulance_rates(self) -> None:
+        x = self.ctx
+        if x.ambulance != "ground" or not x.ambulance_con:
+            if x.ambulance == "ground":
+                self.skipped["az_ambulance_rate"] = "ambulance company not selected"
+            return
+        from billcheck.ambulance import find
+        r = find(x.ambulance_con)
+        if not r:
+            self.skipped["az_ambulance_rate"] = "ambulance company not in the ADHS schedule"
+            return
+        self.run.append("az_ambulance_rate")
+        name = r["entity"].split(" dba ")[-1] if " dba " in r["entity"] else r["entity"]
+        srcs = [src("adhs_ambulance", as_of=r["schedule_prepared"]), src("ars_36_2239")]
+        ev = {"company": r["entity"], "als": r["als"], "bls": r["bls"], "ccs": r["ccs"], "per_mile": r["mileage"],
+              "supplies_may_be_charged": r["supplies_separate"], "rate_effective": r["effective"]}
+        lines = self.bill.lines if self.bill else []
+        coded = False
+        for i, bl in enumerate(lines, 1):
+            code = (bl.code or "").upper()
+            per_unit = bl.amount / bl.units
+            if code in self.BASE_CODES and r.get(self.BASE_CODES[code]):
+                coded = True
+                cap = r[self.BASE_CODES[code]]
+                if per_unit > cap + 0.01:
+                    self.add(rule="ambulance_over_rate", severity="error", lines=[i], evidence={**ev, "billed": per_unit},
+                             title=f"Ambulance base charge is above the rate Arizona approved for {name}",
+                             explanation=(f"ADHS set {name}'s {self.BASE_CODES[code].upper()} base rate at "
+                                          f"{money(cap)}. The bill charges {money(c(per_unit))}. Arizona law (A.R.S. "
+                                          "36-2239) says an ambulance service may not charge more than the approved rate."),
+                             action="Ask the ambulance company to correct the charge to the ADHS-approved rate. If they "
+                                    "refuse, you can file a complaint with the ADHS Bureau of EMS.",
+                             amount_at_stake=c(per_unit - cap), sources=srcs)
+            if code == self.MILEAGE_CODE and r.get("mileage"):
+                coded = True
+                if per_unit > r["mileage"] + 0.01:
+                    self.add(rule="ambulance_over_rate", severity="error", lines=[i],
+                             evidence={**ev, "billed_per_mile": c(per_unit)},
+                             title=f"Ambulance mileage is above the rate Arizona approved for {name}",
+                             explanation=(f"ADHS set {name}'s rate at {money(r['mileage'])} per mile. The bill charges "
+                                          f"{money(c(per_unit))} per mile."),
+                             action="Ask the ambulance company to correct the mileage charge.",
+                             amount_at_stake=c((per_unit - r["mileage"]) * bl.units), sources=srcs)
+        if not coded and self.bill:
+            b = self.bill
+            total = c(sum(bl.amount for bl in lines)) if lines else c((b.balance_due or 0) + b.patient_payments
+                                                                      + b.insurance_paid + b.adjustments)
+            level = x.ambulance_level if x.ambulance_level in ("als", "bls", "ccs") and r.get(x.ambulance_level) else "als"
+            cap = r[level] + (r["mileage"] * x.ambulance_miles if x.ambulance_miles else 0)
+            if total > cap + 0.01:
+                supplies = r["supplies_separate"] in ("Yes", "only Oxygen")
+                self.add(rule="ambulance_over_rate", severity="warning" if supplies or not x.ambulance_miles else "error",
+                         evidence={**ev, "billed_total": total, "approved_base_plus_mileage": c(cap)},
+                         title=f"The ambulance bill is above Arizona's approved rate for {name}",
+                         explanation=(f"ADHS approved {money(r[level])} as {name}'s {level.upper()} base rate"
+                                      + (f" plus {money(r['mileage'])} per mile, {money(c(cap))} for "
+                                         f"{x.ambulance_miles:g} miles" if x.ambulance_miles else "")
+                                      + f". The bill totals {money(total)}."
+                                      + (" Supplies, medication and oxygen may be charged on top, at prices filed "
+                                         "with ADHS." if supplies else "")),
+                         action="Ask for an itemized bill with HCPCS codes (A0427, A0429, A0425) and the loaded miles, "
+                                "then compare each line with the approved rates.",
+                         amount_at_stake=c(total - cap) if not supplies else None, sources=srcs)
+            else:
+                self.add(rule="ambulance_within_rate", severity="ok", evidence=ev, sources=srcs,
+                         title=f"The ambulance bill is within Arizona's approved rate for {name}",
+                         explanation=f"Approved: {money(r[level])} base"
+                                     + (f" plus {money(r['mileage'])} per mile" if r.get("mileage") else "") + ".")
+        if x.transported is False:
+            self.add(rule="ambulance_no_transport", severity="warning", evidence=ev, sources=srcs,
+                     title="You were not taken to the hospital",
+                     explanation=("Under Arizona law an ambulance service may charge the advanced life support base "
+                                  "rate without transport only if you received advanced life support care. If you "
+                                  "declined treatment or transport, the law lets the service provide the call free of "
+                                  "charge (A.R.S. 36-2239(K))."),
+                     action=("Ask what care you were billed for. If you declined care, ask them to treat the call as "
+                             "gratuitous under A.R.S. 36-2239(K)."))
+
     # ------------------------------------------------------------------ documents the patient should have
     def paperwork(self) -> None:
         b = self.bill
@@ -453,7 +535,8 @@ class Checker:
 
     # ------------------------------------------------------------------
     BILL_TOTALS = ("balance_over_eob", "gfe_dispute")          # whole-bill differences
-    BILL_LINES = ("duplicate_line", "bill_line_not_on_eob", "mue_units", "ncci_pair", "self_pay_over_cash")
+    BILL_LINES = ("duplicate_line", "bill_line_not_on_eob", "mue_units", "ncci_pair", "self_pay_over_cash",
+                  "ambulance_over_rate")
     EOB_SIDE = ("allowed_vs_published", "eob_denied")          # amounts decided by the insurer
 
     def amount_at_stake(self) -> float:
@@ -476,7 +559,7 @@ class Checker:
                                                headline="Enter your EOB, your bill, or both."),
                                findings=[], checks_run=[])
         for step in (self.eob_arithmetic, self.bill_vs_eob, self.duplicates, self.units_mue, self.code_pairs,
-                     self.published, self.surprises, self.paperwork):
+                     self.published, self.surprises, self.ambulance_rates, self.paperwork):
             step()
         order = {"error": 0, "warning": 1, "info": 2, "ok": 3}
         self.findings.sort(key=lambda f: (order[f.severity], -(f.amount_at_stake or 0)))
@@ -484,7 +567,8 @@ class Checker:
         at_stake = self.amount_at_stake()
         balance = self.bill.balance_due if self.bill else None
         owed = self.eob_owe() if self.eob and self.ctx.coverage == "insured" else None
-        compared = bool(set(self.run) & {"bill_vs_eob", "published_prices", "duplicates", "mue_units", "ncci_ptp"}) \
+        compared = bool(set(self.run) & {"bill_vs_eob", "published_prices", "duplicates", "mue_units", "ncci_ptp",
+                                         "az_ambulance_rate"}) \
             or any(f.rule in ("gfe_dispute", "gfe_within", "balance_matches_eob") for f in self.findings)
         if counts["error"]:
             verdict = "likely_errors"

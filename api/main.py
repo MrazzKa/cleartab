@@ -298,3 +298,13 @@ def bill_read(req: _ReadRequest):
         raise HTTPException(422, str(e)) from e
     except ValueError as e:
         raise HTTPException(400, "The photo data is not valid.") from e
+
+
+# ---------------------------------------------------------------- v2: Arizona ground ambulance services (ADHS rates)
+from billcheck.ambulance import rates as _ambulance_rates  # noqa: E402
+
+
+@app.get("/ambulance/services")
+def ambulance_services():
+    """ADHS-approved ground ambulance rates per service (data/processed/az_ground_ambulance_rates.csv)."""
+    return {"services": sorted(_ambulance_rates(), key=lambda r: r["entity"])}

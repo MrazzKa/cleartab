@@ -15,6 +15,8 @@ ASK = {
     "self_pay_over_cash": "apply your published discounted cash price to this service",
     "gfe_dispute": "review the charges above your good faith estimate",
     "eob_denied": "correct and resubmit the denied claim, or tell me what information is missing",
+    "ambulance_over_rate": "correct the charges to the rates approved by the Arizona Department of Health Services",
+    "ambulance_no_transport": "explain what care I was billed for, or treat the call as gratuitous under A.R.S. 36-2239(K)",
 }
 
 
@@ -49,6 +51,10 @@ def statement(f: Finding) -> str:
     if f.rule == "gfe_dispute":
         return (f"My good faith estimate was {m(e['good_faith_estimate'])}, and the bill totals "
                 f"{m(e['billed_total'])}, {m(f.amount_at_stake)} more.")
+    if f.rule == "ambulance_over_rate":
+        return f.explanation.split(" Arizona law")[0].split(" Supplies")[0]
+    if f.rule == "ambulance_no_transport":
+        return "I was not transported to a hospital."
     if f.rule == "eob_denied":
         return "My insurer denied this claim."
     return f.title + "."
@@ -66,7 +72,8 @@ def build_kit(req: CheckRequest, res: CheckResult) -> tuple[str, list[str]]:
         f"Re: Account [Account number], claim {claim}, date of service [Date of service]", "",
         "Hello,", "",
         ("I compared my bill with your published prices and my good faith estimate"
-         if req.context.coverage == "self_pay" else "I compared my bill with my explanation of benefits")
+         if req.context.coverage == "self_pay" else "I compared my bill with my explanation of benefits"
+         if req.eob else "I reviewed my bill against the rates that apply to it")
         + " and have questions about the charges below. "
         "Please put this account on hold while you review it, and do not send it to collections.", "",
     ]

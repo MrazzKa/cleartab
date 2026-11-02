@@ -62,6 +62,10 @@ class Context(BaseModel):
     network: Literal["in", "out", "unknown"] = "unknown"
     emergency: bool = False
     ambulance: Literal["none", "ground", "air"] = "none"
+    ambulance_con: str | None = Field(None, max_length=10, description="ADHS certificate of necessity number")
+    ambulance_level: Literal["als", "bls", "ccs", "unknown"] = "unknown"
+    ambulance_miles: float | None = Field(None, ge=0, le=1000)
+    transported: bool | None = None
     good_faith_estimate: Money | None = Field(None, ge=0, description="self-pay: the provider's estimate total")
     gfe_received: bool = False
     today: date | None = None
