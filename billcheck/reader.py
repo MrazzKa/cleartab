@@ -98,10 +98,14 @@ def read_document(images: list[tuple[bytes, str]], session=requests) -> ReadResu
                         "image_url": {"url": f"data:{ctype};base64,{base64.b64encode(data).decode()}"}})
     body = {"model": MODEL, "temperature": 0, "response_format": {"type": "json_object"},
             "messages": [{"role": "user", "content": content}]}
+    if MODEL.startswith("qwen/"):
+        body["reasoning_effort"] = "none"
     try:
         r = session.post(GROQ_URL, json=body, timeout=60, headers={"Authorization": f"Bearer {key}"})
     except requests.RequestException as e:
         raise ReaderError("The photo reader did not respond. Try again or enter the numbers by hand.") from e
+    if r.status_code == 429:
+        raise ReaderError("The photo reader is busy (429). Wait a minute and try again.")
     if r.status_code != 200:
         raise ReaderError(f"The photo reader returned an error ({r.status_code}). Enter the numbers by hand.")
     try:

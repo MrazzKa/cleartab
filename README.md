@@ -29,6 +29,7 @@ export DATABASE_URL=postgresql://cleartab:cleartab@localhost:5432/cleartab
 .venv/bin/python -m pipeline.load_registry   # load data/processed/hospital_registry.csv
 .venv/bin/python -m pipeline.run             # ETL: download, validate, parse, normalize, load
 .venv/bin/python -m billcheck.fetch_reference  # CMS MUE tables into data/raw/reference (PTP: see MANUAL_DOWNLOADS.md)
+.venv/bin/python -m billcheck.build_ptp       # after the PTP zips are in data/raw/manual/ncci_ptp
 .venv/bin/uvicorn api.main:app --reload      # API on :8000
 cd web && npm install && npm run dev         # web app; /api is proxied to :8000 (CLEARTAB_API to change)
 ```

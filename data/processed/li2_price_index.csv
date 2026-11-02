@@ -1,0 +1,15 @@
+ccn,hospital,system,price_index,ci_low,ci_high,procedures,source_url,retrieved_at
+030036,Chandler Regional Medical Center,Dignity Health (CommonSpirit),0.8612,0.3205,0.9925,48,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+030030,Abrazo Central Campus,Abrazo (Tenet),0.8739,0.7274,0.8761,50,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+030107,Arizona Spine and Joint Hospital,USPI (independent site),0.8769,0.8757,0.8801,19,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+030064,Banner - University Medical Center Tucso,Banner Health,0.9754,0.9724,0.9823,46,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+030024,St. Joseph's Hospital and Medical Center,Dignity Health (CommonSpirit),0.9776,0.9733,0.9835,50,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+030022,Valleywise Health Medical Center,Valleywise Health,0.9877,0.9849,0.995,50,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+030006,Tucson Medical Center,TMC Health,0.99,0.9777,0.9931,50,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+030065,Banner Desert Medical Center,Banner Health,0.9952,0.9802,1.0023,44,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+030103,Mayo Clinic Hospital (Phoenix),Mayo Clinic,1.1197,1.1192,1.1238,14,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+030085,Northwest Medical Center,Northwest Healthcare,1.1735,1.1677,1.3212,45,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+030148,Northwest Medical Center Sahuarita,Northwest Healthcare,1.1735,1.1678,1.3068,44,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+030114,Oro Valley Hospital,Northwest Healthcare,1.2809,1.2221,1.4634,44,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+030038,HonorHealth Scottsdale Osborn Medical Ce,HonorHealth,1.4063,1.3524,1.4702,50,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+030092,HonorHealth Deer Valley Medical Center,HonorHealth,1.4063,1.3469,1.4708,50,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00

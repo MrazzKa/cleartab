@@ -14,6 +14,7 @@ Checked 2026-10-12 from this machine (see research/registry/recheck.csv and data
 | 030006 | Tucson Medical Center | robots.txt: `User-Agent: *  Disallow: /` (whole site) | https://www.tmcaz.com/cms-hpt.txt first, then https://www.tmcaz.com/en/price-transparency | data/raw/manual/030006_<original file name>, and paste the cms-hpt.txt text into data/raw/manual/030006_cms-hpt.txt |
 | 030138 | City of Hope Cancer Center Phoenix (Goodyear) | site returns HTTP 403 to ClearTab's downloader for robots.txt and the price page | https://www.cityofhope.org/cms-hpt.txt, then the City of Hope price transparency page; look for the Phoenix (Goodyear) location | data/raw/manual/030138_<original file name>, or write "not found" in the table below |
 | 030112 | Arizona Orthopedic and Surgical Specialty Hospital | www.azosh.com fails the TLS handshake and returns Cloudflare error 1001 over HTTP (site not reachable from this machine) | https://www.azosh.com/cms-hpt.txt; if the site is down for you too, search for the hospital's current website | data/raw/manual/030112_<original file name>, or "not found" |
+| CMS NCCI PTP | Timur Kamarayev | 2026-11-02 | cms.gov Medicare NCCI PTP edits page, 2026 Q4 (v323r0), AMA license accepted | ccioph-v323r0-f1..f4.zip (hospital outpatient), ccipra-v323r0-f1..f4.zip (practitioner) | 1,406,699 and 1,732,820 pairs active on 2026-10-01 after build_ptp |
 
 Note on the Northwest HEAD requests: on 2026-10-12 a first version of the robots.txt checker did not
 understand the `*` wildcard and sent one HEAD request (headers only, no body) to each of the three Northwest
@@ -34,7 +35,8 @@ on cms.gov, so a team member downloads them by hand after reading and accepting 
    (f1-f4); accept the license when asked.
 3. Put the zip files, unchanged, in `data/raw/manual/ncci_ptp/` (gitignored). Do not commit them: CPT content is
    AMA copyrighted.
-4. Record the download in the table below. The API picks the files up on its next start.
+4. Run `python -m billcheck.build_ptp` (about a minute) to build data/raw/reference/ncci_ptp.sqlite.
+5. Record the download in the table below.
 
 The MUE tables have no click-through and are downloaded by `python -m billcheck.fetch_reference`.
 

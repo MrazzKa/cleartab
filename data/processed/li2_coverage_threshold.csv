@@ -1,0 +1,14 @@
+threshold_pct,hospitals_passing,hospitals,pooled_with_mayo_passes,pooled_without_mayo_passes,mean_of_hospitals_passes,source_url,retrieved_at
+30,14,14,True,True,True,data/processed/coverage_followup_hospitals.csv,2026-11-02T10:23:32+00:00
+35,14,14,True,True,True,data/processed/coverage_followup_hospitals.csv,2026-11-02T10:23:32+00:00
+40,13,14,True,True,True,data/processed/coverage_followup_hospitals.csv,2026-11-02T10:23:32+00:00
+45,12,14,True,True,True,data/processed/coverage_followup_hospitals.csv,2026-11-02T10:23:32+00:00
+50,11,14,True,True,True,data/processed/coverage_followup_hospitals.csv,2026-11-02T10:23:32+00:00
+55,11,14,False,True,True,data/processed/coverage_followup_hospitals.csv,2026-11-02T10:23:32+00:00
+60,9,14,False,True,True,data/processed/coverage_followup_hospitals.csv,2026-11-02T10:23:32+00:00
+65,9,14,False,True,True,data/processed/coverage_followup_hospitals.csv,2026-11-02T10:23:32+00:00
+70,6,14,False,False,True,data/processed/coverage_followup_hospitals.csv,2026-11-02T10:23:32+00:00
+75,6,14,False,False,False,data/processed/coverage_followup_hospitals.csv,2026-11-02T10:23:32+00:00
+80,5,14,False,False,False,data/processed/coverage_followup_hospitals.csv,2026-11-02T10:23:32+00:00
+85,4,14,False,False,False,data/processed/coverage_followup_hospitals.csv,2026-11-02T10:23:32+00:00
+90,4,14,False,False,False,data/processed/coverage_followup_hospitals.csv,2026-11-02T10:23:32+00:00

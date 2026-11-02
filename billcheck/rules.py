@@ -260,7 +260,7 @@ class Checker:
                  sources=[src("mue", as_of=e.as_of)])
 
     def code_pairs(self) -> None:
-        if not self.ptp or not self.ptp.pairs:
+        if self.ptp is None:
             self.skipped["ncci_ptp"] = "CMS procedure-to-procedure table not loaded (manual download)"
             return
         rows = [(bl.service_date, bl.code, i) for i, bl in enumerate(self.bill.lines if self.bill else [], 1) if bl.code]
@@ -285,7 +285,7 @@ class Checker:
                                              ", unless a modifier shows they were separate services.")),
                              action=f"Ask the billing office why {b} is billed separately from {a}.",
                              evidence={"column_1": a, "column_2": b, "modifier_indicator": mod},
-                             sources=[src("ptp")])
+                             sources=[src("ptp", as_of=f"{self.ptp.table} {self.ptp.as_of}".strip())])
 
     # ------------------------------------------------------------------ against published prices
     def published(self) -> None:

@@ -4,14 +4,16 @@ CMS NCCI tables carry CPT codes under the AMA license, so they are read from dat
 committed:
 - MUE (medically unlikely edits): data/raw/reference/medicare-ncci-<year>-q<q>-*-mue-table.zip, downloaded by
   `python -m billcheck.fetch_reference`.
-- PTP (procedure-to-procedure edits): behind the AMA license click-through on cms.gov, so a team member downloads
-  them by hand into data/raw/manual/ncci_ptp/ (see MANUAL_DOWNLOADS.md). Without them the pair check is skipped
-  and the result says so.
+- PTP (procedure-to-procedure edits): behind the AMA license click-through on cms.gov (robots.txt disallows
+  /license/ for automated clients), so a team member downloads them by hand into data/raw/manual/ncci_ptp/ (see
+  MANUAL_DOWNLOADS.md); `python -m billcheck.build_ptp` turns them into data/raw/reference/ncci_ptp.sqlite.
+  Without it the pair check is skipped and the result says so.
 """
 import csv
 import glob
 import io
 import re
+import sqlite3
 import zipfile
 from dataclasses import dataclass, field
 from functools import lru_cache
@@ -75,43 +77,79 @@ def load_mue() -> dict[str, dict[str, MueEdit]]:
 
 @dataclass
 class PtpTable:
-    pairs: dict[str, dict[str, str]] = field(default_factory=dict)   # column 1 code -> {column 2 code: modifier}
-    files: list[str] = field(default_factory=list)
+    """Active PTP pairs for the codes in one request: column 1 code -> {column 2 code: modifier indicator}."""
+    pairs: dict[str, dict[str, str]] = field(default_factory=dict)
+    table: str = ""
+    as_of: str = ""
+
+
+PTP_DB = REFERENCE / "ncci_ptp.sqlite"
+CODE = re.compile(r"[0-9A-Z]{5}")
+PTP_FILES = {"facility outpatient": "ccioph-*.zip", "practitioner": "ccipra-*.zip"}
+
+
+def build_ptp(active_on: str = "20261001") -> dict[str, int]:
+    """Load the CMS PTP text files from data/raw/manual/ncci_ptp/ into data/raw/reference/ncci_ptp.sqlite.
+
+    Text files are tab separated: Column 1, Column 2, *, Effective date, Deletion date ('*' = none), Modifier
+    (0 = never together, 1 = allowed with a modifier, 9 = not applicable), Rationale. Kept: pairs still active on
+    `active_on` with modifier 0 or 1.
+    """
+    REFERENCE.mkdir(parents=True, exist_ok=True)
+    tmp = PTP_DB.with_suffix(".tmp")
+    tmp.unlink(missing_ok=True)
+    db = sqlite3.connect(tmp)
+    db.execute("CREATE TABLE ptp (tbl TEXT, c1 TEXT, c2 TEXT, modifier TEXT, PRIMARY KEY (tbl, c1, c2))")
+    db.execute("CREATE TABLE meta (k TEXT PRIMARY KEY, v TEXT)")
+    counts = {}
+    for table, pattern in PTP_FILES.items():
+        files = sorted(glob.glob(str(PTP_DIR / pattern)))
+        rows = []
+        for path in files:
+            for line in _ptp_lines(path):
+                parts = line.rstrip("\n").split("\t")
+                if len(parts) < 6 or not (CODE.fullmatch(parts[0]) and CODE.fullmatch(parts[1])):
+                    continue
+                deletion, modifier = parts[4].strip(), parts[5].strip()
+                if modifier in ("0", "1") and (deletion == "*" or deletion >= active_on):
+                    rows.append((table, parts[0], parts[1], modifier))
+        db.executemany("INSERT OR REPLACE INTO ptp VALUES (?, ?, ?, ?)", rows)
+        counts[table] = len(rows)
+        version = re.search(r"v\d+r\d+", " ".join(files))
+        db.execute("INSERT OR REPLACE INTO meta VALUES (?, ?)", (table, version.group(0) if version else ""))
+    db.commit()
+    db.close()
+    tmp.replace(PTP_DB)
+    return counts
 
 
 def _ptp_lines(path: str):
-    if path.lower().endswith(".zip"):
-        z = zipfile.ZipFile(path)
-        for n in z.namelist():
-            if n.lower().endswith((".txt", ".csv")):
-                yield from io.TextIOWrapper(z.open(n), encoding="latin-1")
-    else:
-        with open(path, encoding="latin-1") as f:
-            yield from f
+    z = zipfile.ZipFile(path)
+    for n in z.namelist():
+        if n.lower().endswith(".txt"):
+            yield from io.TextIOWrapper(z.open(n), encoding="latin-1")
 
 
-@lru_cache(maxsize=1)
-def load_ptp() -> PtpTable:
-    """Active PTP pairs from whatever CMS files are in data/raw/manual/ncci_ptp/ (zip, txt or csv).
+def ptp_available() -> bool:
+    return PTP_DB.exists()
 
-    CMS text files are tab separated with columns Column 1, Column 2, *, Effective Date, Deletion Date,
-    Modifier (0 = never together, 1 = allowed with an appropriate modifier, 9 = not applicable), Rationale.
-    """
-    t = PtpTable()
-    for path in sorted(glob.glob(str(PTP_DIR / "*"))):
-        if not path.lower().endswith((".zip", ".txt", ".csv")):
-            continue
-        t.files.append(path)
-        for line in _ptp_lines(path):
-            parts = [p.strip() for p in re.split(r"\t|,", line.rstrip("\n"))]
-            if len(parts) < 6 or not re.fullmatch(r"[0-9A-Z]{5}", parts[0] or "") \
-                    or not re.fullmatch(r"[0-9A-Z]{5}", parts[1] or ""):
-                continue
-            deletion, modifier = parts[4], parts[5]
-            if deletion not in ("*", "", "99991231") or modifier not in ("0", "1"):
-                continue
-            t.pairs.setdefault(parts[0], {})[parts[1]] = modifier
-    return t
+
+def load_ptp_for(codes: list[str], table: str) -> PtpTable | None:
+    """Pairs among `codes` from the local PTP database, or None when it was not built."""
+    if not PTP_DB.exists():
+        return None
+    db = sqlite3.connect(f"file:{PTP_DB}?mode=ro", uri=True)
+    try:
+        q = ",".join("?" * len(codes)) or "''"
+        t = PtpTable(table=table)
+        for c1, c2, mod in db.execute(f"SELECT c1, c2, modifier FROM ptp WHERE tbl = ? AND c1 IN ({q}) AND c2 IN ({q})",
+                                      (table, *codes, *codes)):
+            t.pairs.setdefault(c1, {})[c2] = mod
+        row = db.execute("SELECT v FROM meta WHERE k = ?", (table,)).fetchone()
+        t.as_of = row[0] if row else ""
+        return t
+    finally:
+        db.close()
 
 
 PRICE_SQL = """
