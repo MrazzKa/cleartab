@@ -246,3 +246,18 @@ def hospitals():
                                       EXISTS (SELECT 1 FROM prices p WHERE p.hospital_id = h.id) AS has_prices
                                FROM hospitals h ORDER BY h.metro, h.name""").fetchall()
     return {"hospitals": rows}
+
+
+# ---------------------------------------------------------------- v2: financial assistance finder (Feature 9)
+from billcheck.assistance import AssistanceRequest, evaluate, policies  # noqa: E402
+
+
+@app.post("/assistance")
+def assistance(req: AssistanceRequest):
+    """Income and household size are used for this answer only; never logged or stored."""
+    return evaluate(req)
+
+
+@app.get("/assistance/policies")
+def assistance_policies():
+    return policies()

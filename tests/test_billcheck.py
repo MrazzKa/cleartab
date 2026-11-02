@@ -122,3 +122,17 @@ def test_code_pairs():
 def test_nothing_entered():
     res = check(CheckRequest())
     assert res.summary.verdict == "not_enough_data"
+
+
+def test_assistance_bands():
+    from billcheck.assistance import AssistanceRequest, evaluate, fpl_percent, poverty_line
+    assert poverty_line(1) == 15960 and poverty_line(4) == 33000
+    assert fpl_percent(66000, 4) == 200.0
+    res = {r["system"]: r for r in evaluate(AssistanceRequest(household_size=4, annual_income=66000))["results"]}
+    assert res["Banner Health"]["result"] == "75% discount off AGB"           # policy: free care below 200%
+    assert res["HonorHealth"]["status"] == "free"                            # 0-200% inclusive
+    assert res["Tenet (Abrazo, Carondelet)"]["status"] == "unknown"
+    res = {r["system"]: r for r in evaluate(AssistanceRequest(household_size=4, annual_income=66100))["results"]}
+    assert res["HonorHealth"]["result"].startswith("87%")
+    res = {r["system"]: r for r in evaluate(AssistanceRequest(household_size=1, annual_income=90000))["results"]}
+    assert res["Mayo Clinic"]["status"] == "above"
