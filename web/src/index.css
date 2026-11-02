@@ -144,3 +144,15 @@ button.link { background: none; border: none; color: var(--accent); padding: 0; 
   border-radius: var(--radius); font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px; text-align: center; }
 .photo.disabled { border-color: var(--rule); color: var(--muted); cursor: not-allowed; }
 .photo input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.big-choices .choice { text-decoration: none; min-height: 96px; font-size: 1.3rem; font-weight: 700; }
+.big-choices .choice small { font-size: 1rem; }
+.stepper { display: flex; align-items: center; gap: 20px; }
+.stepper button { width: 64px; height: 64px; font-size: 2rem; border-radius: 50%; padding: 0; }
+.big-number { font-size: 3rem; font-weight: 800; min-width: 2ch; text-align: center; font-variant-numeric: tabular-nums; }
+.lead { font-size: 1.15rem; font-weight: 600; }
+.verdict.info { background: var(--info-soft); border-color: var(--info); }
+ol.steps { margin: 0; padding-left: 1.3em; display: grid; gap: 14px; }
+ul.checklist { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 6px; }
+ul.checklist .check { font-weight: 400; align-items: flex-start; }
+a.button-link { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 16px; border-radius: 8px;
+  border: 1px solid var(--accent); color: var(--accent); font-weight: 700; text-decoration: none; }

@@ -101,6 +101,7 @@ export interface AssistanceResult {
   status: 'free' | 'discount' | 'above' | 'unknown' | 'not_eligible'
   result: string; nonprofit_501r: boolean; covers: string; window: string; how_to_apply: string
   phone: string | null; assets_test: string; notes: string; source_url: string; page_url: string; retrieved_at: string
+  application_url: string | null; documents: string[]; send_to: string; policy: string
 }
 
 export interface AssistanceResponse {

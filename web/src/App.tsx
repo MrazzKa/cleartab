@@ -28,9 +28,9 @@ export default function App() {
       <header className="topbar">
         <a className="brand" href="#/">Clear<span>Tab</span></a>
         <nav aria-label="Main">
-          {link('bill', 'Check a bill')}
-          {link('help', 'Help paying')}
-          {link('prices', 'Look up a price')}
+          {link('help', 'Lower my bill')}
+          {link('bill', 'Check my bill')}
+          {link('prices', 'Prices')}
         </nav>
       </header>
       <main>

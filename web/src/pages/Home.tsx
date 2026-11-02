@@ -2,38 +2,31 @@ export default function Home() {
   return (
     <div className="stack-lg">
       <section className="hero">
-        <h1>Got a medical bill you don't understand?</h1>
-        <p>Compare your bill with your insurer's explanation of benefits and with the prices the hospital itself
-          published. See what looks wrong, what to ask, and whether you qualify for help paying.</p>
+        <h1>Got a hospital bill?</h1>
+        <p>Free help for Arizona patients. No account, nothing stored. Pick what fits you best.</p>
       </section>
-      <div className="tiles">
-        <a className="card tile" href="#/bill">
-          <h2>Check a bill</h2>
-          <p className="muted">Enter your explanation of benefits (EOB) and your bill. We check the math, duplicate
-            charges, Medicare coding limits, published prices and your No Surprises Act rights.</p>
-          <span className="go">Start checking →</span>
+      <div className="choices big-choices">
+        <a className="choice" href="#/help">
+          <span>I can’t afford it</span>
+          <small>See if the hospital must lower it or forgive it, and get your application ready. About 1 minute.</small>
         </a>
-        <a className="card tile" href="#/help">
-          <h2>Get help paying</h2>
-          <p className="muted">Many Arizona hospitals must offer free or discounted care. Enter your household size
-            and income to see what each hospital's own policy says.</p>
-          <span className="go">See what you qualify for →</span>
+        <a className="choice" href="#/bill">
+          <span>I think it’s wrong</span>
+          <small>Compare the bill with your insurance statement and the hospital’s own prices. Get a letter to send.</small>
         </a>
-        <a className="card tile" href="#/prices">
-          <h2>Look up a price</h2>
-          <p className="muted">See what Tucson and Phoenix hospitals published for 50 common procedures: list
-            price, cash price and insurer rates, with the source file for every number.</p>
-          <span className="go">Search prices →</span>
+        <a className="choice" href="#/prices">
+          <span>I want a price before care</span>
+          <small>What Tucson and Phoenix hospitals published for 50 common procedures.</small>
         </a>
       </div>
       <section className="card stack">
-        <h2>Why this exists</h2>
-        <p>In a national KFF survey (2022), 41% of US adults had debt from medical or dental bills, and 44% of
-          them had not paid a bill in full because they were not sure it was correct. Hospitals now publish their
-          prices, but in files patients cannot open. ClearTab turns those files, and the federal billing rules, into
-          plain answers.</p>
-        <p className="small muted">Source: <a href="https://www.kff.org/health-costs/kff-health-care-debt-survey/"
-          target="_blank" rel="noreferrer">KFF Health Care Debt Survey</a>.</p>
+        <h2>Why this matters</h2>
+        <p>41% of US adults have debt from medical or dental bills, and 44% of them did not pay a bill in full because
+          they were not sure it was correct (KFF, 2022). Most people don’t know that nonprofit hospitals must offer
+          financial assistance.</p>
+        <p className="small muted">Sources: <a href="https://www.kff.org/health-costs/kff-health-care-debt-survey/" target="_blank"
+          rel="noreferrer">KFF Health Care Debt Survey</a>; <a href="https://www.irs.gov/charities-non-profits/billing-and-collections-section-501r6"
+          target="_blank" rel="noreferrer">IRS section 501(r)</a>.</p>
       </section>
     </div>
   )

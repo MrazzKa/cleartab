@@ -51,7 +51,14 @@
       "other_states_note": "Same policy, Colorado hospitals: free care up to 250% FPL under Colorado HB 24-1399 (Arizona: below 200%).",
       "source_url": "https://www.bannerhealth.com/-/media/files/project/bh/patients-visitors/billing/financial-assistance/2025-documents/banner-health-financial-assistance-policy-for-hospital-patients-770-v6092925100125.pdf",
       "page_url": "https://www.bannerhealth.com/patients/billing/financial-assistance/arizona-region",
-      "retrieved_at": "2026-11-02"
+      "retrieved_at": "2026-11-02",
+      "application_url": "https://www.bannerhealth.com/-/media/files/project/bh/patients-visitors/billing/financial-assistance/2025-documents/9999-0061-bh-summary-of-financial-assistance-programs-and-application.pdf",
+      "documents": [
+        "Last year's income tax return",
+        "Your 3 most recent pay stubs",
+        "Your 3 most recent checking and savings statements"
+      ],
+      "send_to": "By mail or email to the address on the application form, or in person at a Banner hospital."
     },
     {
       "system": "HonorHealth",
@@ -87,7 +94,14 @@
       "source_url": "https://www.honorhealth.com/sites/default/files/2026-06/financial-assistance-policy-english-26.pdf",
       "page_url": "https://www.honorhealth.com/patients-visitors/financial-assistance-policy",
       "retrieved_at": "2026-11-02",
-      "notes": "The full policy (2026-04-17) says discounted care is for income above 200% but less than 400%; the income guidelines say 201-400%. The full policy is used here."
+      "notes": "The full policy (2026-04-17) says discounted care is for income above 200% but less than 400%; the income guidelines say 201-400%. The full policy is used here.",
+      "application_url": "https://www.honorhealth.com/patients-visitors/financial-assistance-policy",
+      "documents": [
+        "Uninsured: the Basic Financial Assistance Attestation form",
+        "The Financial Assistance Application",
+        "Proof of household income"
+      ],
+      "send_to": "As described on the HonorHealth financial assistance page; questions: 623-300-9044."
     },
     {
       "system": "Dignity Health (CommonSpirit)",
@@ -123,7 +137,14 @@
       "source_url": "https://www.commonspirit.org/content/dam/shared/en/pdfs/finance/assistance/g-003-financial-assistance-policy-en.pdf",
       "page_url": "https://www.commonspirit.org/patient-resources/dignity-health-arizona-financial-assistance",
       "retrieved_at": "2026-11-02",
-      "notes": "Bands as written: at or below 200%, and at or above 201% but lower than 400%. Income between 200% and 201% falls between the two bands."
+      "notes": "Bands as written: at or below 200%, and at or above 201% but lower than 400%. Income between 200% and 201% falls between the two bands.",
+      "application_url": "https://www.commonspirit.org/patient-resources/dignity-health-arizona-financial-assistance",
+      "documents": [
+        "Proof of income for every adult in the family: last year's tax return, a W-2, 3 months of pay stubs, or signed statements from employers",
+        "Proof of assets: the last 3 months of bank statements",
+        "If you have no income: a signed page explaining how you pay for housing, food and utilities"
+      ],
+      "send_to": "Choose your hospital on the Dignity Health Arizona page; each form lists its mailing address and fax. A Social Security number is not required."
     },
     {
       "system": "TMC Health",
@@ -204,7 +225,17 @@
       "notes": "Grid dollar amounts use the 2025 poverty guidelines (revised 2025-03-20). Band mapping read from the grid header; the page example (family of four at 150% FPL gets 80% off the amount after insurance) matches it.",
       "source_url": "https://tmchdfdstorageprod.blob.core.windows.net/payload/documents/Sliding%20Scale.pdf",
       "page_url": "https://tmctucson.tmcaz.com/en/pay-my-bill/financial-assistance",
-      "retrieved_at": "2026-11-02"
+      "retrieved_at": "2026-11-02",
+      "application_url": "https://tmchdfdstorageprod.blob.core.windows.net/payload/documents/financial-assistance-application.pdf",
+      "documents": [
+        "Most recent W-2s and tax forms",
+        "Your last 3 pay stubs",
+        "Social Security or unemployment benefit letters, if any",
+        "Checking and savings statements",
+        "Rent receipt, lease or mortgage statement",
+        "Utility bills"
+      ],
+      "send_to": "TMC Business Office, PO Box 42195, Tucson, AZ; or in person at 5151 E. Broadway #155, Tucson, AZ 85711."
     },
     {
       "system": "Mayo Clinic",
@@ -240,7 +271,12 @@
       "source_url": "https://mcforms.mayo.edu/mc5800-mc5899/mc5815-65.pdf",
       "page_url": "https://www.mayoclinic.org/financialassistance",
       "retrieved_at": "2026-11-02",
-      "notes": "Insured patients qualify only if Mayo Clinic is in network for their plan."
+      "notes": "Insured patients qualify only if Mayo Clinic is in network for their plan.",
+      "application_url": "https://www.mayoclinic.org/financialassistance",
+      "documents": [
+        "Proof of household income and assets as listed on the application"
+      ],
+      "send_to": "Online through the Mayo Clinic patient portal, or as described at mayoclinic.org/financialassistance."
     },
     {
       "system": "Valleywise Health",
@@ -291,7 +327,12 @@
       "notes": "Schedule percentages are the share the patient pays (lower income, lower share). The schedule does not say whether the category rates apply to balances after insurance.",
       "source_url": "https://valleywisehealth.org/wp-content/uploads/2026/09/Valleywise-Health-Financial-Assistance-Unininsured-Discount-Schedule.pdf",
       "page_url": "https://valleywisehealth.org/patients/financial-assistance-and-discount-program-updates/",
-      "retrieved_at": "2026-11-02"
+      "retrieved_at": "2026-11-02",
+      "application_url": "https://valleywisehealth.org/patients/financial-assistance-and-discount-program-updates/",
+      "documents": [
+        "Ask financial counseling which documents they need"
+      ],
+      "send_to": "Valleywise financial counseling; call 602-344-8181."
     },
     {
       "system": "Tenet (Abrazo, Carondelet)",
@@ -321,7 +362,12 @@
       "notes": "Values from the second reader's reading of the Abrazo page; the site returns HTTP 403 to automated clients, so the first reader could not confirm them.",
       "source_url": "https://www.abrazohealth.com/patients/financial-assistance-program",
       "page_url": "https://www.abrazohealth.com/patients/financial-assistance-program",
-      "retrieved_at": "2026-11-02"
+      "retrieved_at": "2026-11-02",
+      "application_url": "https://www.abrazohealth.com/patients/financial-assistance-program",
+      "documents": [
+        "Information about household finances and supporting documents, as asked on the Financial Application"
+      ],
+      "send_to": "Call (800) 374-4637 for charity care or (866) 904-6871 for the uninsured discount."
     },
     {
       "system": "Northwest Healthcare",
@@ -343,7 +389,12 @@
       "notes": "Charity is 'based on multiples of the U.S. Federal Poverty Guidelines'; the multiples are not published on the page.",
       "source_url": "https://www.healthiertucson.com/financial-assistance-program",
       "page_url": "https://www.healthiertucson.com/financial-assistance-program",
-      "retrieved_at": "2026-11-02"
+      "retrieved_at": "2026-11-02",
+      "application_url": "https://www.healthiertucson.com/financial-assistance-program",
+      "documents": [
+        "The hospital's Financial Assistance Program application and proof of income"
+      ],
+      "send_to": "Ask the hospital's Customer Service, Patient Access Director or a financial counselor for the application."
     }
   ]
 }

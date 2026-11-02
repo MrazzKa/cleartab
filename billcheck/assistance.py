@@ -75,6 +75,8 @@ def evaluate(req: AssistanceRequest) -> dict:
         out.append({"system": s["system"], "registry_systems": s["registry_systems"], "status": status,
                     "result": label, "nonprofit_501r": s["nonprofit_501r"], "covers": s["covers"],
                     "window": s["window"], "how_to_apply": s["how_to_apply"], "phone": s["phone"],
+                    "application_url": s.get("application_url"), "documents": s.get("documents", []),
+                    "send_to": s.get("send_to", ""), "policy": s["policy"],
                     "assets_test": s["assets_test"], "notes": s.get("notes", ""),
                     "source_url": s["source_url"], "page_url": s["page_url"], "retrieved_at": s["retrieved_at"]})
     rank = {"free": 0, "discount": 1, "above": 2, "unknown": 3, "not_eligible": 4}
