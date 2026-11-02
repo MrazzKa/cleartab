@@ -149,24 +149,30 @@ def condition_c(cases: list[dict]) -> list[dict]:
             if c["id"] in done:
                 continue
             imgs = [((DATA / "images" / f"{c['id']}_{k}.png").read_bytes(), "image/png") for k in ("eob", "bill")]
-            for attempt in range(6):
+            rec = None
+            for attempt in range(15):
                 try:
                     r = read_document(imgs)
                     rec = {"id": c["id"], "read": r.model_dump()}
                     break
                 except ReaderError as e:
-                    if "429" in str(e) and attempt < 5:
-                        time.sleep(2 ** attempt * 3)
+                    if "429" in str(e):          # rate limit, not a reading failure: wait, never record it
+                        time.sleep(min(90, 10 * (attempt + 1)))
                         continue
                     rec = {"id": c["id"], "error": str(e)}
                     break
+            if rec is None:
+                continue
             f.write(json.dumps(rec) + "\n")
             f.flush()
             done[c["id"]] = rec
     out = []
     conn = db()
     for c in cases:
-        rec = done[c["id"]]
+        rec = done.get(c["id"])
+        if rec is None:
+            print(f"C: {c['id']} not read yet (rate limit); rerun to complete")
+            continue
         if "read" not in rec:
             out.append({"id": c["id"], "error": c["error"], "parsed": False, "detected": False, "category": False,
                         "amount": False, "read_totals": False})
