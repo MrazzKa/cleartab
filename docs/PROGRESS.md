@@ -155,3 +155,12 @@ Each phase appends a summary of at most 15 lines.
 - Financial assistance: policies of 8 systems covering 41 of 46 registry hospitals (data/processed/assistance_policies.json, 2026 HHS guidelines). Free care up to about 200% FPL at Banner, HonorHealth, Dignity and Mayo; Tenet and Northwest do not publish income limits; TMC's grid still uses 2025 guidelines. Same Banner policy: free care below 200% in Arizona, up to 250% in Colorado (state law). Second reader pending.
 - Web: home, bill check with examples and results, dispute kit, assistance finder, price lookup; mobile to 390 px checked.
 - Tests: 34 passed; ruff, eslint and tsc clean.
+
+## v2: guided flow, CMS pair check, Dr. Li round 2, R1 registry, R2 pilot (2026-11-02)
+- Quick check is now a guided flow (what you got, three amounts, network, ambulance); detailed line entry is optional. Bill without an EOB now says "wait for the EOB" instead of "looks right"; nothing to compare gives "not enough data".
+- Photo reading (F10): qwen/qwen3.8-27b on Groq, consent required, photos not stored; reads EOB and bill together. Installable web app (manifest, icon).
+- CMS NCCI PTP v323r0 downloaded by hand after the AMA license (cms.gov robots.txt disallows /license/); `python -m billcheck.build_ptp` builds 1,406,699 facility and 1,732,820 practitioner pairs active on 2026-10-01.
+- Dr. Li round 2 (research/h2/li_round2.md): H2 pooled 1.92 (1.82-2.39), Phoenix 2.81, Tucson 1.39, Phoenix at Tucson's system count 1.66 (1.47-1.86); Mayo a constant 1.12x the median hospital on its 14 comparable procedures; 60% coverage threshold on a 60-65% plateau (9 of 14 hospitals); random weights: ranks stable at both ends (Kendall tau median 0.86).
+- R1: 83 Arizona acute and critical access hospitals; 44 nonprofit (501(r)); policies collected for 41 hospitals, 16 nonprofit still to collect (data/processed/r1_az_hospitals.csv). Second-reader kit for the 8 collected policies: research/assistance/.
+- R2 pilot (exploratory, research/r2/REPORT.md): rules 100%; gpt-oss-120b caught 84% of errors, gpt-oss-20b 63%, qwen 43%; a payment not subtracted was caught once in 30 model answers. Photo reading + rules: 12 of 40 cases before the free daily token limit, all correct so far; rerun to complete.
+- Proposal revision draft (docs/PROPOSAL_V2_CHANGES.md) with H4-H6 decision rules; demo script (docs/MIDSEM_DEMO.md).
