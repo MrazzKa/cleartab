@@ -72,6 +72,7 @@ def groq(model: str, prompt: str) -> str:
             "messages": [{"role": "user", "content": prompt}]}
     if model.startswith("qwen/"):
         body["reasoning_effort"] = "none"       # keeps responses inside the free-tier token rate
+        body["max_completion_tokens"] = 600     # free tier: 1,000 output tokens per minute for this model
     for attempt in range(10):
         r = requests.post(GROQ, json=body, timeout=180, headers={"Authorization": f"Bearer {key}"})
         if r.status_code == 429 or r.status_code >= 500:
@@ -219,6 +220,7 @@ def main() -> None:
     ap.add_argument("--conditions", default="A,B")
     ap.add_argument("--models", default=",".join(MODELS))
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--c-per-type", type=int, default=4, help="condition C: cases per error type (none: twice)")
     args = ap.parse_args()
     cases, cats = load_cases()
     if args.limit:
@@ -232,7 +234,15 @@ def main() -> None:
         for m in args.models.split(","):
             results[f"B {m}"] = condition_b(cases, cats, m)
     if "C" in conds:
-        results["C qwen/qwen3.8-27b reads + rules"] = condition_c(cases)
+        sub, seen = [], {}
+        for c in cases:      # stratified: the first N cases of each error type in file order, 2N clean cases
+            k = 2 * args.c_per_type if c["error"] == "none" else args.c_per_type
+            if seen.get(c["error"], 0) < k:
+                sub.append(c)
+                seen[c["error"]] = seen.get(c["error"], 0) + 1
+        results["C qwen/qwen3.8-27b reads + rules"] = condition_c(sub)
+        results["A rules, same cases as C"] = [r for r in results.get("A rules", condition_a(sub))
+                                               if r["id"] in {c["id"] for c in sub}]
     for name, rows in results.items():
         summaries.append(summarize(name, rows))
         print(json.dumps(summaries[-1]))

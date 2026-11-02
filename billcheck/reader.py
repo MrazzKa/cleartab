@@ -100,6 +100,7 @@ def read_document(images: list[tuple[bytes, str]], session=requests) -> ReadResu
             "messages": [{"role": "user", "content": content}]}
     if MODEL.startswith("qwen/"):
         body["reasoning_effort"] = "none"
+        body["max_completion_tokens"] = 900    # Groq free tier caps this model at 1,000 output tokens per minute
     try:
         r = session.post(GROQ_URL, json=body, timeout=60, headers={"Authorization": f"Bearer {key}"})
     except requests.RequestException as e:
