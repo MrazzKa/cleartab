@@ -1,5 +1,5 @@
 {
-  "about": "Hospital financial assistance policies for the Tucson and Phoenix registry, by health system. Read by hand from each system's own documents on 2026-11-02; every value cites its source. 'Not published' means the source does not state it. Second-reader verification pending (team rule: two people).",
+  "about": "Hospital financial assistance policies for the Tucson and Phoenix registry, by health system. Read from each system's own documents; checked by a second reader (research/assistance/second_reader_completed.xlsx: 114 of 131 values agreed, 87.0%; the 17 disagreements were resolved against the documents). 'Not published' means the source does not state it.",
   "poverty_guidelines": {
     "year": 2026,
     "region": "48 contiguous states and DC",
@@ -12,15 +12,34 @@
   "systems": [
     {
       "system": "Banner Health",
-      "registry_systems": ["Banner Health"],
+      "registry_systems": [
+        "Banner Health"
+      ],
       "nonprofit_501r": true,
       "policy": "Banner Health Financial Assistance Policy for Hospital Patients, No. 770, version 6",
       "effective": "2025-07-01",
       "covers": "Banner hospitals; uninsured and underinsured patients; physician, home care and imaging bills have a separate policy",
       "tiers": [
-        {"max_fpl": 199.99, "discount_pct": 100, "uninsured": "100% discount off AGB", "insured": "100% discount off the balance after insurance"},
-        {"min_fpl": 200, "max_fpl": 300, "discount_pct": 75, "uninsured": "75% discount off AGB", "insured": "75% discount off the balance after insurance"},
-        {"min_fpl": 300.01, "max_fpl": 400, "discount_pct": 50, "uninsured": "50% discount off AGB", "insured": "50% discount off the balance after insurance"}
+        {
+          "max_fpl": 199.99,
+          "discount_pct": 100,
+          "uninsured": "100% discount off AGB",
+          "insured": "100% discount off the balance after insurance"
+        },
+        {
+          "min_fpl": 200,
+          "max_fpl": 300,
+          "discount_pct": 75,
+          "uninsured": "75% discount off AGB",
+          "insured": "75% discount off the balance after insurance"
+        },
+        {
+          "min_fpl": 300.01,
+          "max_fpl": 400,
+          "discount_pct": 50,
+          "uninsured": "50% discount off AGB",
+          "insured": "50% discount off the balance after insurance"
+        }
       ],
       "above_max": "Medically indigent household (medical expenses, Banner and non-Banner, above 50% of household income): 75% discount off the remaining balance or off the self-pay rate.",
       "insured_eligible": true,
@@ -36,64 +55,142 @@
     },
     {
       "system": "HonorHealth",
-      "registry_systems": ["HonorHealth"],
+      "registry_systems": [
+        "HonorHealth"
+      ],
       "nonprofit_501r": true,
-      "policy": "HonorHealth Hospital Facilities Financial Assistance Income Guidelines; plain language summary",
-      "effective": "2026-02-01",
+      "policy": "HonorHealth Financial Assistance Policy (full policy); Income Guidelines; plain language summary",
+      "effective": "2026-04-17 (full policy); income guidelines 2026-02-01",
       "covers": "HonorHealth hospitals and HonorHealth Medical Group clinics; facility charges only (not ER physicians, pathologists, radiologists, anesthesiologists)",
       "tiers": [
-        {"max_fpl": 200, "discount_pct": 100, "uninsured": "Free care", "insured": "Free care (application)"},
-        {"min_fpl": 201, "max_fpl": 400, "discount_pct": 87, "uninsured": "87% discount off total charges (attestation form)", "insured": "87% discount (application)"}
+        {
+          "max_fpl": 200,
+          "discount_pct": 100,
+          "uninsured": "Free care",
+          "insured": "Free care (application)"
+        },
+        {
+          "min_fpl": 200.01,
+          "max_fpl": 399.99,
+          "discount_pct": 87,
+          "uninsured": "87% discount off total charges (attestation form)",
+          "insured": "87% discount (application)"
+        }
       ],
       "above_max": "Medically indigent household: pays 13% of the patient liability (after insurance for insured patients).",
       "insured_eligible": true,
-      "assets_test": "Not published in the summary.",
-      "window": "Apply within 240 days of discharge; decision within about 30 days.",
+      "assets_test": "In extraordinary cases, assets that are disproportionately large compared with income may be treated as income.",
+      "window": "Apply within 240 days after the first post-discharge bill (can be longer); decision usually within 30 days of a complete application.",
       "max_charge": "Not more than amounts generally billed for emergency or medically necessary care.",
       "how_to_apply": "Uninsured: income attestation form. Insured: financial assistance application. May be asked to apply for Marketplace or public coverage first.",
-      "phone": "(480) 882-5207",
-      "source_url": "https://www.honorhealth.com/sites/default/files/2026-01/financial-assistance-income-guidelines.pdf",
-      "page_url": "https://www.honorhealth.com/sites/default/files/2026-02/plain-language-summary-english.pdf",
-      "retrieved_at": "2026-11-02"
+      "phone": "623-300-9044",
+      "source_url": "https://www.honorhealth.com/sites/default/files/2026-06/financial-assistance-policy-english-26.pdf",
+      "page_url": "https://www.honorhealth.com/patients-visitors/financial-assistance-policy",
+      "retrieved_at": "2026-11-02",
+      "notes": "The full policy (2026-04-17) says discounted care is for income above 200% but less than 400%; the income guidelines say 201-400%. The full policy is used here."
     },
     {
       "system": "Dignity Health (CommonSpirit)",
-      "registry_systems": ["Dignity Health (CommonSpirit)"],
+      "registry_systems": [
+        "Dignity Health (CommonSpirit)"
+      ],
       "nonprofit_501r": true,
-      "policy": "CommonSpirit Health Financial Assistance Policy (Dignity Health Arizona page)",
-      "effective": "not published on the page",
+      "policy": "CommonSpirit Health Financial Assistance Policy, Finance G-003",
+      "effective": "2026-07-01",
       "covers": "Uninsured and underinsured patients at Dignity Health Arizona facilities",
       "tiers": [
-        {"max_fpl": 200, "discount_pct": 100, "uninsured": "100% discount (charity care)", "insured": "100% discount off the balance"},
-        {"min_fpl": 201, "max_fpl": 400, "discount_pct": null, "uninsured": "Balance reduced to the amount generally billed (AGB)", "insured": "Balance reduced to AGB"}
+        {
+          "max_fpl": 200,
+          "discount_pct": 100,
+          "uninsured": "100% discount (charity care)",
+          "insured": "100% discount off the balance"
+        },
+        {
+          "min_fpl": 201,
+          "max_fpl": 399.99,
+          "discount_pct": null,
+          "uninsured": "Balance reduced to the amount generally billed (AGB)",
+          "insured": "Balance reduced to AGB"
+        }
       ],
       "above_max": "Not published on the page.",
       "insured_eligible": true,
-      "assets_test": "Policy mentions financial resources; details not on the page.",
-      "window": "Not published on the page.",
-      "max_charge": "AGB for 201-400% FPL.",
+      "assets_test": "Monetary assets of the family may be considered; retirement and deferred compensation plans are not counted.",
+      "window": "The later of 365 days after discharge or the date of care, or 240 days after the first post-discharge bill.",
+      "max_charge": "No patient eligible under the policy is charged more than the amount generally billed (AGB).",
       "how_to_apply": "Application and plain language summary per hospital on the page.",
       "phone": null,
-      "source_url": "https://www.commonspirit.org/patient-resources/dignity-health-arizona-financial-assistance",
+      "source_url": "https://www.commonspirit.org/content/dam/shared/en/pdfs/finance/assistance/g-003-financial-assistance-policy-en.pdf",
       "page_url": "https://www.commonspirit.org/patient-resources/dignity-health-arizona-financial-assistance",
-      "retrieved_at": "2026-11-02"
+      "retrieved_at": "2026-11-02",
+      "notes": "Bands as written: at or below 200%, and at or above 201% but lower than 400%. Income between 200% and 201% falls between the two bands."
     },
     {
       "system": "TMC Health",
-      "registry_systems": ["TMC Health"],
+      "registry_systems": [
+        "TMC Health"
+      ],
       "nonprofit_501r": true,
       "policy": "TMC Financial Assistance Policy (Community Care), version D; Sliding Fee Scale 2025",
       "effective": "2025-01-03",
       "covers": "Facility and technical fees at TMC; not ER physicians, hospitalists, radiology, anesthesia or pathology",
       "tiers": [
-        {"min_fpl": 100.01, "max_fpl": 125, "discount_pct": 90, "uninsured": "80% discount", "insured": "90% discount off the amount after insurance"},
-        {"min_fpl": 125.01, "max_fpl": 150, "discount_pct": 80, "uninsured": "60% discount", "insured": "80% discount off the amount after insurance"},
-        {"min_fpl": 150.01, "max_fpl": 175, "discount_pct": 70, "uninsured": "40% discount", "insured": "70% discount off the amount after insurance"},
-        {"min_fpl": 175.01, "max_fpl": 200, "discount_pct": 60, "uninsured": "30% discount", "insured": "60% discount off the amount after insurance"},
-        {"min_fpl": 200.01, "max_fpl": 250, "discount_pct": 50, "uninsured": "25% discount", "insured": "50% discount off the amount after insurance"},
-        {"min_fpl": 250.01, "max_fpl": 300, "discount_pct": 40, "uninsured": "20% discount", "insured": "40% discount off the amount after insurance"},
-        {"min_fpl": 300.01, "max_fpl": 350, "discount_pct": 30, "uninsured": "15% discount", "insured": "30% discount off the amount after insurance"},
-        {"min_fpl": 350.01, "max_fpl": 400, "discount_pct": 20, "uninsured": "10% discount", "insured": "20% discount off the amount after insurance"}
+        {
+          "min_fpl": 100.01,
+          "max_fpl": 125,
+          "discount_pct": 90,
+          "uninsured": "80% discount",
+          "insured": "90% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 125.01,
+          "max_fpl": 150,
+          "discount_pct": 80,
+          "uninsured": "60% discount",
+          "insured": "80% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 150.01,
+          "max_fpl": 175,
+          "discount_pct": 70,
+          "uninsured": "40% discount",
+          "insured": "70% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 175.01,
+          "max_fpl": 200,
+          "discount_pct": 60,
+          "uninsured": "30% discount",
+          "insured": "60% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 200.01,
+          "max_fpl": 250,
+          "discount_pct": 50,
+          "uninsured": "25% discount",
+          "insured": "50% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 250.01,
+          "max_fpl": 300,
+          "discount_pct": 40,
+          "uninsured": "20% discount",
+          "insured": "40% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 300.01,
+          "max_fpl": 350,
+          "discount_pct": 30,
+          "uninsured": "15% discount",
+          "insured": "30% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 350.01,
+          "max_fpl": 400,
+          "discount_pct": 20,
+          "uninsured": "10% discount",
+          "insured": "20% discount off the amount after insurance"
+        }
       ],
       "uninsured_discount_differs": true,
       "below_min": "At or below 100% FPL: not stated in the 2025 grid; ask the business office.",
@@ -111,39 +208,78 @@
     },
     {
       "system": "Mayo Clinic",
-      "registry_systems": ["Mayo Clinic"],
+      "registry_systems": [
+        "Mayo Clinic"
+      ],
       "nonprofit_501r": true,
       "policy": "Mayo Clinic Financial Assistance Policy, Arizona, Florida and Wisconsin (MC5815-65)",
       "effective": "not stated in the extracted text",
-      "covers": "Mayo Clinic hospitals and clinics in Arizona",
+      "covers": "Emergency and medically necessary hospital care at Mayo Clinic (policy also covers Florida and Wisconsin); not all services qualify",
       "tiers": [
-        {"max_fpl": 200, "discount_pct": 100, "uninsured": "100% adjustment of the self-pay balance", "insured": "100% adjustment of the self-pay balance"},
-        {"min_fpl": 200.01, "max_fpl": 400, "discount_pct": 50, "uninsured": "50% adjustment of the self-pay balance", "insured": "50% adjustment of the self-pay balance"}
+        {
+          "max_fpl": 200,
+          "discount_pct": 100,
+          "uninsured": "100% adjustment of the self-pay balance",
+          "insured": "100% adjustment of the self-pay balance (only if Mayo Clinic is in network for your plan)"
+        },
+        {
+          "min_fpl": 200.01,
+          "max_fpl": 400,
+          "discount_pct": 50,
+          "uninsured": "50% adjustment of the self-pay balance",
+          "insured": "50% adjustment of the self-pay balance (only if Mayo Clinic is in network for your plan)"
+        }
       ],
       "above_max": "Not eligible under the income criteria.",
       "insured_eligible": true,
       "assets_test": "Yes: the thresholds apply to household income and assets.",
       "window": "From the date of care until 240 days after the first post-discharge statement; may need to re-apply every 180 days.",
-      "max_charge": "Minimum discount of 50% of gross charges for eligible patients.",
+      "max_charge": "An eligible patient's self-pay balance is limited to the amount generally billed (AGB); discounts are at least 50% of gross charges.",
       "how_to_apply": "Application at mayoclinic.org/financialassistance or the patient portal.",
       "phone": "1-844-217-9591",
       "source_url": "https://mcforms.mayo.edu/mc5800-mc5899/mc5815-65.pdf",
       "page_url": "https://www.mayoclinic.org/financialassistance",
-      "retrieved_at": "2026-11-02"
+      "retrieved_at": "2026-11-02",
+      "notes": "Insured patients qualify only if Mayo Clinic is in network for their plan."
     },
     {
       "system": "Valleywise Health",
-      "registry_systems": ["Valleywise Health"],
+      "registry_systems": [
+        "Valleywise Health"
+      ],
       "nonprofit_501r": false,
       "public_district": "Maricopa County Special Health Care District",
       "policy": "Valleywise Health Financial Assistance & Uninsured Discount Schedule; Policy 99021 G (reviewed 05/26)",
-      "effective": "2026 schedule",
-      "covers": "Valleywise Health services",
+      "effective": "Policy 99021 G effective 2015-11, reviewed 2026-05; the 2026 schedule has no printed effective date",
+      "covers": "Valleywise Health services other than Federally Qualified Health Center (FQHC) clinics, which have a separate schedule",
       "tiers": [
-        {"max_fpl": 100, "discount_pct": null, "uninsured": "Category 1: schedule lists 5% for outpatient services, $75 ER visit, 0% inpatient", "insured": "Category 1"},
-        {"min_fpl": 101, "max_fpl": 138, "discount_pct": null, "uninsured": "Category 2: schedule lists 30% for outpatient and inpatient services, $100 ER visit", "insured": "Category 2"},
-        {"min_fpl": 139, "max_fpl": 150, "discount_pct": null, "uninsured": "Category 3: schedule lists 60%, $150 ER visit", "insured": "Category 3"},
-        {"min_fpl": 151, "max_fpl": 200, "discount_pct": null, "uninsured": "Category 4: schedule lists 80%, $175 ER visit", "insured": "Category 4"}
+        {
+          "max_fpl": 100,
+          "discount_pct": null,
+          "uninsured": "Category 1: you pay 5% for outpatient services, $75 ER visit, 0% inpatient",
+          "insured": "Category 1"
+        },
+        {
+          "min_fpl": 101,
+          "max_fpl": 138,
+          "discount_pct": null,
+          "uninsured": "Category 2: you pay 30% for outpatient and inpatient services, $100 ER visit",
+          "insured": "Category 2"
+        },
+        {
+          "min_fpl": 139,
+          "max_fpl": 150,
+          "discount_pct": null,
+          "uninsured": "Category 3: you pay 60%, $150 ER visit",
+          "insured": "Category 3"
+        },
+        {
+          "min_fpl": 151,
+          "max_fpl": 200,
+          "discount_pct": null,
+          "uninsured": "Category 4: you pay 80%, $175 ER visit",
+          "insured": "Category 4"
+        }
       ],
       "above_max": "Uninsured patients above the categories: most services at 115% of Medicare rates; ER visit 115% of Medicare.",
       "insured_eligible": null,
@@ -151,35 +287,47 @@
       "window": "Not published.",
       "max_charge": "Not published.",
       "how_to_apply": "Financial counseling at Valleywise.",
-      "phone": null,
-      "notes": "The schedule's percentages appear to be the share the patient pays (lower income, lower percent); to confirm with Valleywise.",
+      "phone": "602-344-8181",
+      "notes": "Schedule percentages are the share the patient pays (lower income, lower share). The schedule does not say whether the category rates apply to balances after insurance.",
       "source_url": "https://valleywisehealth.org/wp-content/uploads/2026/09/Valleywise-Health-Financial-Assistance-Unininsured-Discount-Schedule.pdf",
-      "page_url": "https://valleywisehealth.org/wp-content/uploads/2026/05/Policy-99021-G-Finance-Financial-Assistance-052726.pdf",
+      "page_url": "https://valleywisehealth.org/patients/financial-assistance-and-discount-program-updates/",
       "retrieved_at": "2026-11-02"
     },
     {
       "system": "Tenet (Abrazo, Carondelet)",
-      "registry_systems": ["Abrazo (Tenet)", "Carondelet (Tenet)"],
+      "registry_systems": [
+        "Abrazo (Tenet)",
+        "Carondelet (Tenet)"
+      ],
       "nonprofit_501r": false,
       "policy": "Abrazo Family Assistance Program; Compact with Uninsured discounts",
       "effective": "not published",
-      "covers": "Uninsured patients (Compact with Uninsured); charity criteria not published on the page",
-      "tiers": [],
+      "covers": "Uninsured patients: Compact with Uninsured discount. Charity care for household income below 200% of the poverty level, subject to documented financial need. Scope for Carondelet not established.",
+      "tiers": [
+        {
+          "max_fpl": 199.99,
+          "discount_pct": null,
+          "uninsured": "Charity care may apply (amount not published)",
+          "insured": "Charity care may apply (insured eligibility not published)"
+        }
+      ],
       "above_max": "Not published.",
       "insured_eligible": null,
-      "assets_test": "Not published.",
+      "assets_test": "Household finances and supporting documents are reviewed; no asset limit is published.",
       "window": "Not published.",
       "max_charge": "Not published.",
       "how_to_apply": "Call a patient advocate.",
-      "phone": "(866) 904-6871",
-      "notes": "Income thresholds are not published on the Abrazo page (found through search; the site returned HTTP 403 to the ClearTab client). Carondelet site also returned 403; not checked.",
-      "source_url": "https://www.abrazohealth.com/patients/family-assistance-program",
-      "page_url": "https://www.abrazohealth.com/patients/family-assistance-program",
+      "phone": "(800) 374-4637 charity care; (866) 904-6871 uninsured discount",
+      "notes": "Values from the second reader's reading of the Abrazo page; the site returns HTTP 403 to automated clients, so the first reader could not confirm them.",
+      "source_url": "https://www.abrazohealth.com/patients/financial-assistance-program",
+      "page_url": "https://www.abrazohealth.com/patients/financial-assistance-program",
       "retrieved_at": "2026-11-02"
     },
     {
       "system": "Northwest Healthcare",
-      "registry_systems": ["Northwest Healthcare"],
+      "registry_systems": [
+        "Northwest Healthcare"
+      ],
       "nonprofit_501r": false,
       "policy": "Northwest Healthcare Financial Assistance Program",
       "effective": "not published",

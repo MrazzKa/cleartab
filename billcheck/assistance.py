@@ -36,14 +36,14 @@ def fpl_percent(income: float, household_size: int) -> float:
 
 
 def match_tier(tiers: list[dict], pct: float) -> dict | None:
-    """Bands read as (previous band's maximum, this band's maximum]; the first band starts at its own minimum.
-    So "201-400%" after "0-200%" covers 200.1%, and Banner's "< 200%" (stored as max 199.99) leaves 200% to the
-    next band."""
+    """Bands read as (previous band's maximum, this band's maximum], and never below a band's own stated minimum.
+    Banner's "< 200%" (stored as max 199.99) leaves 200% to the next band; CommonSpirit's "at or above 201%" leaves
+    200.5% between the bands, as its policy is written (answered as "call and ask")."""
     ordered = sorted(tiers, key=lambda t: t["max_fpl"])
     for i, t in enumerate(ordered):
         if i == 0 and t.get("min_fpl", 0) <= pct <= t["max_fpl"]:
             return t
-        if i > 0 and ordered[i - 1]["max_fpl"] < pct <= t["max_fpl"]:
+        if i > 0 and ordered[i - 1]["max_fpl"] < pct <= t["max_fpl"] and pct >= t.get("min_fpl", 0):
             return t
     return None
 

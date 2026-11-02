@@ -134,6 +134,9 @@ def test_assistance_bands():
     assert res["Tenet (Abrazo, Carondelet)"]["status"] == "unknown"
     res = {r["system"]: r for r in evaluate(AssistanceRequest(household_size=4, annual_income=66100))["results"]}
     assert res["HonorHealth"]["result"].startswith("87%")
+    assert res["Dignity Health (CommonSpirit)"]["status"] == "unknown"   # 200.3%: between "200%" and "201%"
+    res = {r["system"]: r for r in evaluate(AssistanceRequest(household_size=4, annual_income=132000))["results"]}
+    assert res["HonorHealth"]["status"] == "above"                       # exactly 400%: policy says less than 400%
     res = {r["system"]: r for r in evaluate(AssistanceRequest(household_size=1, annual_income=90000))["results"]}
     assert res["Mayo Clinic"]["status"] == "above"
 
