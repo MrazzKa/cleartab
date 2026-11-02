@@ -164,3 +164,12 @@ Each phase appends a summary of at most 15 lines.
 - R1: 83 Arizona acute and critical access hospitals; 44 nonprofit (501(r)); policies collected for 41 hospitals, 16 nonprofit still to collect (data/processed/r1_az_hospitals.csv). Second-reader kit for the 8 collected policies: research/assistance/.
 - R2 pilot (exploratory, research/r2/REPORT.md): rules 100%; gpt-oss-120b caught 84% of errors, gpt-oss-20b 63%, qwen 43%; a payment not subtracted was caught once in 30 model answers. Photo reading + rules: 12 of 40 cases before the free daily token limit, all correct so far; rerun to complete.
 - Proposal revision draft (docs/PROPOSAL_V2_CHANGES.md) with H4-H6 decision rules; demo script (docs/MIDSEM_DEMO.md).
+
+## v2: second reader, simpler product, ambulance rates, Spanish, My visits (2026-11-02)
+- Second reader of assistance policies: 114 of 131 values agreed (87.0%, target 85%); 17 disagreements checked against the documents (14 confirmed newer HonorHealth and CommonSpirit policies, Valleywise contacts, Mayo wording; 3 Abrazo values accepted from the second reader, site blocks automated clients). Findings: Mayo helps insured patients only in network; CommonSpirit bands leave 200-201% FPL uncovered.
+- Home is one question with four choices. "Lower my bill": hospital, household, income, then the hospital's own policy result and an application kit (form link, documents from the form, where to send, 501(r) collections pause, letter). Official forms are not fillable PDFs, so no auto-fill.
+- Arizona ground ambulance: ADHS rate schedule (prepared 2026-10-01, 103 services) parsed into data/processed/az_ground_ambulance_rates.csv; A.R.S. 36-2239(D) forbids charging other than the approved rate; refused transport may be gratuitous under (K). New rule compares bills with the approved ALS/BLS base and mileage.
+- Spanish: whole interface (language switch) and every finding; letters stay in English for billing offices; assistance policy text in Spanish.
+- My visits: all papers from one visit on the device; per provider pay, wait or question; reminders (.ics), family sharing, collector validation letter (CFPB sample structure).
+- Market check: five new "photo of a bill" apps in 2026 with almost no ratings; CFPB medical debt complaints since 2025: 15,303 US, 385 AZ, top issues "not mine or already paid" and "not enough information to verify".
+- Tests 39 passed; ruff, eslint, tsc clean.
