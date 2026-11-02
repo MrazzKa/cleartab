@@ -26,3 +26,10 @@ def test_brand_words_and_network_contract():
     assert match("OSCAR PPO [91160912]", "AZ CIGNA [39]")["canonical_payer"] == "Oscar"  # payer column wins
     assert match("MULTIPLAN", "AZ CIGNA [39]")["canonical_payer"] == "other"           # rental network stays other
     assert match("WORLD INSURANCE [91160466]", "AZ FL BY PLAN [182]")["canonical_payer"] == "other"
+
+
+def test_plan_type_default_follows_guide():
+    # labeling guide round 2: employer plans, funds and administrators without plan-type words are commercial
+    assert match("CAPITAL ADMINISTRATORS [91160084]", "AZ CIGNA [39]")["plan_type"] == "commercial"
+    assert match("Self Pay", "Self Pay")["plan_type"] == "unknown"
+    assert match("Devoted", "Medicare Advantage")["plan_type"] == "medicare advantage"

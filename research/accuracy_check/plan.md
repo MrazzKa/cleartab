@@ -50,3 +50,24 @@ every "no quote" with the reason. No pair is dropped from the report.
 ## Timing
 About 15-20 minutes per call including hold time; 10 calls about 3-4 hours, spread over two weekdays
 during business hours. Owner suggestion: Artyom (data) calls, Timur reviews.
+
+## Results so far
+### Pair 1 (added by the team): Banner UMC Phoenix, knee MRI 73721, outpatient (accuracy_log.csv)
+Banner UMC Phoenix is not in the H1 sample, so its file was downloaded once on 2026-10-16 and processed with the
+pipeline code into data/raw/accuracy/ (research/accuracy_check/published_figures.py), leaving the H1 and H2
+inputs unchanged.
+| Source | Date | Gross | Cash / self-pay | Negotiated (fixed dollar, canonical insurers) |
+|---|---|---|---|---|
+| (a) published file (last_updated_on 2026-09-25) | 2026-10-16 | $1,547.00 | $297.02 | $140.78 - $1,119.73 (median $166.84, 22 rows) |
+| (b) Banner online estimator, Good Faith Estimate, facility only, ID UNO5FC2Q | 2026-10-13 | $1,547.00 | $355.81 | - |
+| (c) phone, Financial Clearance (888) 688-4797 option 1 | 2026-10-13 | - | no quote (needs a patient record) | - |
+
+Gap between (a) and (b):
+- Gross charge is identical, so the chargemaster price did not change between the file date (2026-09-25) and the
+  estimate (2026-10-13); the file date does not explain the gap.
+- Scope is the same: the estimate covers facility services only, and all 73721 rows in the file are facility
+  rows. The estimate does not add a professional fee.
+- The difference is in the discount. The estimator's self-pay amount is exactly 23.0% of gross (a 77% discount:
+  $1,547.00 x 0.23 = $355.81). The file's discounted cash price is $297.02 (a 80.8% discount). The estimator is
+  $58.79 (19.8%) above the published cash price. Why Banner applies a different self-pay discount in its
+  estimator than in its file is not known; it should be asked on the next call.

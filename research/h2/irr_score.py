@@ -50,7 +50,7 @@ def kappa(a: list[str], b: list[str]) -> float:
 
 def main() -> None:
     pa, pb = (sys.argv[1:3] if len(sys.argv) >= 3 else
-              ("research/h2/irr_round2_rater_A.xlsx", "research/h2/irr_round2_rater_B.xlsx"))
+              ("research/h2/irr_round2_rater_A.csv", "research/h2/irr_round2_rater_B.csv"))
     A, B = load(pa), load(pb)
     assert [(r["raw_payer"], r["raw_plan"]) for r in A] == [(r["raw_payer"], r["raw_plan"]) for r in B], \
         "the two files must list the same strings in the same order"

@@ -109,11 +109,14 @@ def norm(s: str) -> str:
 
 
 def plan_type(payer: str, plan: str) -> str:
+    """Labeling guide (round 2), plan_type: commercial is "an employer, union fund, trust, administrator or insurer
+    plan with none of the words above"; unknown only for self pay. Before inter-rater round 2 the fallback was
+    unknown, which disagreed with both raters on 137 of 200 strings."""
     text = f"{norm(plan)} {norm(payer)}"
     for rx, t in PLAN_TYPE_RULES:
         if rx.search(text):
             return t
-    return "unknown"
+    return "unknown" if re.search(r"self ?pay|\bcash\b|uninsured", text) else "commercial"
 
 
 def match(payer: str, plan: str) -> dict:
@@ -150,6 +153,9 @@ def match(payer: str, plan: str) -> dict:
             "note": "not one of the canonical insurers"}
 
 
+REVIEW = PROCESSED / "payer_review.csv"
+
+
 def build_dictionary() -> list[dict]:
     with open(PROCESSED / "payer_strings.csv", newline="") as f:
         strings = list(csv.DictReader(f))
@@ -157,10 +163,14 @@ def build_dictionary() -> list[dict]:
     for r in strings:
         k = (r["raw_payer"], r["raw_plan"])
         pairs[k] = pairs.get(k, 0) + int(r["row_count"])
+    # Inter-rater round 2 (2026-10-16): 96.0% agreement on canonical_payer (target 85%), so the dictionary is
+    # accepted. Strings the raters must still settle together are listed in payer_review.csv and stay pending.
+    with open(REVIEW, newline="") as f:
+        pending = {(r["raw_payer"], r["raw_plan"]): r["rater_status"] for r in csv.DictReader(f)}
     rows = []
     for (payer, plan), n in sorted(pairs.items()):
         m = match(payer, plan)
-        rows.append({**m, "row_count": n, "rater_status": "provisional",
+        rows.append({**m, "row_count": n, "rater_status": pending.get((payer, plan), "accepted"),
                      "source_url": "data/processed/payer_strings.csv; AHCCCS list: " + AHCCCS_SOURCE,
                      "retrieved_at": now_utc()})
     with open(PROCESSED / "payer_aliases.csv", "w", newline="") as f:

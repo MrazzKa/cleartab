@@ -1,0 +1,15 @@
+canonical_payer: 192/200 = 96.0% agreement, Cohen's kappa = 0.939
+plan_type: 198/200 = 99.0% agreement, Cohen's kappa = 0.959
+target: 85% agreement on canonical_payer
+canonical_payer disagreements by type: {'other disagreement': 5, 'hospital name used as payer': 2, 'plan names insurer': 1}
+
+Disagreements (canonical_payer or plan_type):
+- BCBS - AZ | Commercial|Workers Comp: A=other/commercial  B=Blue Cross Blue Shield of Arizona/workers comp
+- HEALTH NET [91160209] | AZ CIGNA [39]: A=Centene (Arizona Complete Health, Ambetter, Health Net, Wellcare)/commercial  B=Cigna/commercial
+- Cigna | Cigna HMO: A=Cigna/commercial  B=other/commercial
+- Mercy Care | Mercy Medicaid: A=Mercy Care/ahcccs  B=Banner Health plans/ahcccs
+- BANNER DESERT [91160966] | AZ BY PLAN [32]: A=other/commercial  B=Banner Health plans/commercial
+- Veterans Eval Services | Veterans Eval Services: A=other/government  B=other/commercial
+- BANNER HEALTH [91160071] | [9]: A=other/commercial  B=Banner Health plans/commercial
+- NODE Banner MCR ADV | NODE Banner MCR ADV: A=Banner Health plans/medicare advantage  B=other/medicare advantage
+- Wellpoint (fka Amerigroup) | Medicare Advantage HMO: A=other/medicare advantage  B=Banner Health plans/medicare advantage

@@ -13,3 +13,4 @@ web/dist/
 tools/validator/
 docs/source/
 data/processed/etl_cache.json
+exports/
