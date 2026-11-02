@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api, money } from '../api'
+import { useT } from '../i18n'
 
 interface PriceRow {
   ccn: string; hospital: string; city: string; phone: string | null; distance_miles: number | null
@@ -9,6 +10,7 @@ interface PriceRow {
 }
 
 export default function Prices() {
+  const t = useT()
   const [q, setQ] = useState('knee mri')
   const [plan, setPlan] = useState('cash')
   const [zip, setZip] = useState('85719')
@@ -27,22 +29,21 @@ export default function Prices() {
   return (
     <div className="stack-lg">
       <section className="hero">
-        <h1>Look up a published price</h1>
-        <p>What Tucson and Phoenix hospitals published for 50 common procedures. These are facility charges; the
-          doctor bills separately.</p>
+        <h1>{t('Look up a published price')}</h1>
+        <p>{t('What Tucson and Phoenix hospitals published for 50 common procedures. These are facility charges; the doctor bills separately.')}</p>
       </section>
       <section className="card stack">
         <div className="grid2">
-          <label className="field">Procedure or code<input value={q} onChange={(e) => setQ(e.target.value)} /></label>
-          <label className="field">Insurance
+          <label className="field">{t('Procedure or code')}<input value={q} onChange={(e) => setQ(e.target.value)} /></label>
+          <label className="field">{t('Insurance')}
             <select value={plan} onChange={(e) => setPlan(e.target.value)}>
-              <option value="cash">No insurance (cash price)</option>
+              <option value="cash">{t('No insurance (cash price)')}</option>
               {plans.map((p) => <option key={p} value={p}>{p}</option>)}
             </select>
           </label>
-          <label className="field">ZIP code<input inputMode="numeric" maxLength={5} value={zip} onChange={(e) => setZip(e.target.value)} /></label>
+          <label className="field">{t('ZIP code')}<input inputMode="numeric" maxLength={5} value={zip} onChange={(e) => setZip(e.target.value)} /></label>
         </div>
-        <div><button type="button" onClick={go}>Search</button></div>
+        <div><button type="button" onClick={go}>{t('Search')}</button></div>
         {error && <p className="error-box" role="alert">{error}</p>}
       </section>
       {res && (
@@ -51,7 +52,7 @@ export default function Prices() {
           <p className="small muted">{res.explainer}</p>
           <div className="table-wrap card">
             <table>
-              <thead><tr><th>Hospital</th><th>Cash</th><th>{plan === 'cash' ? 'List price' : 'Your insurer'}</th><th>Data</th></tr></thead>
+              <thead><tr><th>{t('Hospital')}</th><th>{t('Cash')}</th><th>{plan === 'cash' ? t('List price') : t('Your insurer')}</th><th>{t('Data')}</th></tr></thead>
               <tbody>
                 {(res.results as PriceRow[]).map((r) => (
                   <tr key={r.ccn}>
@@ -59,7 +60,7 @@ export default function Prices() {
                     <td className="num">{money(r.cash.amount)}</td>
                     <td className="num">{plan === 'cash' ? money(r.gross.amount)
                       : r.negotiated?.median != null ? money(r.negotiated.median) : <span className="muted small">{r.negotiated?.kind ?? '-'}</span>}</td>
-                    <td className="small"><a href={r.provenance.source_url} target="_blank" rel="noreferrer">file</a>, {r.completeness.label}</td>
+                    <td className="small"><a href={r.provenance.source_url} target="_blank" rel="noreferrer">{t('file')}</a>, {t(r.completeness.label)}</td>
                   </tr>
                 ))}
               </tbody>

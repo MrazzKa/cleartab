@@ -19,6 +19,7 @@ class AssistanceRequest(BaseModel):
     annual_income: float = Field(..., ge=0, le=10_000_000)
     coverage: Literal["insured", "self_pay"] = "self_pay"
     hospital_system: str | None = Field(None, max_length=80, description="registry health_system, shown first")
+    lang: Literal["en", "es"] = "en"
 
 
 @lru_cache(maxsize=1)
@@ -48,6 +49,26 @@ def match_tier(tiers: list[dict], pct: float) -> dict | None:
     return None
 
 
+def result_es(status: str, t: dict | None, english: str) -> str:
+    """Spanish wording of a result from the band's numbers; the English policy text is kept beside it."""
+    if status == "free":
+        return "Atención gratuita (100% de descuento)"
+    if status == "discount" and t and t.get("discount_pct"):
+        return f"Descuento del {t['discount_pct']}%"
+    if status == "discount" and "AGB" in english:
+        return "Su saldo se reduce al monto generalmente facturado a los asegurados (AGB)"
+    if status == "discount" and english.startswith("Category"):
+        cat = english.split(":")[0].replace("Category", "Categoría")
+        return f"{cat}: usted paga una parte reducida (vea la tabla del hospital)"
+    if status == "discount":
+        return "Atención de caridad posible; el monto no se publica"
+    if status == "above":
+        return "Su ingreso está por encima del límite publicado; pregunte por otras opciones"
+    if status == "not_eligible":
+        return "Esta política no cubre su situación"
+    return "Los límites no se publican claramente. Llame y pregunte."
+
+
 def evaluate(req: AssistanceRequest) -> dict:
     pct = fpl_percent(req.annual_income, req.household_size)
     g = policies()["poverty_guidelines"]
@@ -72,16 +93,23 @@ def evaluate(req: AssistanceRequest) -> dict:
                 status, label = "above", s.get("above_max", "Above the published income limit.")
             else:
                 status, label = "unknown", "Between published bands. Call and ask."
+        tier = match_tier(tiers, pct) if tiers else None
+        es = s.get("es", {}) if req.lang == "es" else {}
         out.append({"system": s["system"], "registry_systems": s["registry_systems"], "status": status,
-                    "result": label, "nonprofit_501r": s["nonprofit_501r"], "covers": s["covers"],
-                    "window": s["window"], "how_to_apply": s["how_to_apply"], "phone": s["phone"],
-                    "application_url": s.get("application_url"), "documents": s.get("documents", []),
-                    "send_to": s.get("send_to", ""), "policy": s["policy"],
-                    "assets_test": s["assets_test"], "notes": s.get("notes", ""),
+                    "result_original": label,
+                    "result": result_es(status, tier, label) if req.lang == "es" else label,
+                    "nonprofit_501r": s["nonprofit_501r"], "covers": es.get("covers", s["covers"]),
+                    "window": es.get("window", s["window"]), "how_to_apply": s["how_to_apply"], "phone": s["phone"],
+                    "application_url": s.get("application_url"), "documents": es.get("documents", s.get("documents", [])),
+                    "send_to": es.get("send_to", s.get("send_to", "")), "policy": s["policy"],
+                    "assets_test": es.get("assets_test", s["assets_test"]),
+                    "notes": es.get("notes", s.get("notes", "")) if req.lang == "es" else s.get("notes", ""),
                     "source_url": s["source_url"], "page_url": s["page_url"], "retrieved_at": s["retrieved_at"]})
     rank = {"free": 0, "discount": 1, "above": 2, "unknown": 3, "not_eligible": 4}
     out.sort(key=lambda r: (req.hospital_system not in r["registry_systems"], rank[r["status"]], r["system"]))
     return {"fpl_percent": pct, "poverty_line": poverty_line(req.household_size),
             "guidelines": {"year": g["year"], "source_url": g["source_url"]}, "results": out,
-            "note": ("Hospitals decide eligibility from your application and documents. These results come from "
+            "note": ("El hospital decide con su solicitud y documentos. Estos resultados vienen de la política "
+                     "publicada de cada hospital y son una guía, no una decisión." if req.lang == "es" else
+                     "Hospitals decide eligibility from your application and documents. These results come from "
                      "each hospital's published policy and are a guide, not a decision.")}

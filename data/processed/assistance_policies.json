@@ -58,7 +58,19 @@
         "Your 3 most recent pay stubs",
         "Your 3 most recent checking and savings statements"
       ],
-      "send_to": "By mail or email to the address on the application form, or in person at a Banner hospital."
+      "send_to": "By mail or email to the address on the application form, or in person at a Banner hospital.",
+      "es": {
+        "covers": "Hospitales de Banner; pacientes sin seguro y con seguro insuficiente. Las facturas de médicos, atención en casa e imágenes tienen otra política.",
+        "window": "El descuento se aplica a servicios de los 12 meses anteriores y de los 180 días posteriores a la aprobación. Las acciones de cobro pueden empezar 120 días después de la primera factura.",
+        "documents": [
+          "Declaración de impuestos del año pasado",
+          "Sus 3 talones de pago más recientes",
+          "Sus 3 estados de cuenta más recientes de cheques y ahorros"
+        ],
+        "send_to": "Por correo postal o electrónico a la dirección del formulario, o en persona en un hospital de Banner.",
+        "assets_test": "Solo si no tiene ingresos documentados: se compara su deuda con sus activos.",
+        "notes": ""
+      }
     },
     {
       "system": "HonorHealth",
@@ -101,7 +113,19 @@
         "The Financial Assistance Application",
         "Proof of household income"
       ],
-      "send_to": "As described on the HonorHealth financial assistance page; questions: 623-300-9044."
+      "send_to": "As described on the HonorHealth financial assistance page; questions: 623-300-9044.",
+      "es": {
+        "covers": "Hospitales y clínicas de HonorHealth Medical Group; solo cargos del centro (no médicos de emergencias, patólogos, radiólogos ni anestesiólogos).",
+        "window": "Solicite dentro de los 240 días después de la primera factura tras el alta (puede ser más); la decisión suele tardar unos 30 días con la solicitud completa.",
+        "documents": [
+          "Sin seguro: el formulario de declaración (Basic Financial Assistance Attestation)",
+          "La solicitud de asistencia financiera",
+          "Comprobante de ingresos del hogar"
+        ],
+        "send_to": "Según la página de asistencia financiera de HonorHealth; preguntas: 623-300-9044.",
+        "assets_test": "En casos extraordinarios, si sus activos son muy grandes comparados con sus ingresos, pueden contarse como ingresos.",
+        "notes": "La política completa (17/04/2026) dice que el descuento es para ingresos de más del 200% y menos del 400%; la tabla de ingresos dice 201-400%. Aquí se usa la política completa."
+      }
     },
     {
       "system": "Dignity Health (CommonSpirit)",
@@ -144,7 +168,19 @@
         "Proof of assets: the last 3 months of bank statements",
         "If you have no income: a signed page explaining how you pay for housing, food and utilities"
       ],
-      "send_to": "Choose your hospital on the Dignity Health Arizona page; each form lists its mailing address and fax. A Social Security number is not required."
+      "send_to": "Choose your hospital on the Dignity Health Arizona page; each form lists its mailing address and fax. A Social Security number is not required.",
+      "es": {
+        "covers": "Pacientes sin seguro y con seguro insuficiente en los centros de Dignity Health Arizona.",
+        "window": "El plazo mayor entre 365 días desde el alta o la atención, o 240 días desde la primera factura tras el alta.",
+        "documents": [
+          "Comprobante de ingresos de cada adulto: declaración de impuestos, W-2, 3 meses de talones de pago o cartas firmadas de empleadores",
+          "Comprobante de activos: estados de cuenta bancarios de los últimos 3 meses",
+          "Si no tiene ingresos: una hoja firmada que explique cómo paga vivienda, comida y servicios"
+        ],
+        "send_to": "Elija su hospital en la página de Dignity Health Arizona; cada formulario tiene su dirección y fax. No se requiere número de Seguro Social.",
+        "assets_test": "Pueden considerarse los activos monetarios de la familia; no se cuentan los planes de jubilación.",
+        "notes": "Niveles tal como están escritos: hasta el 200%, y desde el 201% hasta menos del 400%. Un ingreso entre 200% y 201% queda entre los dos niveles."
+      }
     },
     {
       "system": "TMC Health",
@@ -235,7 +271,22 @@
         "Rent receipt, lease or mortgage statement",
         "Utility bills"
       ],
-      "send_to": "TMC Business Office, PO Box 42195, Tucson, AZ; or in person at 5151 E. Broadway #155, Tucson, AZ 85711."
+      "send_to": "TMC Business Office, PO Box 42195, Tucson, AZ; or in person at 5151 E. Broadway #155, Tucson, AZ 85711.",
+      "es": {
+        "covers": "Cargos del centro y técnicos en TMC; no médicos de emergencias, hospitalistas, radiología, anestesia ni patología.",
+        "window": "La página dice que puede solicitar en cualquier momento y también que debe completar la solicitud dentro de los 30 días del alta.",
+        "documents": [
+          "W-2 y formularios de impuestos más recientes",
+          "Sus últimos 3 talones de pago",
+          "Cartas de beneficios del Seguro Social o desempleo, si tiene",
+          "Estados de cuenta de cheques y ahorros",
+          "Recibo de renta, contrato o estado de hipoteca",
+          "Facturas de servicios"
+        ],
+        "send_to": "TMC Business Office, PO Box 42195, Tucson, AZ; o en persona en 5151 E. Broadway #155, Tucson, AZ 85711.",
+        "assets_test": "Sí, se consideran los activos.",
+        "notes": "La tabla usa las guías de pobreza de 2025."
+      }
     },
     {
       "system": "Mayo Clinic",
@@ -276,7 +327,17 @@
       "documents": [
         "Proof of household income and assets as listed on the application"
       ],
-      "send_to": "Online through the Mayo Clinic patient portal, or as described at mayoclinic.org/financialassistance."
+      "send_to": "Online through the Mayo Clinic patient portal, or as described at mayoclinic.org/financialassistance.",
+      "es": {
+        "covers": "Atención de emergencia y médicamente necesaria en hospitales de Mayo Clinic (la política también cubre Florida y Wisconsin); no todos los servicios califican.",
+        "window": "Desde la fecha de atención hasta 240 días después de la primera factura tras el alta; puede tener que volver a solicitar cada 180 días.",
+        "documents": [
+          "Comprobante de ingresos y activos del hogar, según la solicitud"
+        ],
+        "send_to": "En línea por el portal de pacientes de Mayo Clinic, o según mayoclinic.org/financialassistance.",
+        "assets_test": "Sí: los límites se aplican a ingresos y activos del hogar.",
+        "notes": "Los pacientes con seguro califican solo si Mayo Clinic está dentro de la red de su plan."
+      }
     },
     {
       "system": "Valleywise Health",
@@ -332,7 +393,17 @@
       "documents": [
         "Ask financial counseling which documents they need"
       ],
-      "send_to": "Valleywise financial counseling; call 602-344-8181."
+      "send_to": "Valleywise financial counseling; call 602-344-8181.",
+      "es": {
+        "covers": "Servicios de Valleywise Health excepto las clínicas FQHC, que tienen otra tabla.",
+        "window": "No publicado.",
+        "documents": [
+          "Pregunte en asesoría financiera qué documentos necesitan"
+        ],
+        "send_to": "Asesoría financiera de Valleywise; llame al 602-344-8181.",
+        "assets_test": "Evaluación de recursos según la política 99021 G.",
+        "notes": "Los porcentajes de la tabla son la parte que usted paga (menos ingresos, menos paga). La tabla no dice si se aplican a saldos después del seguro."
+      }
     },
     {
       "system": "Tenet (Abrazo, Carondelet)",
@@ -367,7 +438,17 @@
       "documents": [
         "Information about household finances and supporting documents, as asked on the Financial Application"
       ],
-      "send_to": "Call (800) 374-4637 for charity care or (866) 904-6871 for the uninsured discount."
+      "send_to": "Call (800) 374-4637 for charity care or (866) 904-6871 for the uninsured discount.",
+      "es": {
+        "covers": "Sin seguro: descuento 'Compact with Uninsured'. Atención de caridad para ingresos menores al 200% del nivel de pobreza, con comprobantes.",
+        "window": "No publicado.",
+        "documents": [
+          "Información sobre las finanzas del hogar y comprobantes, según la solicitud"
+        ],
+        "send_to": "Llame al (800) 374-4637 para atención de caridad o al (866) 904-6871 para el descuento sin seguro.",
+        "assets_test": "Se revisan las finanzas del hogar; no se publica un límite de activos.",
+        "notes": "Valores leídos por el segundo revisor; el sitio bloquea la verificación automática."
+      }
     },
     {
       "system": "Northwest Healthcare",
@@ -394,7 +475,17 @@
       "documents": [
         "The hospital's Financial Assistance Program application and proof of income"
       ],
-      "send_to": "Ask the hospital's Customer Service, Patient Access Director or a financial counselor for the application."
+      "send_to": "Ask the hospital's Customer Service, Patient Access Director or a financial counselor for the application.",
+      "es": {
+        "covers": "Northwest Medical Center, Houghton, Sahuarita y Oro Valley Hospital; pacientes sin seguro y con seguro insuficiente.",
+        "window": "Al recibir la atención o en cualquier momento durante el ciclo de facturación.",
+        "documents": [
+          "La solicitud del programa de asistencia financiera y comprobante de ingresos"
+        ],
+        "send_to": "Pida la solicitud en Servicio al Cliente, al Director de Admisiones o a un asesor financiero del hospital.",
+        "assets_test": "Criterios financieros con comprobantes; los detalles no se publican.",
+        "notes": "La caridad se basa en 'múltiplos' de las guías federales de pobreza; los múltiplos no se publican."
+      }
     }
   ]
 }

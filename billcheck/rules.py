@@ -497,7 +497,7 @@ class Checker:
                                          "with ADHS." if supplies else "")),
                          action="Ask for an itemized bill with HCPCS codes (A0427, A0429, A0425) and the loaded miles, "
                                 "then compare each line with the approved rates.",
-                         amount_at_stake=c(total - cap) if not supplies else None, sources=srcs)
+                         amount_at_stake=c(total - cap), sources=srcs)   # supplies may explain part of it
             else:
                 self.add(rule="ambulance_within_rate", severity="ok", evidence=ev, sources=srcs,
                          title=f"The ambulance bill is within Arizona's approved rate for {name}",
@@ -597,5 +597,8 @@ def check(req: CheckRequest, prices: dict[str, dict] | None = None,
           mue: dict[str, dict[str, MueEdit]] | None = None, ptp: PtpTable | None = None) -> CheckResult:
     from billcheck.kit import build_kit
     res = Checker(req, prices, mue or {}, ptp).result()
-    res.letter, res.call_script = build_kit(req, res)
+    res.letter, res.call_script = build_kit(req, res)      # letters stay in English: they go to US billing offices
+    if req.context.lang == "es":
+        from billcheck.es import to_spanish
+        res = to_spanish(res)
     return res

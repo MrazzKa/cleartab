@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { ambulanceServices, api, money, reader, shrinkPhoto } from '../api'
 import type { AmbulanceService } from '../api'
 import type { CheckRequest, CheckResult } from '../api'
+import { useLang, useT } from '../i18n'
 import DetailedCheck from './DetailedCheck'
 import Results from './Results'
 
@@ -52,6 +53,8 @@ function Amount({ label, hint, value, onChange, autoFocus }: {
 }
 
 export default function BillCheck() {
+  const t = useT()
+  const { lang } = useLang()
   const [a, setA] = useState<Answers>({})
   const [step, setStep] = useState(0)
   const [result, setResult] = useState<CheckResult | null>(null)
@@ -62,7 +65,6 @@ export default function BillCheck() {
   const [consent, setConsent] = useState(false)
   const [reading, setReading] = useState(false)
   const [readNote, setReadNote] = useState('')
-
   const [services, setServices] = useState<AmbulanceService[]>([])
   useEffect(() => { reader.status().then(setCanRead); ambulanceServices().then(setServices) }, [])
 
@@ -72,13 +74,13 @@ export default function BillCheck() {
     try {
       const imgs = await Promise.all([...files].slice(0, 3).map(shrinkPhoto))
       const r = await reader.read(imgs)
-      if (r.document_type === 'other') throw new Error("That doesn't look like a medical bill or EOB. Try another photo.")
+      if (r.document_type === 'other') throw new Error(t("That doesn't look like a medical bill or EOB. Try another photo."))
       const eob = r.you_owe_total != null
       const bill = r.balance_due != null
       setA((x) => ({ ...x, docs: eob && bill ? 'both' : eob ? 'eob' : 'bill', insured: eob ? true : x.insured,
         billDue: r.balance_due, eobOwe: r.you_owe_total, paid: r.patient_payments }))
-      setReadNote('We read these numbers from your photo. Please check each one against your paper.'
-        + (r.unreadable.length ? ` Could not read: ${r.unreadable.join(', ')}.` : ''))
+      setReadNote(t('We read these numbers from your photo. Please check each one against your paper.')
+        + (r.unreadable.length ? ` ${t('Could not read:')} ${r.unreadable.join(', ')}.` : ''))
       setStep(eob ? 2 : 1)
     } catch (e) { setError((e as Error).message) } finally { setReading(false) }
   }
@@ -86,7 +88,8 @@ export default function BillCheck() {
   if (detailed) {
     return (
       <div className="stack-lg">
-        <button type="button" className="ghost" onClick={() => setDetailed(false)}>← Back to the quick check</button>
+        <button type="button" className="ghost" onClick={() => setDetailed(false)}>{t('← Back to the quick check')}</button>
+        {lang === 'es' && <p className="action">El formulario detallado está en inglés por ahora.</p>}
         <DetailedCheck />
       </div>
     )
@@ -106,7 +109,7 @@ export default function BillCheck() {
         ambulance: a.ambulance ?? 'none', good_faith_estimate: insured ? null : a.gfe ?? null,
         ambulance_con: a.ambulance === 'ground' ? a.con || null : null, ambulance_level: a.level ?? 'unknown',
         ambulance_miles: a.miles ?? null, transported: a.ambulance === 'ground' ? a.transported ?? null : null,
-        gfe_received: !insured && a.gfe != null,
+        gfe_received: !insured && a.gfe != null, lang,
       },
       eob: insured && hasEob ? { lines: [], you_owe_total: a.eobOwe ?? null } : null,
       bill: a.docs === 'eob' ? null : {
@@ -122,32 +125,30 @@ export default function BillCheck() {
   return (
     <div className="stack-lg wizard">
       {step < total && (
-        <div className="progress" aria-label={`Step ${step + 1} of ${total}`}>
+        <div className="progress" aria-label={t('Step {n} of {total}', { n: step + 1, total })}>
           {Array.from({ length: total }, (_, i) => <span key={i} className={i <= step ? 'on' : ''} />)}
         </div>
       )}
 
       {step === 0 && (
         <section className="stack">
-          <h1>What did you get?</h1>
-          <p className="muted">An explanation of benefits (EOB) comes from your insurer and says "This is not a bill".
-            The bill comes from the hospital or doctor.</p>
+          <h1>{t('What did you get?')}</h1>
+          <p className="muted">{t('An explanation of benefits (EOB) comes from your insurer and says "This is not a bill". The bill comes from the hospital or doctor.')}</p>
           <Choice onPick={(v) => { set({ docs: v as Docs, insured: v === 'bill' ? undefined : true }); next() }} options={[
-            ['bill', 'A bill', 'from a hospital, doctor or ambulance'],
-            ['both', 'A bill and an EOB', 'the best case: we can compare them'],
-            ['eob', 'Only an EOB', 'no bill yet'],
+            ['bill', t('A bill'), t('from a hospital, doctor or ambulance')],
+            ['both', t('A bill and an EOB'), t('the best case: we can compare them')],
+            ['eob', t('Only an EOB'), t('no bill yet')],
           ]} />
           {canRead && (
             <div className="card stack">
-              <h2>Or take a photo</h2>
-              <p className="small muted">We send the photo to an AI reading service (Groq) to copy the numbers, then you
-                check them. ClearTab does not store the photo. Cover your name and member ID if you can.</p>
+              <h2>{t('Or take a photo')}</h2>
+              <p className="small muted">{t('We send the photo to an AI reading service (Groq) to copy the numbers, then you check them. ClearTab does not store the photo. Cover your name and member ID if you can.')}</p>
               <label className="check"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-                I agree to send the photo for reading</label>
+                {t('I agree to send the photo for reading')}</label>
               <label className={`photo ${consent ? '' : 'disabled'}`}>
                 <input type="file" accept="image/*" capture="environment" multiple disabled={!consent || reading}
                   onChange={(e) => onPhotos(e.target.files)} />
-                {reading ? 'Reading your photo…' : 'Take or choose a photo (up to 3)'}
+                {reading ? t('Reading your photo…') : t('Take or choose a photo (up to 3)')}
               </label>
               {error && <p className="error-box" role="alert">{error}</p>}
             </div>
@@ -157,15 +158,15 @@ export default function BillCheck() {
 
       {step === 1 && (
         <section className="stack">
-          <h1>{a.docs === 'bill' ? 'Did you use insurance for this care?' : 'A few quick questions'}</h1>
+          <h1>{a.docs === 'bill' ? t('Did you use insurance for this care?') : t('A few quick questions')}</h1>
           {a.docs === 'bill' && <Choice onPick={(v) => { set({ insured: v === 'yes' }); if (v === 'no') set({ network: 'unknown' }); next() }} options={[
-            ['yes', 'Yes, I have insurance', 'but I have no EOB yet'],
-            ['no', 'No', "I'm uninsured or paid myself"],
+            ['yes', t('Yes, I have insurance'), t('but I have no EOB yet')],
+            ['no', t('No'), t("I'm uninsured or paid myself")],
           ]} />}
           {a.docs !== 'bill' && (
             <>
-              <h2>Was it emergency care?</h2>
-              <Choice onPick={(v) => { set({ emergency: v === 'yes' }); next() }} options={[['yes', 'Yes, emergency'], ['no', 'No']]} />
+              <h2>{t('Was it emergency care?')}</h2>
+              <Choice onPick={(v) => { set({ emergency: v === 'yes' }); next() }} options={[['yes', t('Yes, emergency')], ['no', t('No')]]} />
             </>
           )}
         </section>
@@ -173,89 +174,86 @@ export default function BillCheck() {
 
       {step === 2 && (
         <section className="stack">
-          <h1>Enter the amounts</h1>
-          {readNote ? <p className="action">{readNote}</p> : <p className="muted">Copy them from your papers. Leave a box empty if you don't have it.</p>}
-          {a.docs !== 'eob' && <Amount label="How much does the bill ask you to pay?" hint="often called 'amount due' or 'balance'"
+          <h1>{t('Enter the amounts')}</h1>
+          {readNote ? <p className="action">{readNote}</p> : <p className="muted">{t("Copy them from your papers. Leave a box empty if you don't have it.")}</p>}
+          {a.docs !== 'eob' && <Amount label={t('How much does the bill ask you to pay?')} hint={t("often called 'amount due' or 'balance'")}
             value={a.billDue} onChange={(v) => set({ billDue: v })} autoFocus />}
-          {hasEob && <Amount label="How much does the EOB say you owe?" hint="the last column, often 'what you owe' or 'patient responsibility'"
+          {hasEob && <Amount label={t('How much does the EOB say you owe?')} hint={t("the last column, often 'what you owe' or 'patient responsibility'")}
             value={a.eobOwe} onChange={(v) => set({ eobOwe: v })} autoFocus={a.docs === 'eob'} />}
-          {a.docs !== 'eob' && <Amount label="Did you already pay this provider anything?" hint="for example a copay at check-in"
+          {a.docs !== 'eob' && <Amount label={t('Did you already pay this provider anything?')} hint={t('for example a copay at check-in')}
             value={a.paid} onChange={(v) => set({ paid: v })} />}
-          {a.insured === false && <Amount label="Did they give you a written estimate before the visit?" hint="a 'good faith estimate'; leave empty if not"
+          {a.insured === false && <Amount label={t('Did they give you a written estimate before the visit?')} hint={t("a 'good faith estimate'; leave empty if not")}
             value={a.gfe} onChange={(v) => set({ gfe: v })} />}
-          <div><button type="button" onClick={next}>Continue</button></div>
+          <div><button type="button" onClick={next}>{t('Continue')}</button></div>
         </section>
       )}
 
       {step === 3 && (
         <section className="stack">
-          <h1>Last question</h1>
+          <h1>{t('Last question')}</h1>
           {a.insured !== false && (
             <>
-              <h2>Was this provider in your insurance network?</h2>
-              <Choice onPick={(v) => set({ network: v as Answers['network'] })} options={[['in', 'In network'], ['out', 'Out of network'], ['unknown', "I don't know"]]} />
-              {a.network && <p className="small muted">Selected: {a.network === 'in' ? 'in network' : a.network === 'out' ? 'out of network' : "don't know"}</p>}
+              <h2>{t('Was this provider in your insurance network?')}</h2>
+              <Choice onPick={(v) => set({ network: v as Answers['network'] })} options={[['in', t('In network')], ['out', t('Out of network')], ['unknown', t("I don't know")]]} />
+              {a.network && <p className="small muted">{t('Selected:')} {a.network === 'in' ? t('In network') : a.network === 'out' ? t('Out of network') : t("I don't know")}</p>}
             </>
           )}
-          <h2>Was an ambulance involved?</h2>
+          <h2>{t('Was an ambulance involved?')}</h2>
           <div className="seg">
-            {([['none', 'No'], ['ground', 'Ground ambulance'], ['air', 'Air ambulance']] as const).map(([v, l]) => (
+            {([['none', t('No')], ['ground', t('Ground ambulance')], ['air', t('Air ambulance')]] as const).map(([v, l]) => (
               <button key={v} type="button" aria-pressed={(a.ambulance ?? 'none') === v} onClick={() => set({ ambulance: v })}>{l}</button>
             ))}
           </div>
           {a.ambulance === 'ground' && (
             <div className="card stack">
-              <p className="small muted">Arizona sets the most each ambulance service may charge (A.R.S. 36-2239). Tell us
-                which one sent the bill and we’ll compare.</p>
-              <label className="field">Ambulance service (name on the bill)
+              <p className="small muted">{t('Arizona sets the most each ambulance service may charge (A.R.S. 36-2239). Tell us which one sent the bill and we’ll compare.')}</p>
+              <label className="field">{t('Ambulance service (name on the bill)')}
                 <select value={a.con ?? ''} onChange={(e) => set({ con: e.target.value })}>
-                  <option value="">Not sure / not listed</option>
+                  <option value="">{t('Not sure / not listed')}</option>
                   {services.map((x) => <option key={x.con} value={x.con}>{x.entity.includes(' dba ') ? x.entity.split(' dba ').slice(-1)[0] : x.entity}</option>)}
                 </select>
               </label>
-              <div className="seg" role="group" aria-label="Level of care">
-                {([['als', 'Advanced (ALS)'], ['bls', 'Basic (BLS)'], ['unknown', "Don't know"]] as const).map(([v, l]) => (
+              <div className="seg" role="group" aria-label={t('Level of care')}>
+                {([['als', t('Advanced (ALS)')], ['bls', t('Basic (BLS)')], ['unknown', t("Don't know")]] as const).map(([v, l]) => (
                   <button key={v} type="button" aria-pressed={(a.level ?? 'unknown') === v} onClick={() => set({ level: v })}>{l}</button>
                 ))}
               </div>
-              <label className="field">Miles driven, if the bill shows them
+              <label className="field">{t('Miles driven, if the bill shows them')}
                 <input type="number" inputMode="decimal" min="0" value={a.miles ?? ''} onChange={(e) => set({ miles: num(e.target.value) })} />
               </label>
-              <div className="seg" role="group" aria-label="Were you taken to the hospital?">
-                <button type="button" aria-pressed={a.transported !== false} onClick={() => set({ transported: true })}>Taken to hospital</button>
-                <button type="button" aria-pressed={a.transported === false} onClick={() => set({ transported: false })}>Not taken / I refused</button>
+              <div className="seg" role="group" aria-label={t('Were you taken to the hospital?')}>
+                <button type="button" aria-pressed={a.transported !== false} onClick={() => set({ transported: true })}>{t('Taken to hospital')}</button>
+                <button type="button" aria-pressed={a.transported === false} onClick={() => set({ transported: false })}>{t('Not taken / I refused')}</button>
               </div>
             </div>
           )}
           <div className="row">
-            <button type="button" onClick={run} disabled={busy}>{busy ? 'Checking…' : 'Check my bill'}</button>
+            <button type="button" onClick={run} disabled={busy}>{busy ? t('Checking…') : t('Check my bill')}</button>
           </div>
           {error && <p className="error-box" role="alert">{error}</p>}
         </section>
       )}
 
       {step > 0 && step < total && (
-        <div className="row"><button type="button" className="ghost" onClick={() => setStep((s) => s - 1)}>← Back</button></div>
+        <div className="row"><button type="button" className="ghost" onClick={() => setStep((s) => s - 1)}>{t('← Back')}</button></div>
       )}
 
       {result && step === total && (
         <div className="stack-lg">
           <Results result={result} simple />
           <section className="card stack">
-            <h2>Want a deeper check?</h2>
-            <p className="muted">Enter each line of the bill and the EOB to find duplicate charges, coding problems and
-              prices above what the hospital published.</p>
+            <h2>{t('Want a deeper check?')}</h2>
+            <p className="muted">{t('Enter each line of the bill and the EOB to find duplicate charges, coding problems and prices above what the hospital published.')}</p>
             <div className="row">
-              <button type="button" className="secondary" onClick={() => setDetailed(true)}>Enter the lines</button>
-              <button type="button" className="ghost" onClick={restart}>Check another bill</button>
+              <button type="button" className="secondary" onClick={() => setDetailed(true)}>{t('Enter the lines')}</button>
+              <button type="button" className="ghost" onClick={restart}>{t('Check another bill')}</button>
             </div>
           </section>
         </div>
       )}
 
       {step === 0 && (
-        <p className="small muted">Prefer to see an example first? <button type="button" className="link" onClick={() => setDetailed(true)}>Open the
-          detailed check with sample bills</button>. Example: you paid {money(35)} at check-in and the bill still asks for {money(35)}.</p>
+        <p className="small muted">{t('Prefer to see an example first?')} <button type="button" className="link" onClick={() => setDetailed(true)}>{t('Open the detailed check with sample bills')}</button>. {t('Example: you paid {a} at check-in and the bill still asks for {a}.', { a: money(35) })}</p>
       )}
     </div>
   )

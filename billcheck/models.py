@@ -69,6 +69,7 @@ class Context(BaseModel):
     good_faith_estimate: Money | None = Field(None, ge=0, description="self-pay: the provider's estimate total")
     gfe_received: bool = False
     today: date | None = None
+    lang: Literal["en", "es"] = "en"
 
 
 class CheckRequest(BaseModel):

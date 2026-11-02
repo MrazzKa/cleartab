@@ -157,3 +157,4 @@ ul.checklist .check { font-weight: 400; align-items: flex-start; }
 a.button-link { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 16px; border-radius: 8px;
   border: 1px solid var(--accent); color: var(--accent); font-weight: 700; text-decoration: none; }
 .check input { flex: none; }
+nav button.lang { min-height: 36px; padding: 6px 12px; border-radius: 999px; background: transparent; color: var(--accent); border: 1px solid var(--accent); font-weight: 700; }

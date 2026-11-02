@@ -202,3 +202,19 @@ dba ABC Ambulance ( 1,047.08)      ( 932.33)         ( 14.36)   ( 233.08)      0
         over = [f for f in res.findings if f.rule == "ambulance_over_rate"]
         assert len(over) == 2 and all(f.severity == "error" for f in over)
         assert rules(res)["ambulance_no_transport"] == "warning"
+
+
+def test_spanish_findings_keep_numbers_and_english_letter():
+    req = copy.deepcopy(CASES["copay-paid-twice"])
+    req["context"]["lang"] = "es"
+    res = check(CheckRequest(**req))
+    f = next(f for f in res.findings if f.rule == "balance_over_eob")
+    assert f.title.startswith("Es posible") and "$35.00" in f.explanation
+    assert res.summary.headline.startswith("Encontramos")
+    assert "I compared my bill" in res.letter
+    for case in CASES.values():                       # every finding of every demo case has Spanish text
+        c = copy.deepcopy(case)
+        c["context"]["lang"] = "es"
+        for f in check(CheckRequest(**c), prices=PRICES_030064_BCBS).findings:
+            from billcheck.es import es
+            assert es(f) is not None, f.rule

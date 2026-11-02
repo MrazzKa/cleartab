@@ -42,6 +42,7 @@ export interface Context {
   ambulance_level?: 'als' | 'bls' | 'ccs' | 'unknown'
   ambulance_miles?: number | null
   transported?: boolean | null
+  lang?: 'en' | 'es'
   good_faith_estimate?: number | null
   gfe_received: boolean
   today?: string | null
@@ -132,8 +133,8 @@ export const api = {
   cases: () => call<{ cases: DemoCase[] }>('/bill/cases').then((x) => x.cases),
   hospitals: () => call<{ hospitals: Hospital[] }>('/hospitals').then((x) => x.hospitals),
   plans: () => call<{ plans: string[] }>('/plans').then((x) => x.plans.filter((p) => p !== 'cash')),
-  assistance: (household_size: number, annual_income: number, coverage: string, hospital_system?: string) =>
-    call<AssistanceResponse>('/assistance', post({ household_size, annual_income, coverage, hospital_system })),
+  assistance: (household_size: number, annual_income: number, coverage: string, hospital_system?: string, lang = 'en') =>
+    call<AssistanceResponse>('/assistance', post({ household_size, annual_income, coverage, hospital_system, lang })),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   search: (q: string, plan: string, zip: string) => call<any>(`/search?${new URLSearchParams({ q, plan, zip })}`),
 }
