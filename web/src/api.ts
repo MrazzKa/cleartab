@@ -133,5 +133,27 @@ export const api = {
   search: (q: string, plan: string, zip: string) => call<any>(`/search?${new URLSearchParams({ q, plan, zip })}`),
 }
 
+export interface ReadResult {
+  document_type: 'eob' | 'bill' | 'other'; provider_type: string; statement_date: string | null
+  claim_number: string | null; balance_due: number | null; patient_payments: number | null
+  you_owe_total: number | null; unreadable: string[]; note: string
+}
+
+export const reader = {
+  status: () => call<{ available: boolean }>('/bill/read/status').then((x) => x.available).catch(() => false),
+  read: (images: { data: string; type: string }[]) => call<ReadResult>('/bill/read', post({ images, consent: true })),
+}
+
+/** Shrink a phone photo to at most 2000 px and re-encode as JPEG, returning base64 without the data: prefix. */
+export async function shrinkPhoto(file: File): Promise<{ data: string; type: string }> {
+  const bmp = await createImageBitmap(file)
+  const scale = Math.min(1, 2000 / Math.max(bmp.width, bmp.height))
+  const c = document.createElement('canvas')
+  c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale)
+  c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height)
+  const url = c.toDataURL('image/jpeg', 0.85)
+  return { data: url.split(',')[1], type: 'image/jpeg' }
+}
+
 export const money = (x: number | null | undefined) =>
   x == null ? '-' : x.toLocaleString('en-US', { style: 'currency', currency: 'USD' })

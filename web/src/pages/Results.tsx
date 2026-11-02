@@ -52,14 +52,34 @@ function DisputeKit({ letter, script }: { letter: string; script: string[] }) {
   )
 }
 
-export default function Results({ result }: { result: CheckResult }) {
+function FindingCard({ f }: { f: CheckResult['findings'][number] }) {
+  return (
+    <article className={`card finding ${f.severity}`}>
+      <span className={`badge ${f.severity}`}><span aria-hidden="true">{ICON[f.severity]}</span>{LABEL[f.severity]}</span>
+      <h3>{f.title}</h3>
+      <p>{f.explanation}</p>
+      {f.action && <p className="action"><b>What to do: </b>{f.action}</p>}
+      {f.sources.length > 0 && (
+        <p className="sources">Source: {f.sources.map((src, j) => (
+          <span key={j}>{j > 0 && '; '}{src.url ? <a href={src.url} target="_blank" rel="noreferrer">{src.name}</a> : src.name}
+            {src.as_of && ` (${src.as_of.slice(0, 10)})`}</span>
+        ))}</p>
+      )}
+    </article>
+  )
+}
+
+export default function Results({ result, simple = false }: { result: CheckResult; simple?: boolean }) {
   const s = result.summary
-  const problems = result.findings.filter((f) => f.severity !== 'ok')
+  const problems = result.findings.filter((f) => f.severity === 'error' || f.severity === 'warning')
+  const info = result.findings.filter((f) => f.severity === 'info')
   const passed = result.findings.filter((f) => f.severity === 'ok')
+  const [showKit, setShowKit] = useState(!simple)
+  const steps = [...new Set(problems.map((f) => f.action).filter(Boolean))].slice(0, 3)
   return (
     <div className="stack-lg">
       <section className={`verdict ${s.verdict}`} aria-live="polite">
-        <h2>{s.headline}</h2>
+        <h2>{s.verdict === 'looks_right' && simple ? 'Your bill looks right.' : s.headline}</h2>
         <div className="figures">
           {s.eob_you_owe != null && <div className="figure"><span className="small muted">EOB says you owe</span><b>{money(s.eob_you_owe)}</b></div>}
           {s.bill_balance != null && <div className="figure"><span className="small muted">Bill asks for</span><b>{money(s.bill_balance)}</b></div>}
@@ -67,37 +87,38 @@ export default function Results({ result }: { result: CheckResult }) {
         </div>
       </section>
 
-      <section className="stack">
-        {problems.length === 0 && <p className="muted">No problems found in what you entered.</p>}
-        {problems.map((f, i) => (
-          <article key={i} className={`card finding ${f.severity}`}>
-            <span className={`badge ${f.severity}`}><span aria-hidden="true">{ICON[f.severity]}</span>{LABEL[f.severity]}</span>
-            <h3>{f.title}</h3>
-            <p>{f.explanation}</p>
-            {f.action && <p className="action"><b>What to do: </b>{f.action}</p>}
-            {f.sources.length > 0 && (
-              <p className="sources">Source: {f.sources.map((src, j) => (
-                <span key={j}>{j > 0 && '; '}{src.url ? <a href={src.url} target="_blank" rel="noreferrer">{src.name}</a> : src.name}
-                  {src.as_of && ` (${src.as_of.slice(0, 10)})`}</span>
-              ))}</p>
-            )}
-          </article>
-        ))}
-      </section>
-
-      {passed.length > 0 && (
-        <section className="stack">
-          <h3>Checks that passed</h3>
-          {passed.map((f, i) => (
-            <article key={i} className="card finding ok">
-              <span className="badge ok"><span aria-hidden="true">✓</span>Checked</span>
-              <p><b>{f.title}.</b> {f.explanation}</p>
-            </article>
-          ))}
+      {simple && steps.length > 0 && (
+        <section className="card stack">
+          <h2>What to do now</h2>
+          <ol className="script">{steps.map((x, i) => <li key={i}>{x}</li>)}</ol>
+          {result.letter && !showKit && <div><button type="button" onClick={() => setShowKit(true)}>Get a ready-to-send letter</button></div>}
         </section>
       )}
 
-      {result.letter && <DisputeKit letter={result.letter} script={result.call_script} />}
+      {problems.length > 0 && (
+        <section className="stack">
+          {simple && <h2>Why</h2>}
+          {problems.map((f, i) => <FindingCard key={i} f={f} />)}
+        </section>
+      )}
+      {!simple && problems.length === 0 && <p className="muted">No problems found in what you entered.</p>}
+
+      {info.length > 0 && (simple ? (
+        <details className="card"><summary>Good to know ({info.length})</summary>
+          <div className="stack" style={{ marginTop: 12 }}>{info.map((f, i) => <FindingCard key={i} f={f} />)}</div>
+        </details>
+      ) : <section className="stack">{info.map((f, i) => <FindingCard key={i} f={f} />)}</section>)}
+
+      {passed.length > 0 && (
+        <details className="card" open={!simple}>
+          <summary>Checks that passed ({passed.length})</summary>
+          <div className="stack" style={{ marginTop: 12 }}>
+            {passed.map((f, i) => <p key={i}><span className="badge ok">✓ Checked</span> <b>{f.title}.</b> {f.explanation}</p>)}
+          </div>
+        </details>
+      )}
+
+      {result.letter && showKit && <DisputeKit letter={result.letter} script={result.call_script} />}
 
       <details className="card">
         <summary>What we checked</summary>

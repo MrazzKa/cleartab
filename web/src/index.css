@@ -127,3 +127,20 @@ td.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabu
 footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 0.85rem; display: grid; gap: 6px; }
 @media (prefers-reduced-motion: no-preference) { .finding { animation: rise 0.25s ease both; } }
 @keyframes rise { from { transform: translateY(4px); opacity: 0.4; } to { transform: none; opacity: 1; } }
+.choices { display: grid; gap: 10px; }
+.choice { display: grid; gap: 2px; text-align: left; background: var(--card); color: var(--ink); border: 2px solid var(--rule);
+  border-radius: var(--radius); padding: 16px 18px; min-height: 64px; font-size: 1.1rem; }
+.choice small { font-weight: 400; color: var(--muted); font-size: 0.9rem; }
+.choice:hover, .choice:focus-visible { border-color: var(--accent); }
+.wizard { max-width: 560px; }
+.progress { display: flex; gap: 6px; }
+.progress span { flex: 1; height: 6px; border-radius: 3px; background: var(--rule); }
+.progress span.on { background: var(--accent); }
+label.field.big { font-size: 1.05rem; }
+.dollar { display: flex; align-items: center; gap: 6px; font-size: 1.3rem; font-weight: 700; }
+.dollar input { font-size: 1.3rem; font-family: var(--mono); }
+button.link { background: none; border: none; color: var(--accent); padding: 0; min-height: 0; font-weight: 600; text-decoration: underline; }
+.photo { display: flex; align-items: center; justify-content: center; min-height: 56px; border: 2px dashed var(--accent);
+  border-radius: var(--radius); font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px; text-align: center; }
+.photo.disabled { border-color: var(--rule); color: var(--muted); cursor: not-allowed; }
+.photo input { position: absolute; width: 1px; height: 1px; opacity: 0; }

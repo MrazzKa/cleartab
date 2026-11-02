@@ -115,6 +115,16 @@ class Checker:
             return
         if not self.eob or self.ctx.coverage == "self_pay":
             self.skipped["bill_vs_eob"] = "no EOB (self-pay or not entered)"
+            if self.ctx.coverage == "insured":
+                self.add(rule="no_eob_yet", severity="warning",
+                         title="Wait for your explanation of benefits before paying",
+                         explanation=("Your insurer sends an explanation of benefits (EOB) after it processes the "
+                                      "claim. It says how much you owe. Until then, the bill may not include what "
+                                      "your insurance will pay."),
+                         action=("Check your insurer's app or website for the EOB, or call the number on your "
+                                 "insurance card. If the provider never billed your insurance, give them your "
+                                 "insurance card details."),
+                         sources=[src("cms_eob")])
             return
         owed, balance = self.eob_owe(), self.bill.balance_due
         if owed is None or balance is None:
@@ -137,7 +147,13 @@ class Checker:
                         + (f", minus {money(self.bill.patient_payments)} you already paid"
                            if self.bill.patient_payments else "")
                         + f". The bill asks for {money(balance)}.")
-            if self.ctx.network == "in" or protected:
+            action = ("Do not pay the difference yet. Call the provider's billing office with your EOB, ask them "
+                      "to match the bill to the EOB, and ask for an itemized bill.")
+            if paid_not_subtracted:
+                sev = "error"
+                action = ("Do not pay again. Call the billing office, give the date and amount of your payment (a "
+                          "receipt or card statement helps), and ask them to apply it to this account.")
+            elif self.ctx.network == "in" or protected:
                 sev = "error"
                 expl += (" An in-network provider has agreed to accept the allowed amount, so it may not bill you "
                          "for the difference between its charge and the allowed amount (balance billing)."
@@ -148,9 +164,7 @@ class Checker:
                 sev = "warning"
                 expl += (" If the provider is out of network, it may bill you the difference between its charge "
                          "and what your plan allowed, unless a protection applies.")
-            self.add(rule="balance_over_eob", severity=sev, title=title, explanation=expl,
-                     action=("Do not pay the difference yet. Call the provider's billing office with your EOB, ask "
-                             "them to match the bill to the EOB, and ask for an itemized bill."),
+            self.add(rule="balance_over_eob", severity=sev, title=title, explanation=expl, action=action,
                      evidence={"eob_you_owe": owed, "already_paid": self.bill.patient_payments,
                                "bill_balance": balance},
                      amount_at_stake=diff, sources=[src("cms_eob"), src("nsa_insured")])
@@ -470,6 +484,8 @@ class Checker:
         at_stake = self.amount_at_stake()
         balance = self.bill.balance_due if self.bill else None
         owed = self.eob_owe() if self.eob and self.ctx.coverage == "insured" else None
+        compared = bool(set(self.run) & {"bill_vs_eob", "published_prices", "duplicates", "mue_units", "ncci_ptp"}) \
+            or any(f.rule in ("gfe_dispute", "gfe_within", "balance_matches_eob") for f in self.findings)
         if counts["error"]:
             verdict = "likely_errors"
             n = counts["error"]
@@ -479,6 +495,9 @@ class Checker:
             verdict = "questions"
             n = counts["warning"]
             headline = f"{n} thing{'s' if n > 1 else ''} to ask about before you pay."
+        elif not compared:
+            verdict = "not_enough_data"
+            headline = "We could not compare your bill with anything yet."
         else:
             verdict = "looks_right"
             headline = "Nothing in what you entered looks wrong."

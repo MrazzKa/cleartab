@@ -136,3 +136,46 @@ def test_assistance_bands():
     assert res["HonorHealth"]["result"].startswith("87%")
     res = {r["system"]: r for r in evaluate(AssistanceRequest(household_size=1, annual_income=90000))["results"]}
     assert res["Mayo Clinic"]["status"] == "above"
+
+
+def test_bill_without_eob_is_not_called_right():
+    req = {"context": {"coverage": "insured"}, "bill": {"balance_due": 480.0}}
+    res = check(CheckRequest(**req))
+    assert res.summary.verdict == "questions" and rules(res)["no_eob_yet"] == "warning"
+    res = check(CheckRequest(**{"context": {"coverage": "self_pay"}, "bill": {"balance_due": 480.0}}))
+    assert res.summary.verdict == "not_enough_data"
+
+
+def test_quick_check_totals_only():
+    req = {"context": {"coverage": "insured", "network": "in"}, "eob": {"lines": [], "you_owe_total": 35.0},
+           "bill": {"balance_due": 35.0, "patient_payments": 35.0}}
+    res = check(CheckRequest(**req))
+    assert rules(res)["balance_over_eob"] == "error" and res.summary.amount_at_stake == 35.0
+
+
+def test_reader_parses_model_json(monkeypatch):
+    import json as _json
+
+    from billcheck import reader
+
+    class Resp:
+        status_code = 200
+
+        def json(self):
+            return {"choices": [{"message": {"content": _json.dumps({
+                "document_type": "eob", "you_owe_total": 35, "eob_lines": [{"description": "Medical care",
+                                                                          "allowed": 118.12, "you_owe": 35}],
+                "unreadable": []})}}]}
+
+    class Session:
+        def post(self, url, **kw):
+            assert kw["json"]["response_format"] == {"type": "json_object"}
+            return Resp()
+
+    monkeypatch.setenv("GROQ_API_KEY", "test")
+    r = reader.read_document([(b"\xff\xd8fake", "image/jpeg")], session=Session())
+    assert r.document_type == "eob" and r.you_owe_total == 35 and r.eob_lines[0].allowed == 118.12
+    monkeypatch.delenv("GROQ_API_KEY")
+    import pytest
+    with pytest.raises(reader.ReaderError):
+        reader.read_document([(b"x", "image/jpeg")])

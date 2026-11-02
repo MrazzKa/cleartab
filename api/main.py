@@ -261,3 +261,40 @@ def assistance(req: AssistanceRequest):
 @app.get("/assistance/policies")
 def assistance_policies():
     return policies()
+
+
+# ---------------------------------------------------------------- v2: read a photo (Feature 10, optional)
+import base64 as _b64  # noqa: E402
+
+from pydantic import BaseModel as _Model  # noqa: E402
+
+from billcheck import reader  # noqa: E402
+
+
+class _Image(_Model):
+    data: str           # base64, no data: prefix
+    type: str
+
+
+class _ReadRequest(_Model):
+    images: list[_Image]
+    consent: bool = False
+
+
+@app.get("/bill/read/status")
+def bill_read_status():
+    return {"available": reader.available(), "model": reader.MODEL}
+
+
+@app.post("/bill/read", response_model=reader.ReadResult)
+def bill_read(req: _ReadRequest):
+    """Photos go to the Groq API for this request only; ClearTab does not store or log them."""
+    if not req.consent:
+        raise HTTPException(400, "Consent is required before a photo is sent to the reading service.")
+    try:
+        imgs = [(_b64.b64decode(i.data, validate=True), i.type) for i in req.images]
+        return reader.read_document(imgs)
+    except reader.ReaderError as e:
+        raise HTTPException(422, str(e)) from e
+    except ValueError as e:
+        raise HTTPException(400, "The photo data is not valid.") from e

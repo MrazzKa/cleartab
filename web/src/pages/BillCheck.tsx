@@ -1,231 +1,230 @@
-import { useEffect, useMemo, useState } from 'react'
-import { api } from '../api'
-import type { BillLine, CheckRequest, CheckResult, DemoCase, EobLine, Hospital } from '../api'
+import { useEffect, useState } from 'react'
+import { api, money, reader, shrinkPhoto } from '../api'
+import type { CheckRequest, CheckResult } from '../api'
+import DetailedCheck from './DetailedCheck'
 import Results from './Results'
 
-const blankEob = (): EobLine => ({
-  description: '', units: 1, copay: 0, deductible: 0, coinsurance: 0, not_covered: 0, status: 'paid', remark: '',
-})
-const blankBillLine = (): BillLine => ({ description: '', units: 1, amount: 0 })
-
-const emptyRequest = (): CheckRequest => ({
-  context: { coverage: 'insured', network: 'in', emergency: false, ambulance: 'none', gfe_received: false },
-  eob: { claim_number: '', lines: [blankEob()] },
-  bill: { provider_type: 'unknown', lines: [], insurance_paid: 0, adjustments: 0, patient_payments: 0, balance_due: null },
-})
-
-const num = (v: string): number | null => (v.trim() === '' ? null : Number(v))
-
-function Money({ label, value, onChange, hint }: {
-  label: string; value: number | null | undefined; onChange: (v: number | null) => void; hint?: string
-}) {
-  return (
-    <label className="field">{label}{hint && <small>{hint}</small>}
-      <input inputMode="decimal" type="number" step="0.01" min="0" value={value ?? ''}
-        onChange={(e) => onChange(num(e.target.value))} />
-    </label>
-  )
+// A guided check: one question per screen, three numbers at most. The detailed form stays available for people
+// who want line-by-line checks.
+type Docs = 'bill' | 'both' | 'eob'
+interface Answers {
+  docs?: Docs
+  insured?: boolean
+  billDue?: number | null
+  eobOwe?: number | null
+  paid?: number | null
+  gfe?: number | null
+  emergency?: boolean
+  ambulance?: 'none' | 'ground' | 'air'
+  network?: 'in' | 'out' | 'unknown'
 }
 
-function Seg<T extends string>({ value, options, onChange, label }: {
-  value: T; options: [T, string][]; onChange: (v: T) => void; label: string
-}) {
+const num = (v: string) => (v.trim() === '' ? null : Number(v))
+
+function Choice({ options, onPick }: { options: [string, string, string?][]; onPick: (v: string) => void }) {
   return (
-    <div className="field" role="group" aria-label={label}>
-      <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{label}</span>
-      <div className="seg">
-        {options.map(([v, l]) => (
-          <button type="button" key={v} aria-pressed={value === v} onClick={() => onChange(v)}>{l}</button>
-        ))}
-      </div>
+    <div className="choices">
+      {options.map(([v, label, hint]) => (
+        <button key={v} type="button" className="choice" onClick={() => onPick(v)}>
+          <span>{label}</span>{hint && <small>{hint}</small>}
+        </button>
+      ))}
     </div>
   )
 }
 
+function Amount({ label, hint, value, onChange, autoFocus }: {
+  label: string; hint?: string; value: number | null | undefined; onChange: (v: number | null) => void; autoFocus?: boolean
+}) {
+  return (
+    <label className="field big">{label}{hint && <small>{hint}</small>}
+      <span className="dollar"><span aria-hidden="true">$</span>
+        <input type="number" inputMode="decimal" min="0" step="0.01" placeholder="0.00" autoFocus={autoFocus}
+          value={value ?? ''} onChange={(e) => onChange(num(e.target.value))} />
+      </span>
+    </label>
+  )
+}
+
 export default function BillCheck() {
-  const [req, setReq] = useState<CheckRequest>(emptyRequest)
-  const [cases, setCases] = useState<DemoCase[]>([])
-  const [hospitals, setHospitals] = useState<Hospital[]>([])
-  const [plans, setPlans] = useState<string[]>([])
+  const [a, setA] = useState<Answers>({})
+  const [step, setStep] = useState(0)
   const [result, setResult] = useState<CheckResult | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const [story, setStory] = useState('')
+  const [detailed, setDetailed] = useState(false)
+  const [canRead, setCanRead] = useState(false)
+  const [consent, setConsent] = useState(false)
+  const [reading, setReading] = useState(false)
+  const [readNote, setReadNote] = useState('')
 
-  useEffect(() => {
-    api.cases().then(setCases).catch(() => setCases([]))
-    api.hospitals().then(setHospitals).catch(() => setHospitals([]))
-    api.plans().then(setPlans).catch(() => setPlans([]))
-  }, [])
+  useEffect(() => { reader.status().then(setCanRead) }, [])
 
-  const ctx = req.context
-  const selfPay = ctx.coverage === 'self_pay'
-  const setCtx = (patch: Partial<CheckRequest['context']>) => setReq((r) => ({ ...r, context: { ...r.context, ...patch } }))
-  const eobLines = req.eob?.lines ?? []
-  const bill = req.bill!
-  const setEobLine = (i: number, patch: Partial<EobLine>) => setReq((r) => ({
-    ...r, eob: { ...r.eob!, lines: r.eob!.lines.map((l, j) => (j === i ? { ...l, ...patch } : l)) },
-  }))
-  const setBill = (patch: Partial<NonNullable<CheckRequest['bill']>>) => setReq((r) => ({ ...r, bill: { ...r.bill!, ...patch } }))
-  const setBillLine = (i: number, patch: Partial<BillLine>) => setBill({ lines: bill.lines.map((l, j) => (j === i ? { ...l, ...patch } : l)) })
-
-  const withPrices = useMemo(() => hospitals.filter((h) => h.has_prices), [hospitals])
-
-  const loadCase = (id: string) => {
-    const c = cases.find((x) => x.id === id)
-    if (!c) return
-    const base = emptyRequest()
-    setReq({
-      context: { ...base.context, ...c.request.context },
-      eob: c.request.eob ? { ...c.request.eob, lines: c.request.eob.lines.map((l) => ({ ...blankEob(), ...l })) } : { claim_number: '', lines: [] },
-      bill: c.request.bill ? { ...base.bill!, ...c.request.bill, lines: (c.request.bill.lines ?? []).map((l) => ({ ...blankBillLine(), ...l })) } : base.bill,
-    })
-    setStory(c.story)
-    setResult(null)
-  }
-
-  const submit = async () => {
-    setBusy(true); setError('')
-    const clean: CheckRequest = {
-      context: { ...ctx, hospital_ccn: ctx.hospital_ccn || null, insurer: ctx.insurer || null },
-      eob: selfPay || eobLines.length === 0 ? null : { ...req.eob!, lines: eobLines.map((l) => ({ ...l, code: l.code || null, service_date: l.service_date || null })) },
-      bill: { ...bill, statement_date: bill.statement_date || null, lines: bill.lines.map((l) => ({ ...l, code: l.code || null, service_date: l.service_date || null })) },
-    }
+  const onPhotos = async (files: FileList | null) => {
+    if (!files || files.length === 0) return
+    setReading(true); setError(''); setReadNote('')
     try {
-      setResult(await api.check(clean))
-      setTimeout(() => document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' }), 50)
-    } catch (e) {
-      setError((e as Error).message)
-    } finally { setBusy(false) }
+      const imgs = await Promise.all([...files].slice(0, 3).map(shrinkPhoto))
+      const r = await reader.read(imgs)
+      if (r.document_type === 'other') throw new Error("That doesn't look like a medical bill or EOB. Try another photo.")
+      const eob = r.you_owe_total != null
+      const bill = r.balance_due != null
+      setA((x) => ({ ...x, docs: eob && bill ? 'both' : eob ? 'eob' : 'bill', insured: eob ? true : x.insured,
+        billDue: r.balance_due, eobOwe: r.you_owe_total, paid: r.patient_payments }))
+      setReadNote('We read these numbers from your photo. Please check each one against your paper.'
+        + (r.unreadable.length ? ` Could not read: ${r.unreadable.join(', ')}.` : ''))
+      setStep(eob ? 2 : 1)
+    } catch (e) { setError((e as Error).message) } finally { setReading(false) }
   }
+
+  if (detailed) {
+    return (
+      <div className="stack-lg">
+        <button type="button" className="ghost" onClick={() => setDetailed(false)}>← Back to the quick check</button>
+        <DetailedCheck />
+      </div>
+    )
+  }
+
+  const set = (patch: Partial<Answers>) => setA((x) => ({ ...x, ...patch }))
+  const next = () => setStep((s) => s + 1)
+  const hasEob = a.docs === 'both' || a.docs === 'eob'
+  const total = 4
+
+  const run = async () => {
+    setBusy(true); setError('')
+    const insured = a.insured !== false
+    const req: CheckRequest = {
+      context: {
+        coverage: insured ? 'insured' : 'self_pay', network: a.network ?? 'unknown', emergency: !!a.emergency,
+        ambulance: a.ambulance ?? 'none', good_faith_estimate: insured ? null : a.gfe ?? null,
+        gfe_received: !insured && a.gfe != null,
+      },
+      eob: insured && hasEob ? { lines: [], you_owe_total: a.eobOwe ?? null } : null,
+      bill: a.docs === 'eob' ? null : {
+        provider_type: a.ambulance && a.ambulance !== 'none' ? 'ambulance' : 'unknown', lines: [],
+        insurance_paid: 0, adjustments: 0, patient_payments: a.paid ?? 0, balance_due: a.billDue ?? null,
+      },
+    }
+    try { setResult(await api.check(req)); setStep(total) } catch (e) { setError((e as Error).message) } finally { setBusy(false) }
+  }
+
+  const restart = () => { setA({}); setStep(0); setResult(null) }
 
   return (
-    <div className="stack-lg">
-      <section className="hero">
-        <h1>Check a medical bill</h1>
-        <p>Copy the numbers from your explanation of benefits (EOB) and your bill. You don't need to fill everything:
-          the more you enter, the more we can check. Nothing is stored.</p>
-      </section>
+    <div className="stack-lg wizard">
+      {step < total && (
+        <div className="progress" aria-label={`Step ${step + 1} of ${total}`}>
+          {Array.from({ length: total }, (_, i) => <span key={i} className={i <= step ? 'on' : ''} />)}
+        </div>
+      )}
 
-      {cases.length > 0 && (
-        <section className="card stack">
-          <h2>Try an example</h2>
-          <p className="small muted">Made-up patients. Prices in the hospital examples come from the hospitals' own published files.</p>
-          <div className="row">
-            {cases.map((c) => <button key={c.id} className="secondary" type="button" onClick={() => loadCase(c.id)}>{c.title}</button>)}
-          </div>
-          {story && <p className="action">{story}</p>}
+      {step === 0 && (
+        <section className="stack">
+          <h1>What did you get?</h1>
+          <p className="muted">An explanation of benefits (EOB) comes from your insurer and says "This is not a bill".
+            The bill comes from the hospital or doctor.</p>
+          <Choice onPick={(v) => { set({ docs: v as Docs, insured: v === 'bill' ? undefined : true }); next() }} options={[
+            ['bill', 'A bill', 'from a hospital, doctor or ambulance'],
+            ['both', 'A bill and an EOB', 'the best case: we can compare them'],
+            ['eob', 'Only an EOB', 'no bill yet'],
+          ]} />
+          {canRead && (
+            <div className="card stack">
+              <h2>Or take a photo</h2>
+              <p className="small muted">We send the photo to an AI reading service (Groq) to copy the numbers, then you
+                check them. ClearTab does not store the photo. Cover your name and member ID if you can.</p>
+              <label className="check"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+                I agree to send the photo for reading</label>
+              <label className={`photo ${consent ? '' : 'disabled'}`}>
+                <input type="file" accept="image/*" capture="environment" multiple disabled={!consent || reading}
+                  onChange={(e) => onPhotos(e.target.files)} />
+                {reading ? 'Reading your photo…' : 'Take or choose a photo (up to 3)'}
+              </label>
+              {error && <p className="error-box" role="alert">{error}</p>}
+            </div>
+          )}
         </section>
       )}
 
-      <fieldset>
-        <legend>1. Your situation</legend>
-        <div className="row">
-          <Seg label="How did you pay?" value={ctx.coverage}
-            options={[['insured', 'With insurance'], ['self_pay', 'No insurance / paid myself']]}
-            onChange={(v) => setCtx({ coverage: v })} />
-          {!selfPay && <Seg label="Was the provider in your network?" value={ctx.network}
-            options={[['in', 'In network'], ['out', 'Out of network'], ['unknown', "Don't know"]]}
-            onChange={(v) => setCtx({ network: v })} />}
-        </div>
-        <div className="grid2">
-          <label className="field">Hospital <small>to compare with its published prices</small>
-            <select value={ctx.hospital_ccn ?? ''} onChange={(e) => setCtx({ hospital_ccn: e.target.value || null })}>
-              <option value="">Not listed / not a hospital</option>
-              {withPrices.map((h) => <option key={h.ccn} value={h.ccn}>{h.name} ({h.city})</option>)}
-            </select>
-          </label>
-          {!selfPay && <label className="field">Insurance company
-            <select value={ctx.insurer ?? ''} onChange={(e) => setCtx({ insurer: e.target.value || null })}>
-              <option value="">Not listed</option>
-              {plans.map((p) => <option key={p} value={p}>{p}</option>)}
-            </select>
-          </label>}
-          <Seg label="Ambulance?" value={ctx.ambulance}
-            options={[['none', 'No'], ['ground', 'Ground'], ['air', 'Air']]} onChange={(v) => setCtx({ ambulance: v })} />
-        </div>
-        <label className="check"><input type="checkbox" checked={ctx.emergency} onChange={(e) => setCtx({ emergency: e.target.checked })} />
-          This was emergency care</label>
-        {selfPay && <div className="grid2">
-          <Money label="Good faith estimate total" hint="if the provider gave you one" value={ctx.good_faith_estimate}
-            onChange={(v) => setCtx({ good_faith_estimate: v, gfe_received: v != null })} />
-        </div>}
-      </fieldset>
-
-      {!selfPay && (
-        <fieldset>
-          <legend>2. Explanation of benefits (from your insurer)</legend>
-          <p className="small muted">One block per line on the EOB. "Allowed" is the amount your insurer agreed to pay
-            the provider in total; "you owe" is usually the last column.</p>
-          <label className="field" style={{ maxWidth: 280 }}>Claim number
-            <input value={req.eob?.claim_number ?? ''} onChange={(e) => setReq((r) => ({ ...r, eob: { ...r.eob!, claim_number: e.target.value } }))} />
-          </label>
-          {eobLines.map((l, i) => (
-            <div className="line-card" key={i}>
-              <div className="line-head"><span>EOB line {i + 1}</span>
-                <button type="button" className="ghost" onClick={() => setReq((r) => ({ ...r, eob: { ...r.eob!, lines: r.eob!.lines.filter((_, j) => j !== i) } }))}>Remove</button>
-              </div>
-              <div className="grid-lines">
-                <label className="field">Date<input type="date" value={l.service_date ?? ''} onChange={(e) => setEobLine(i, { service_date: e.target.value })} /></label>
-                <label className="field">Code<input value={l.code ?? ''} maxLength={8} placeholder="e.g. 73721" onChange={(e) => setEobLine(i, { code: e.target.value.toUpperCase() })} /></label>
-                <label className="field">Description<input value={l.description} onChange={(e) => setEobLine(i, { description: e.target.value })} /></label>
-                <Money label="Charged" value={l.billed} onChange={(v) => setEobLine(i, { billed: v })} />
-                <Money label="Allowed" value={l.allowed} onChange={(v) => setEobLine(i, { allowed: v })} />
-                <Money label="Copay" value={l.copay} onChange={(v) => setEobLine(i, { copay: v ?? 0 })} />
-                <Money label="Deductible" value={l.deductible} onChange={(v) => setEobLine(i, { deductible: v ?? 0 })} />
-                <Money label="Coinsurance" value={l.coinsurance} onChange={(v) => setEobLine(i, { coinsurance: v ?? 0 })} />
-                <Money label="Not covered" value={l.not_covered} onChange={(v) => setEobLine(i, { not_covered: v ?? 0 })} />
-                <Money label="Plan paid" value={l.plan_paid} onChange={(v) => setEobLine(i, { plan_paid: v })} />
-                <Money label="You owe" value={l.you_owe} onChange={(v) => setEobLine(i, { you_owe: v })} />
-                <label className="field">Status
-                  <select value={l.status} onChange={(e) => setEobLine(i, { status: e.target.value as EobLine['status'] })}>
-                    <option value="paid">Paid</option><option value="denied">Denied</option>
-                    <option value="pending">Pending</option><option value="unknown">Not shown</option>
-                  </select>
-                </label>
-              </div>
-            </div>
-          ))}
-          <div><button type="button" className="secondary" onClick={() => setReq((r) => ({ ...r, eob: { ...r.eob!, lines: [...r.eob!.lines, blankEob()] } }))}>+ Add EOB line</button></div>
-        </fieldset>
+      {step === 1 && (
+        <section className="stack">
+          <h1>{a.docs === 'bill' ? 'Did you use insurance for this care?' : 'A few quick questions'}</h1>
+          {a.docs === 'bill' && <Choice onPick={(v) => { set({ insured: v === 'yes' }); if (v === 'no') set({ network: 'unknown' }); next() }} options={[
+            ['yes', 'Yes, I have insurance', 'but I have no EOB yet'],
+            ['no', 'No', "I'm uninsured or paid myself"],
+          ]} />}
+          {a.docs !== 'bill' && (
+            <>
+              <h2>Was it emergency care?</h2>
+              <Choice onPick={(v) => { set({ emergency: v === 'yes' }); next() }} options={[['yes', 'Yes, emergency'], ['no', 'No']]} />
+            </>
+          )}
+        </section>
       )}
 
-      <fieldset>
-        <legend>{selfPay ? '2' : '3'}. The bill (from the hospital or doctor)</legend>
-        <div className="row">
-          <Seg label="Who sent the bill?" value={bill.provider_type}
-            options={[['facility', 'Hospital'], ['professional', 'Doctor or group'], ['ambulance', 'Ambulance'], ['unknown', 'Not sure']]}
-            onChange={(v) => setBill({ provider_type: v })} />
-        </div>
-        <div className="grid2">
-          <Money label="Amount due on the bill" value={bill.balance_due} onChange={(v) => setBill({ balance_due: v })} />
-          <Money label="What you already paid them" hint="for example a copay at check-in" value={bill.patient_payments} onChange={(v) => setBill({ patient_payments: v ?? 0 })} />
-          <label className="field">Statement date<input type="date" value={bill.statement_date ?? ''} onChange={(e) => setBill({ statement_date: e.target.value })} /></label>
-        </div>
-        <p className="small muted">Itemized lines (optional, but needed for duplicate, coding and price checks):</p>
-        {bill.lines.map((l, i) => (
-          <div className="line-card" key={i}>
-            <div className="line-head"><span>Bill line {i + 1}</span>
-              <button type="button" className="ghost" onClick={() => setBill({ lines: bill.lines.filter((_, j) => j !== i) })}>Remove</button>
-            </div>
-            <div className="grid-lines">
-              <label className="field">Date<input type="date" value={l.service_date ?? ''} onChange={(e) => setBillLine(i, { service_date: e.target.value })} /></label>
-              <label className="field">Code<input value={l.code ?? ''} maxLength={8} onChange={(e) => setBillLine(i, { code: e.target.value.toUpperCase() })} /></label>
-              <label className="field">Description<input value={l.description} onChange={(e) => setBillLine(i, { description: e.target.value })} /></label>
-              <label className="field">Units<input type="number" min="1" value={l.units} onChange={(e) => setBillLine(i, { units: Number(e.target.value) || 1 })} /></label>
-              <Money label="Amount" value={l.amount} onChange={(v) => setBillLine(i, { amount: v ?? 0 })} />
-            </div>
-          </div>
-        ))}
-        <div><button type="button" className="secondary" onClick={() => setBill({ lines: [...bill.lines, blankBillLine()] })}>+ Add bill line</button></div>
-      </fieldset>
+      {step === 2 && (
+        <section className="stack">
+          <h1>Enter the amounts</h1>
+          {readNote ? <p className="action">{readNote}</p> : <p className="muted">Copy them from your papers. Leave a box empty if you don't have it.</p>}
+          {a.docs !== 'eob' && <Amount label="How much does the bill ask you to pay?" hint="often called 'amount due' or 'balance'"
+            value={a.billDue} onChange={(v) => set({ billDue: v })} autoFocus />}
+          {hasEob && <Amount label="How much does the EOB say you owe?" hint="the last column, often 'what you owe' or 'patient responsibility'"
+            value={a.eobOwe} onChange={(v) => set({ eobOwe: v })} autoFocus={a.docs === 'eob'} />}
+          {a.docs !== 'eob' && <Amount label="Did you already pay this provider anything?" hint="for example a copay at check-in"
+            value={a.paid} onChange={(v) => set({ paid: v })} />}
+          {a.insured === false && <Amount label="Did they give you a written estimate before the visit?" hint="a 'good faith estimate'; leave empty if not"
+            value={a.gfe} onChange={(v) => set({ gfe: v })} />}
+          <div><button type="button" onClick={next}>Continue</button></div>
+        </section>
+      )}
 
-      <div className="row">
-        <button type="button" onClick={submit} disabled={busy}>{busy ? 'Checking…' : 'Check my bill'}</button>
-        <button type="button" className="ghost" onClick={() => { setReq(emptyRequest()); setResult(null); setStory('') }}>Start over</button>
-      </div>
-      {error && <p className="error-box" role="alert">{error}</p>}
-      {result && <div id="results"><Results result={result} /></div>}
+      {step === 3 && (
+        <section className="stack">
+          <h1>Last question</h1>
+          {a.insured !== false && (
+            <>
+              <h2>Was this provider in your insurance network?</h2>
+              <Choice onPick={(v) => set({ network: v as Answers['network'] })} options={[['in', 'In network'], ['out', 'Out of network'], ['unknown', "I don't know"]]} />
+              {a.network && <p className="small muted">Selected: {a.network === 'in' ? 'in network' : a.network === 'out' ? 'out of network' : "don't know"}</p>}
+            </>
+          )}
+          <h2>Was an ambulance involved?</h2>
+          <div className="seg">
+            {([['none', 'No'], ['ground', 'Ground ambulance'], ['air', 'Air ambulance']] as const).map(([v, l]) => (
+              <button key={v} type="button" aria-pressed={(a.ambulance ?? 'none') === v} onClick={() => set({ ambulance: v })}>{l}</button>
+            ))}
+          </div>
+          <div className="row">
+            <button type="button" onClick={run} disabled={busy}>{busy ? 'Checking…' : 'Check my bill'}</button>
+          </div>
+          {error && <p className="error-box" role="alert">{error}</p>}
+        </section>
+      )}
+
+      {step > 0 && step < total && (
+        <div className="row"><button type="button" className="ghost" onClick={() => setStep((s) => s - 1)}>← Back</button></div>
+      )}
+
+      {result && step === total && (
+        <div className="stack-lg">
+          <Results result={result} simple />
+          <section className="card stack">
+            <h2>Want a deeper check?</h2>
+            <p className="muted">Enter each line of the bill and the EOB to find duplicate charges, coding problems and
+              prices above what the hospital published.</p>
+            <div className="row">
+              <button type="button" className="secondary" onClick={() => setDetailed(true)}>Enter the lines</button>
+              <button type="button" className="ghost" onClick={restart}>Check another bill</button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {step === 0 && (
+        <p className="small muted">Prefer to see an example first? <button type="button" className="link" onClick={() => setDetailed(true)}>Open the
+          detailed check with sample bills</button>. Example: you paid {money(35)} at check-in and the bill still asks for {money(35)}.</p>
+      )}
     </div>
   )
 }
