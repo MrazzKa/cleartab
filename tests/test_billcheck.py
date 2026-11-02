@@ -131,7 +131,7 @@ def test_assistance_bands():
     res = {r["system"]: r for r in evaluate(AssistanceRequest(household_size=4, annual_income=66000))["results"]}
     assert res["Banner Health"]["result"] == "75% discount off AGB"           # policy: free care below 200%
     assert res["HonorHealth"]["status"] == "free"                            # 0-200% inclusive
-    assert res["Tenet (Abrazo, Carondelet)"]["status"] == "unknown"
+    assert res["Tenet (Abrazo, Carondelet)"]["status"] == "above"           # charity care below 200%
     res = {r["system"]: r for r in evaluate(AssistanceRequest(household_size=4, annual_income=66100))["results"]}
     assert res["HonorHealth"]["result"].startswith("87%")
     assert res["Dignity Health (CommonSpirit)"]["status"] == "unknown"   # 200.3%: between "200%" and "201%"
