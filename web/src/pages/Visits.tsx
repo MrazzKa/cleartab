@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { money, reader, shrinkPhoto } from '../api'
+import { money, reader } from '../api'
+import Icon from '../icons'
 import { useT } from '../i18n'
 
 // "My visits": every paper from one visit (bills, explanations of benefits, payment receipts) in one place, and one
@@ -90,6 +91,19 @@ export default function Visits() {
     const v: Visit = { id: uid(), title: t('New visit'), date: new Date().toISOString().slice(0, 10), docs: [] }
     setVisits((vs) => [v, ...vs]); setOpen(v.id)
   }
+  const example = () => {
+    const date = new Date().toISOString().slice(0, 10)
+    const docs: Omit<Doc, 'id'>[] = [
+      { kind: 'bill', provider: 'Banner UMC Tucson', amount: 1222.30, date },
+      { kind: 'eob', provider: 'Banner UMC Tucson', amount: 1154.80, date },
+      { kind: 'bill', provider: 'Emergency physicians group', amount: 652, date },
+      { kind: 'eob', provider: 'Emergency physicians group', amount: 82, date },
+      { kind: 'bill', provider: 'Radiology Ltd', amount: 95, date },
+      { kind: 'bill', provider: 'Tucson Fire Department', amount: 1950, date },
+    ]
+    const v: Visit = { id: uid(), title: t('Example: ER visit'), date, docs: docs.map((d) => ({ ...d, id: uid() })) }
+    setVisits((vs) => [v, ...vs]); setOpen(v.id)
+  }
   const addDoc = (d: Omit<Doc, 'id'>) => update((v) => ({ ...v, docs: [...v.docs, { ...d, id: uid() }] }))
   const addManual = () => {
     if (!form.provider.trim() || form.amount === '') return
@@ -100,13 +114,13 @@ export default function Visits() {
     if (!files?.length) return
     setBusy(true); setMsg('')
     try {
-      const r = await reader.read(await Promise.all([...files].slice(0, 3).map(shrinkPhoto)))
+      const r = await reader.read(files)
       const provider = r.provider_name || t('Unknown provider')
       const date = r.statement_date || visit?.date || ''
       if (r.balance_due != null) addDoc({ kind: 'bill', provider, amount: r.balance_due, date })
       if (r.you_owe_total != null) addDoc({ kind: 'eob', provider, amount: r.you_owe_total, date })
       if (r.patient_payments) addDoc({ kind: 'receipt', provider, amount: r.patient_payments, date })
-      setMsg(t('Added from your photo. Check the numbers against your paper.'))
+      setMsg(t('Added from your document. Check the numbers against your paper.'))
     } catch (e) { setMsg((e as Error).message) } finally { setBusy(false) }
   }
   const share = async () => {
@@ -128,6 +142,7 @@ export default function Visits() {
 
       <div className="row">
         <button type="button" onClick={newVisit}>{t('+ New visit')}</button>
+        {visits.length === 0 && <button type="button" className="secondary" onClick={example}>{t('See an example')}</button>}
         {visits.length > 1 && (
           <select value={open ?? ''} onChange={(e) => setOpen(e.target.value)} aria-label={t('Choose a visit')} style={{ maxWidth: 320 }}>
             {visits.map((v) => <option key={v.id} value={v.id}>{v.title} ({v.date})</option>)}
@@ -186,12 +201,21 @@ export default function Visits() {
             <h2>{t('Add a paper')}</h2>
             {canRead && (
               <>
-                <label className="check"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-                  {t('I agree to send the photo for reading')}</label>
-                <label className={`photo ${consent ? '' : 'disabled'}`}>
-                  <input type="file" accept="image/*" capture="environment" multiple disabled={!consent || busy} onChange={(e) => onPhotos(e.target.files)} />
-                  {busy ? t('Reading your photo…') : t('Take or choose a photo (up to 3)')}
-                </label>
+                <label className="check small"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+                  <span>{t('I agree to send it to an AI reading service (Groq) that copies the numbers. ClearTab does not store it. Cover your name and member ID if you can.')}</span></label>
+                <div className="scan-buttons">
+                  <label className={`scan-btn ${consent && !busy ? '' : 'disabled'}`}>
+                    <input type="file" accept="image/*" capture="environment" multiple disabled={!consent || busy}
+                      onChange={(e) => onPhotos(e.target.files)} aria-label={t('Take a photo')} />
+                    <Icon name="camera" size={26} />{t('Take a photo')}
+                  </label>
+                  <label className={`scan-btn alt ${consent && !busy ? '' : 'disabled'}`}>
+                    <input type="file" accept="image/*,application/pdf,.pdf" multiple disabled={!consent || busy}
+                      onChange={(e) => onPhotos(e.target.files)} aria-label={t('Upload a photo or PDF')} />
+                    <Icon name="file" size={26} />{t('Upload a photo or PDF')}
+                  </label>
+                </div>
+                {busy && <p className="row small" role="status"><span className="spinner" aria-hidden="true" />{t('Reading your document…')}</p>}
                 <p className="small muted">{t('Or type it:')}</p>
               </>
             )}

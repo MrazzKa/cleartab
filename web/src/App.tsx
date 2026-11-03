@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import Icon from './icons'
+import type { IconName } from './icons'
 import Assistance from './pages/Assistance'
 import BillCheck from './pages/BillCheck'
 import Home from './pages/Home'
@@ -13,6 +15,11 @@ const routeFromHash = (): Route => {
   return h === 'bill' || h === 'help' || h === 'prices' || h === 'visits' ? h : 'home'
 }
 
+const TABS: [Route, IconName, string][] = [
+  ['home', 'home', 'Home'], ['bill', 'check', 'Check my bill'], ['help', 'heart', 'Lower my bill'],
+  ['visits', 'layers', 'My visits'], ['prices', 'tag', 'Prices'],
+]
+
 export default function App() {
   const [route, setRoute] = useState<Route>(routeFromHash)
   const t = useT()
@@ -23,34 +30,42 @@ export default function App() {
     return () => window.removeEventListener('hashchange', on)
   }, [])
 
-  const link = (r: Route, label: string) => (
-    <a href={r === 'home' ? '#/' : `#/${r}`} aria-current={route === r ? 'page' : undefined}>{label}</a>
+  const tabs = (cls: string) => (
+    <nav className={cls} aria-label={t('Main')}>
+      {TABS.map(([r, icon, label]) => (
+        <a key={r} href={r === 'home' ? '#/' : `#/${r}`} aria-current={route === r ? 'page' : undefined}>
+          <Icon name={icon} /><span>{t(label)}</span>
+        </a>
+      ))}
+    </nav>
   )
 
   return (
-    <div className="shell">
+    <>
       <header className="topbar">
-        <a className="brand" href="#/">Clear<span>Tab</span></a>
-        <nav aria-label="Main">
-          {link('help', t('Lower my bill'))}
-          {link('bill', t('Check my bill'))}
-          {link('visits', t('My visits'))}
-          {link('prices', t('Prices'))}
+        <div className="topbar-in">
+          <a className="brand" href="#/"><span className="logo" aria-hidden="true"><Icon name="receipt" size={18} /></span>Clear<span>Tab</span></a>
+          {tabs('nav-top')}
           <button type="button" className="lang" onClick={() => setLang(lang === 'en' ? 'es' : 'en')}
-            aria-label={lang === 'en' ? 'Ver en español' : 'View in English'}>{lang === 'en' ? 'Español' : 'English'}</button>
-        </nav>
+            aria-label={lang === 'en' ? 'Ver en español' : 'View in English'}>
+            <Icon name="globe" size={18} />{lang === 'en' ? 'Español' : 'English'}
+          </button>
+        </div>
       </header>
-      <main>
-        {route === 'home' && <Home />}
-        {route === 'bill' && <BillCheck />}
-        {route === 'help' && <Assistance />}
-        {route === 'prices' && <Prices />}
-        {route === 'visits' && <Visits />}
-      </main>
-      <footer>
-        <p>{t('ClearTab compares what you enter with published rules and prices. It is not legal or medical advice. Nothing you enter is stored, and there are no accounts.')}</p>
-        <p>{t('Free and open source. University of Arizona ISTA 498 capstone, Team Trace, 2026.')}</p>
-      </footer>
-    </div>
+      <div className="shell">
+        <main>
+          {route === 'home' && <Home />}
+          {route === 'bill' && <BillCheck />}
+          {route === 'help' && <Assistance />}
+          {route === 'prices' && <Prices />}
+          {route === 'visits' && <Visits />}
+        </main>
+        <footer>
+          <p>{t('ClearTab compares what you enter with published rules and prices. It is not legal or medical advice. Nothing you enter is stored, and there are no accounts.')}</p>
+          <p>{t('Free and open source. University of Arizona ISTA 498 capstone, Team Trace, 2026.')}</p>
+        </footer>
+      </div>
+      {tabs('nav-bottom')}
+    </>
   )
 }

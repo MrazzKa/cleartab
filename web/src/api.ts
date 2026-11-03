@@ -11,6 +11,7 @@ export interface EobLine {
   code?: string | null
   units: number
   billed?: number | null
+  discount?: number | null
   allowed?: number | null
   copay: number
   deductible: number
@@ -50,7 +51,7 @@ export interface Context {
 
 export interface CheckRequest {
   context: Context
-  eob?: { claim_number?: string | null; lines: EobLine[]; you_owe_total?: number | null } | null
+  eob?: { claim_number?: string | null; lines: EobLine[]; you_owe_total?: number | null; oop_max_met?: boolean } | null
   bill?: {
     provider_type: 'facility' | 'professional' | 'ambulance' | 'unknown'
     statement_date?: string | null
@@ -139,16 +140,50 @@ export const api = {
   search: (q: string, plan: string, zip: string) => call<any>(`/search?${new URLSearchParams({ q, plan, zip })}`),
 }
 
+export interface ReadLine {
+  service_date: string | null; description: string; code: string | null
+  billed: number | null; discount: number | null; allowed: number | null; copay: number | null; deductible: number | null
+  coinsurance: number | null; not_covered: number | null; plan_paid: number | null; you_owe: number | null
+  status: string; units: number | null; amount: number | null
+}
+
 export interface ReadResult {
   document_type: 'eob' | 'bill' | 'both' | 'other'; provider_type: string; provider_name: string | null; statement_date: string | null
   claim_number: string | null; balance_due: number | null; patient_payments: number | null
-  you_owe_total: number | null; unreadable: string[]; note: string
+  you_owe_total: number | null; oop_max_met: boolean; eob_lines: ReadLine[]; bill_lines: ReadLine[]
+  unreadable: string[]; note: string
+}
+
+const isPdf = (f: File) => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf')
+
+async function fileBase64(file: File): Promise<string> {
+  const buf = new Uint8Array(await file.arrayBuffer())
+  let bin = ''
+  for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode(...buf.subarray(i, i + 0x8000))
+  return btoa(bin)
+}
+
+/** One PDF, or up to three photos (shrunk in the browser first). */
+async function toUploads(files: FileList | File[]): Promise<{ data: string; type: string }[]> {
+  const list = [...files]
+  const pdf = list.find(isPdf)
+  if (pdf) return [{ data: await fileBase64(pdf), type: 'application/pdf' }]
+  return Promise.all(list.slice(0, 3).map(shrinkPhoto))
 }
 
 export const reader = {
   status: () => call<{ available: boolean }>('/bill/read/status').then((x) => x.available).catch(() => false),
-  read: (images: { data: string; type: string }[]) => call<ReadResult>('/bill/read', post({ images, consent: true })),
+  read: async (files: FileList | File[]) => call<ReadResult>('/bill/read', post({ images: await toUploads(files), consent: true })),
 }
+
+/** Turn read EOB lines into check lines. Empty amounts stay empty: the rule engine skips what it cannot check. */
+const isoDate = (d: string | null) => (d && /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : null)
+export const toEobLines = (lines: ReadLine[]): EobLine[] => lines.map((l) => ({
+  service_date: isoDate(l.service_date), description: l.description, code: l.code, units: 1,
+  billed: l.billed, discount: l.discount, allowed: l.allowed, plan_paid: l.plan_paid, you_owe: l.you_owe,
+  copay: l.copay ?? 0, deductible: l.deductible ?? 0, coinsurance: l.coinsurance ?? 0, not_covered: l.not_covered ?? 0,
+  status: (['paid', 'denied', 'pending', 'adjusted'].includes(l.status) ? l.status : 'unknown') as EobLine['status'], remark: '',
+}))
 
 /** Shrink a phone photo to at most 2000 px and re-encode as JPEG, returning base64 without the data: prefix. */
 export async function shrinkPhoto(file: File): Promise<{ data: string; type: string }> {

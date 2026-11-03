@@ -81,11 +81,13 @@ export default function Results({ result, simple = false }: { result: CheckResul
   const info = result.findings.filter((f) => f.severity === 'info')
   const passed = result.findings.filter((f) => f.severity === 'ok')
   const [showKit, setShowKit] = useState(!simple)
-  const steps = [...new Set(problems.map((f) => f.action).filter(Boolean))].slice(0, 3)
+  const owesZero = passed.some((f) => f.rule === 'eob_owe_zero')
+  const steps = [...new Set((problems.length ? problems : passed.filter((f) => f.rule === 'eob_owe_zero'))
+    .map((f) => f.action).filter(Boolean))].slice(0, 3)
   return (
     <div className="stack-lg">
       <section className={`verdict ${s.verdict}`} aria-live="polite">
-        <h2>{s.verdict === 'looks_right' && simple ? t('Your bill looks right.') : s.headline}</h2>
+        <h2>{s.verdict === 'looks_right' && simple && !owesZero ? t('Your bill looks right.') : s.headline}</h2>
         <div className="figures">
           {s.eob_you_owe != null && <div className="figure"><span className="small muted">{t('EOB says you owe')}</span><b>{money(s.eob_you_owe)}</b></div>}
           {s.bill_balance != null && <div className="figure"><span className="small muted">{t('Bill asks for')}</span><b>{money(s.bill_balance)}</b></div>}
@@ -110,7 +112,7 @@ export default function Results({ result, simple = false }: { result: CheckResul
       {!simple && problems.length === 0 && <p className="muted">{t('No problems found in what you entered.')}</p>}
 
       {info.length > 0 && (simple ? (
-        <details className="card"><summary>{t('Good to know')} ({info.length})</summary>
+        <details className="card" open={problems.length === 0}><summary>{t('Good to know')} ({info.length})</summary>
           <div className="stack" style={{ marginTop: 12 }}>{info.map((f, i) => <FindingCard key={i} f={f} />)}</div>
         </details>
       ) : <section className="stack">{info.map((f, i) => <FindingCard key={i} f={f} />)}</section>)}

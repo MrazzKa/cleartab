@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ambulanceServices, api, money, reader, shrinkPhoto } from '../api'
-import type { AmbulanceService } from '../api'
+import { ambulanceServices, api, money, reader, toEobLines } from '../api'
+import type { AmbulanceService, ReadResult } from '../api'
+import Icon from '../icons'
 import type { CheckRequest, CheckResult } from '../api'
 import { useLang, useT } from '../i18n'
 import DetailedCheck from './DetailedCheck'
@@ -65,6 +66,8 @@ export default function BillCheck() {
   const [consent, setConsent] = useState(false)
   const [reading, setReading] = useState(false)
   const [readNote, setReadNote] = useState('')
+  const [read, setRead] = useState<ReadResult | null>(null)
+  const [useLines, setUseLines] = useState(true)
   const [services, setServices] = useState<AmbulanceService[]>([])
   useEffect(() => { reader.status().then(setCanRead); ambulanceServices().then(setServices) }, [])
 
@@ -72,14 +75,14 @@ export default function BillCheck() {
     if (!files || files.length === 0) return
     setReading(true); setError(''); setReadNote('')
     try {
-      const imgs = await Promise.all([...files].slice(0, 3).map(shrinkPhoto))
-      const r = await reader.read(imgs)
+      const r = await reader.read(files)
       if (r.document_type === 'other') throw new Error(t("That doesn't look like a medical bill or EOB. Try another photo."))
+      setRead(r); setUseLines(true)
       const eob = r.you_owe_total != null
       const bill = r.balance_due != null
       setA((x) => ({ ...x, docs: eob && bill ? 'both' : eob ? 'eob' : 'bill', insured: eob ? true : x.insured,
         billDue: r.balance_due, eobOwe: r.you_owe_total, paid: r.patient_payments }))
-      setReadNote(t('We read these numbers from your photo. Please check each one against your paper.')
+      setReadNote(t('We read these numbers from your document. Please check each one against your paper.')
         + (r.unreadable.length ? ` ${t('Could not read:')} ${r.unreadable.join(', ')}.` : ''))
       setStep(eob ? 2 : 1)
     } catch (e) { setError((e as Error).message) } finally { setReading(false) }
@@ -111,7 +114,10 @@ export default function BillCheck() {
         ambulance_miles: a.miles ?? null, transported: a.ambulance === 'ground' ? a.transported ?? null : null,
         gfe_received: !insured && a.gfe != null, lang,
       },
-      eob: insured && hasEob ? { lines: [], you_owe_total: a.eobOwe ?? null } : null,
+      eob: insured && hasEob ? {
+        lines: read && useLines ? toEobLines(read.eob_lines) : [], you_owe_total: a.eobOwe ?? null,
+        oop_max_met: !!(read && useLines && read.oop_max_met),
+      } : null,
       bill: a.docs === 'eob' ? null : {
         provider_type: a.ambulance && a.ambulance !== 'none' ? 'ambulance' : 'unknown', lines: [],
         insurance_paid: 0, adjustments: 0, patient_payments: a.paid ?? 0, balance_due: a.billDue ?? null,
@@ -120,7 +126,9 @@ export default function BillCheck() {
     try { setResult(await api.check(req)); setStep(total) } catch (e) { setError((e as Error).message) } finally { setBusy(false) }
   }
 
-  const restart = () => { setA({}); setStep(0); setResult(null) }
+  const restart = () => { setA({}); setStep(0); setResult(null); setRead(null); setReadNote('') }
+  const eobLines = read?.eob_lines ?? []
+  const sum = (k: 'billed' | 'plan_paid' | 'you_owe') => eobLines.reduce((x, l) => x + (l[k] ?? 0), 0)
 
   return (
     <div className="stack-lg wizard">
@@ -132,27 +140,41 @@ export default function BillCheck() {
 
       {step === 0 && (
         <section className="stack">
-          <h1>{t('What did you get?')}</h1>
-          <p className="muted">{t('An explanation of benefits (EOB) comes from your insurer and says "This is not a bill". The bill comes from the hospital or doctor.')}</p>
+          <h1>{t('Check a medical bill')}</h1>
+          {canRead && (
+            <div className="scan">
+              <div className="scan-head">
+                <span className="door-icon"><Icon name="camera" size={24} /></span>
+                <div><h2>{t('Scan your bill or EOB')}</h2>
+                  <p className="small muted">{t('A photo, or the PDF from your insurer’s website.')}</p></div>
+              </div>
+              <label className="check small"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+                <span>{t('I agree to send it to an AI reading service (Groq) that copies the numbers. ClearTab does not store it. Cover your name and member ID if you can.')}</span></label>
+              <div className="scan-buttons">
+                <label className={`scan-btn ${consent && !reading ? '' : 'disabled'}`}>
+                  <input type="file" accept="image/*" capture="environment" multiple disabled={!consent || reading}
+                    onChange={(e) => onPhotos(e.target.files)} aria-label={t('Take a photo')} />
+                  <Icon name="camera" size={26} />{t('Take a photo')}
+                </label>
+                <label className={`scan-btn alt ${consent && !reading ? '' : 'disabled'}`}>
+                  <input type="file" accept="image/*,application/pdf,.pdf" multiple disabled={!consent || reading}
+                    onChange={(e) => onPhotos(e.target.files)} aria-label={t('Upload a photo or PDF')} />
+                  <Icon name="file" size={26} />{t('Upload a photo or PDF')}
+                </label>
+              </div>
+              {reading && <p className="row small" role="status"><span className="spinner" aria-hidden="true" />{t('Reading your document…')}</p>}
+              {!consent && <p className="small muted">{t('Tick the box first.')}</p>}
+              {error && <p className="error-box" role="alert">{error}</p>}
+            </div>
+          )}
+          {canRead && <p className="divider">{t('or answer three questions')}</p>}
+          <h2>{t('What did you get?')}</h2>
+          <p className="muted small">{t('An explanation of benefits (EOB) comes from your insurer and says "This is not a bill". The bill comes from the hospital or doctor.')}</p>
           <Choice onPick={(v) => { set({ docs: v as Docs, insured: v === 'bill' ? undefined : true }); next() }} options={[
             ['bill', t('A bill'), t('from a hospital, doctor or ambulance')],
             ['both', t('A bill and an EOB'), t('the best case: we can compare them')],
             ['eob', t('Only an EOB'), t('no bill yet')],
           ]} />
-          {canRead && (
-            <div className="card stack">
-              <h2>{t('Or take a photo')}</h2>
-              <p className="small muted">{t('We send the photo to an AI reading service (Groq) to copy the numbers, then you check them. ClearTab does not store the photo. Cover your name and member ID if you can.')}</p>
-              <label className="check"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-                {t('I agree to send the photo for reading')}</label>
-              <label className={`photo ${consent ? '' : 'disabled'}`}>
-                <input type="file" accept="image/*" capture="environment" multiple disabled={!consent || reading}
-                  onChange={(e) => onPhotos(e.target.files)} />
-                {reading ? t('Reading your photo…') : t('Take or choose a photo (up to 3)')}
-              </label>
-              {error && <p className="error-box" role="alert">{error}</p>}
-            </div>
-          )}
         </section>
       )}
 
@@ -176,6 +198,27 @@ export default function BillCheck() {
         <section className="stack">
           <h1>{t('Enter the amounts')}</h1>
           {readNote ? <p className="action">{readNote}</p> : <p className="muted">{t("Copy them from your papers. Leave a box empty if you don't have it.")}</p>}
+          {eobLines.length > 0 && (
+            <div className="card stack">
+              <h2>{t('{n} lines read from your EOB', { n: eobLines.length })}</h2>
+              <div className="table-wrap">
+                <table className="read-table">
+                  <thead><tr><th>{t('Service')}</th><th>{t('Billed')}</th><th>{t('Plan paid')}</th><th>{t('You owe')}</th></tr></thead>
+                  <tbody>
+                    {eobLines.map((l, i) => (
+                      <tr key={i}><td>{l.description || '-'}</td><td className="num">{money(l.billed)}</td>
+                        <td className="num">{money(l.plan_paid)}</td><td className="num">{money(l.you_owe)}</td></tr>
+                    ))}
+                    <tr><th>{t('Total')}</th><td className="num"><b>{money(sum('billed'))}</b></td>
+                      <td className="num"><b>{money(sum('plan_paid'))}</b></td><td className="num"><b>{money(sum('you_owe'))}</b></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              {read?.oop_max_met && <p className="small">{t('The EOB says your out-of-pocket maximum is met.')}</p>}
+              <label className="check"><input type="checkbox" checked={useLines} onChange={(e) => setUseLines(e.target.checked)} />
+                {t('These match my paper: check each line')}</label>
+            </div>
+          )}
           {a.docs !== 'eob' && <Amount label={t('How much does the bill ask you to pay?')} hint={t("often called 'amount due' or 'balance'")}
             value={a.billDue} onChange={(v) => set({ billDue: v })} autoFocus />}
           {hasEob && <Amount label={t('How much does the EOB say you owe?')} hint={t("the last column, often 'what you owe' or 'patient responsibility'")}
