@@ -146,3 +146,41 @@ Each phase appends a summary of at most 15 lines.
 - Normalization re-run on all 19 files: f4_coverage, f4_flag_log and every H2 ratio identical apart from timestamps. Database prices unchanged (they store the canonical insurer only), so no reload.
 - **H2 final: NOT MET.** Pooled median 1.92 (95% CI 1.82-2.40) < 2; Phoenix 2.81, Tucson 1.39; cash below median negotiated 1 of 50. Per Table 13 the project reframes around interpretation and provenance (to confirm with Dr. Li). Coverage final: 51.0% pooled with Mayo, 66.7% without, 70.7% mean of hospitals.
 - Reports (H2 REPORT, advisor_followup, coverage_followup), charts, brief and advisor pack updated to final.
+
+## v2 prototype: bill check and financial assistance (2026-11-02)
+- Direction changed within the same topic (instructor, 2026-10-27): from comparing prices before care to checking a bill after care. Plan: docs/PLAN_V2.md.
+- Evidence: Campus Health insurance office interview (main pain is reading the EOB and checking the bill); KFF 2022: 41% of US adults have medical or dental debt, 44% of them did not pay a bill in full because they were not sure it was correct; only 2 of 19 hospitals publish physician fees.
+- billcheck/: rule engine (EOB arithmetic, bill vs EOB, duplicates, CMS MUE units, CMS NCCI pairs, allowed vs published rate, self-pay vs cash price, No Surprises Act) with sources on every finding; dispute letter and phone script by template. POST /bill/check, GET /bill/cases (6 synthetic cases, prices from real files).
+- CMS MUE tables (2026 Q4) downloaded by `python -m billcheck.fetch_reference`; NCCI PTP tables need the AMA license click-through (MANUAL_DOWNLOADS.md), pair check skipped until then.
+- Financial assistance: policies of 8 systems covering 41 of 46 registry hospitals (data/processed/assistance_policies.json, 2026 HHS guidelines). Free care up to about 200% FPL at Banner, HonorHealth, Dignity and Mayo; Tenet and Northwest do not publish income limits; TMC's grid still uses 2025 guidelines. Same Banner policy: free care below 200% in Arizona, up to 250% in Colorado (state law). Second reader pending.
+- Web: home, bill check with examples and results, dispute kit, assistance finder, price lookup; mobile to 390 px checked.
+- Tests: 34 passed; ruff, eslint and tsc clean.
+
+## v2: guided flow, CMS pair check, Dr. Li round 2, R1 registry, R2 pilot (2026-11-02)
+- Quick check is now a guided flow (what you got, three amounts, network, ambulance); detailed line entry is optional. Bill without an EOB now says "wait for the EOB" instead of "looks right"; nothing to compare gives "not enough data".
+- Photo reading (F10): qwen/qwen3.8-27b on Groq, consent required, photos not stored; reads EOB and bill together. Installable web app (manifest, icon).
+- CMS NCCI PTP v323r0 downloaded by hand after the AMA license (cms.gov robots.txt disallows /license/); `python -m billcheck.build_ptp` builds 1,406,699 facility and 1,732,820 practitioner pairs active on 2026-10-01.
+- Dr. Li round 2 (research/h2/li_round2.md): H2 pooled 1.92 (1.82-2.39), Phoenix 2.81, Tucson 1.39, Phoenix at Tucson's system count 1.66 (1.47-1.86); Mayo a constant 1.12x the median hospital on its 14 comparable procedures; 60% coverage threshold on a 60-65% plateau (9 of 14 hospitals); random weights: ranks stable at both ends (Kendall tau median 0.86).
+- R1: 83 Arizona acute and critical access hospitals; 44 nonprofit (501(r)); policies collected for 41 hospitals, 16 nonprofit still to collect (data/processed/r1_az_hospitals.csv). Second-reader kit for the 8 collected policies: research/assistance/.
+- R2 pilot (exploratory, research/r2/REPORT.md): rules 100%; gpt-oss-120b caught 84% of errors, gpt-oss-20b 63%, qwen 43%; a payment not subtracted was caught once in 30 model answers. Photo reading + rules: 12 of 40 cases before the free daily token limit, all correct so far; rerun to complete.
+- Proposal revision draft (docs/PROPOSAL_V2_CHANGES.md) with H4-H6 decision rules; demo script (docs/MIDSEM_DEMO.md).
+
+## v2: second reader, simpler product, ambulance rates, Spanish, My visits (2026-11-02)
+- Second reader of assistance policies: 114 of 131 values agreed (87.0%, target 85%); 17 disagreements checked against the documents (14 confirmed newer HonorHealth and CommonSpirit policies, Valleywise contacts, Mayo wording; 3 Abrazo values accepted from the second reader, site blocks automated clients). Findings: Mayo helps insured patients only in network; CommonSpirit bands leave 200-201% FPL uncovered.
+- Home is one question with four choices. "Lower my bill": hospital, household, income, then the hospital's own policy result and an application kit (form link, documents from the form, where to send, 501(r) collections pause, letter). Official forms are not fillable PDFs, so no auto-fill.
+- Arizona ground ambulance: ADHS rate schedule (prepared 2026-10-01, 103 services) parsed into data/processed/az_ground_ambulance_rates.csv; A.R.S. 36-2239(D) forbids charging other than the approved rate; refused transport may be gratuitous under (K). New rule compares bills with the approved ALS/BLS base and mileage.
+- Spanish: whole interface (language switch) and every finding; letters stay in English for billing offices; assistance policy text in Spanish.
+- My visits: all papers from one visit on the device; per provider pay, wait or question; reminders (.ics), family sharing, collector validation letter (CFPB sample structure).
+- Market check: five new "photo of a bill" apps in 2026 with almost no ratings; CFPB medical debt complaints since 2025: 15,303 US, 385 AZ, top issues "not mine or already paid" and "not enough information to verify".
+- Tests 39 passed; ruff, eslint, tsc clean.
+
+## v2: real EOB, PDF reading and redesign (2026-11-03)
+- Tested on a real, anonymized insurer EOB (ER visit, 10 lines, PDF from the insurer website). First reading put
+  the "amount from another source" column into "plan paid"; the EOB arithmetic rule flagged all 9 affected lines.
+- Fix: the reader now only copies the column headers and each row's amounts; fixed rules (billcheck/reader.py
+  COLUMNS) place each amount under its header. Result: all 10 lines and totals match the paper.
+- PDFs with a text layer are read through text (openai/gpt-oss-120b on Groq); scans still need a photo.
+- New rules: eob_owe_zero, network_discount, eob_zero_allowed (bundled line), oop_max_met; discount column
+  supported (allowed = billed - discount - not covered). Spanish text for all four. Tests: 41 passed.
+- Interface: bottom tab bar on phones, scan-first home and check page, review table of read lines before the check,
+  "See an example" in My visits.

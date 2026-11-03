@@ -1,0 +1,6 @@
+estimate,median,ci_low,ci_high,note,source_url,retrieved_at
+"Pooled, both metros (pre-registered)",1.9219,1.8205,2.3948,n=99,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+Phoenix,2.8124,2.8112,3.8985,n=50,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+Tucson,1.3898,1.2506,1.743,n=49,data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+"Phoenix, Tucson-sized hospital sets",2.5287,2.1204,2.8115,"1,000 draws",data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00
+"Phoenix, Tucson's number of systems",1.6617,1.468,1.8553,"1,000 draws",data/raw/normalized/<ccn>_f4.parquet (H1 sample),2026-11-02T10:23:32+00:00

@@ -217,3 +217,94 @@ EXPLAINER = ("These are prices the hospital published for its own part of the ca
              "themselves. A negotiated rate is the amount a hospital agreed with an insurance plan; what you pay "
              "depends on your deductible and coinsurance. Your final bill can be different. Call the hospital to "
              "confirm before your visit.")
+
+
+# ---------------------------------------------------------------- v2: bill check (Features 7 and 8)
+from billcheck import demo_cases, run_check  # noqa: E402
+from billcheck.models import CheckRequest, CheckResult  # noqa: E402
+
+
+@app.post("/bill/check", response_model=CheckResult)
+def bill_check(req: CheckRequest):
+    """Check an EOB and a bill. The body is never logged or stored (only the path is logged)."""
+    if req.context.hospital_ccn:
+        with pool.connection() as conn:
+            return run_check(req, conn)
+    return run_check(req)
+
+
+@app.get("/bill/cases")
+def bill_cases():
+    """Synthetic demo cases (made-up patients; prices from the hospitals' published files)."""
+    return {"cases": demo_cases()}
+
+
+@app.get("/hospitals")
+def hospitals():
+    with pool.connection() as conn:
+        rows = conn.execute("""SELECT h.ccn, h.name, h.city, h.metro, h.health_system, h.phone, h.status,
+                                      EXISTS (SELECT 1 FROM prices p WHERE p.hospital_id = h.id) AS has_prices
+                               FROM hospitals h ORDER BY h.metro, h.name""").fetchall()
+    return {"hospitals": rows}
+
+
+# ---------------------------------------------------------------- v2: financial assistance finder (Feature 9)
+from billcheck.assistance import AssistanceRequest, evaluate, policies  # noqa: E402
+
+
+@app.post("/assistance")
+def assistance(req: AssistanceRequest):
+    """Income and household size are used for this answer only; never logged or stored."""
+    return evaluate(req)
+
+
+@app.get("/assistance/policies")
+def assistance_policies():
+    return policies()
+
+
+# ---------------------------------------------------------------- v2: read a photo (Feature 10, optional)
+import base64 as _b64  # noqa: E402
+
+from pydantic import BaseModel as _Model  # noqa: E402
+
+from billcheck import reader  # noqa: E402
+
+
+class _Image(_Model):
+    data: str           # base64, no data: prefix
+    type: str
+
+
+class _ReadRequest(_Model):
+    images: list[_Image]
+    consent: bool = False
+
+
+@app.get("/bill/read/status")
+def bill_read_status():
+    return {"available": reader.available(), "model": reader.MODEL}
+
+
+@app.post("/bill/read", response_model=reader.ReadResult)
+def bill_read(req: _ReadRequest):
+    """Photos go to the Groq API for this request only; ClearTab does not store or log them."""
+    if not req.consent:
+        raise HTTPException(400, "Consent is required before a photo is sent to the reading service.")
+    try:
+        imgs = [(_b64.b64decode(i.data, validate=True), i.type) for i in req.images]
+        return reader.read_document(imgs)
+    except reader.ReaderError as e:
+        raise HTTPException(422, str(e)) from e
+    except ValueError as e:
+        raise HTTPException(400, "The photo data is not valid.") from e
+
+
+# ---------------------------------------------------------------- v2: Arizona ground ambulance services (ADHS rates)
+from billcheck.ambulance import rates as _ambulance_rates  # noqa: E402
+
+
+@app.get("/ambulance/services")
+def ambulance_services():
+    """ADHS-approved ground ambulance rates per service (data/processed/az_ground_ambulance_rates.csv)."""
+    return {"services": sorted(_ambulance_rates(), key=lambda r: r["entity"])}

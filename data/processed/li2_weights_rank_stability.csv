@@ -1,0 +1,20 @@
+hospital,metro,equal_weight_score,equal_weight_rank,median_rank,rank_p5,rank_p95,share_top5,share_bottom5,source_url,retrieved_at
+East Valley ER & Hospital,Phoenix,100.0,1,1,1,1,1.0,0.0,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+St. Joseph's Hospital (Tucson),Tucson,98.7,2,2,2,6,0.805,0.0,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+St. Mary's Hospital,Tucson,98.7,3,3,3,5,1.0,0.0,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+Banner - University Medical Center Tucson,Tucson,98.4,4,5,4,7,0.71,0.0,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+Arizona Spine and Joint Hospital,Phoenix,98.3,5,5,4,9,0.501,0.0,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+Banner Desert Medical Center,Phoenix,98.3,6,6,5,8,0.133,0.0,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+Chandler Regional Medical Center,Phoenix,97.8,7,7,2,12,0.366,0.0,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+St. Joseph's Hospital and Medical Center,Phoenix,96.9,8,8,3,15,0.207,0.091,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+Abrazo Central Campus,Phoenix,96.2,9,9,2,16,0.227,0.271,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+HonorHealth Scottsdale Osborn Medical Center,Phoenix,96.1,10,10,9,13,0.0,0.0,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+HonorHealth Deer Valley Medical Center,Phoenix,96.0,11,11,10,14,0.0,0.02,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+Mayo Clinic Hospital (Phoenix),Phoenix,94.8,12,12,5,12,0.051,0.0,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+Northwest Medical Center Sahuarita,Tucson,91.5,13,13,8,15,0.0,0.164,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+Northwest Medical Center,Tucson,91.2,14,14,9,16,0.0,0.234,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+Oro Valley Hospital,Tucson,91.0,15,15,10,17,0.0,0.729,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+Valleywise Health Medical Center,Phoenix,88.1,16,16,13,17,0.0,0.766,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+Tucson Medical Center,Tucson,80.4,17,17,13,18,0.0,0.836,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+Exceptional Community Hospital - Maricopa,Phoenix,80.0,18,18,11,18,0.0,0.888,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00
+The CORE Institute Specialty Hospital,Phoenix,0.0,19,19,19,19,0.0,1.0,data/processed/completeness_options.csv,2026-11-02T10:23:32+00:00

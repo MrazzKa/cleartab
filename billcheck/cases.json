@@ -1,0 +1,98 @@
+[
+  {
+    "id": "cms-sample-ok",
+    "title": "Office visit: bill matches the EOB",
+    "story": "The CMS sample explanation of benefits: two lines, a $35 copay. The doctor's bill asks for $35.",
+    "request": {
+      "context": {"coverage": "insured", "network": "in"},
+      "eob": {"claim_number": "SAMPLE-0001", "you_owe_total": 35.00, "lines": [
+        {"line": 1, "service_date": "2022-03-20", "description": "Medical care", "billed": 31.60, "allowed": 2.15,
+         "plan_paid": 2.15, "you_owe": 0.00, "status": "paid", "remark": "PDC"},
+        {"line": 2, "service_date": "2022-03-20", "description": "Medical care", "billed": 375.00, "allowed": 118.12,
+         "copay": 35.00, "plan_paid": 83.12, "you_owe": 35.00, "status": "paid", "remark": "PDC"}]},
+      "bill": {"provider_type": "professional", "balance_due": 35.00}
+    }
+  },
+  {
+    "id": "copay-paid-twice",
+    "title": "Copay already paid at the front desk",
+    "story": "Same visit. The student paid the $35 copay at check-in, but the bill still asks for $35.",
+    "request": {
+      "context": {"coverage": "insured", "network": "in"},
+      "eob": {"claim_number": "SAMPLE-0002", "you_owe_total": 35.00, "lines": [
+        {"line": 1, "service_date": "2022-03-20", "description": "Medical care", "billed": 31.60, "allowed": 2.15,
+         "plan_paid": 2.15, "you_owe": 0.00, "status": "paid"},
+        {"line": 2, "service_date": "2022-03-20", "description": "Medical care", "billed": 375.00, "allowed": 118.12,
+         "copay": 35.00, "plan_paid": 83.12, "you_owe": 35.00, "status": "paid"}]},
+      "bill": {"provider_type": "professional", "patient_payments": 35.00, "balance_due": 35.00}
+    }
+  },
+  {
+    "id": "knee-mri-tucson",
+    "title": "Knee MRI and blood test at a Tucson hospital",
+    "story": "In-network, Blue Cross Blue Shield of Arizona, deductible not met. The hospital bill has a repeated blood test, a blood draw the insurer never saw, and a balance above the EOB.",
+    "request": {
+      "context": {"coverage": "insured", "network": "in", "hospital_ccn": "030064",
+                  "insurer": "Blue Cross Blue Shield of Arizona"},
+      "eob": {"claim_number": "SAMPLE-0003", "lines": [
+        {"line": 1, "service_date": "2026-09-14", "description": "MRI lower extremity joint", "code": "73721",
+         "billed": 3706.00, "allowed": 1150.00, "deductible": 1150.00, "plan_paid": 0.00, "you_owe": 1150.00,
+         "status": "paid"},
+        {"line": 2, "service_date": "2026-09-14", "description": "Complete blood count", "code": "85025",
+         "billed": 42.50, "allowed": 23.98, "coinsurance": 4.80, "plan_paid": 19.18, "you_owe": 4.80,
+         "status": "paid"}]},
+      "bill": {"provider_type": "facility", "statement_date": "2026-10-10", "insurance_paid": 19.18,
+               "adjustments": 2574.52, "balance_due": 1222.30, "lines": [
+        {"service_date": "2026-09-14", "description": "MRI JOINT LWR EXTREM W/O DYE", "code": "73721",
+         "revenue_code": "0610", "amount": 3706.00},
+        {"service_date": "2026-09-14", "description": "CBC W/AUTO DIFF", "code": "85025", "revenue_code": "0300",
+         "amount": 42.50},
+        {"service_date": "2026-09-14", "description": "CBC W/AUTO DIFF", "code": "85025", "revenue_code": "0300",
+         "amount": 42.50},
+        {"service_date": "2026-09-14", "description": "VENIPUNCTURE", "code": "36415", "revenue_code": "0300",
+         "amount": 25.00}]}
+    }
+  },
+  {
+    "id": "self-pay-estimate",
+    "title": "No insurance: bill far above the good faith estimate",
+    "story": "A self-pay patient got a $800 good faith estimate for an outpatient chest x-ray and blood work in Phoenix. The bill is $1,261.",
+    "request": {
+      "context": {"coverage": "self_pay", "hospital_ccn": "030024", "good_faith_estimate": 800.00,
+                  "gfe_received": true, "today": "2026-11-02"},
+      "bill": {"provider_type": "facility", "statement_date": "2026-10-20", "balance_due": 1261.00, "lines": [
+        {"service_date": "2026-10-05", "description": "XR CHEST 2 VIEWS", "code": "71046", "amount": 665.00},
+        {"service_date": "2026-10-05", "description": "COMPREHENSIVE METABOLIC PANEL", "code": "80053",
+         "amount": 344.00},
+        {"service_date": "2026-10-05", "description": "CBC W/AUTO DIFF", "code": "85025", "amount": 252.00}]}
+    }
+  },
+  {
+    "id": "er-doctor-out-of-network",
+    "title": "Emergency room doctor out of network",
+    "story": "An in-network ER visit, but the emergency physician group is out of network and bills the difference between its charge and what the plan paid.",
+    "request": {
+      "context": {"coverage": "insured", "network": "out", "emergency": true},
+      "eob": {"claim_number": "SAMPLE-0005", "lines": [
+        {"line": 1, "service_date": "2026-08-02", "description": "Emergency dept visit", "code": "99284",
+         "billed": 980.00, "allowed": 410.00, "coinsurance": 82.00, "plan_paid": 328.00, "you_owe": 82.00,
+         "status": "paid"}]},
+      "bill": {"provider_type": "professional", "insurance_paid": 328.00, "balance_due": 652.00, "lines": [
+        {"service_date": "2026-08-02", "description": "ED VISIT HIGH SEVERITY", "code": "99284", "amount": 980.00}]}
+    }
+  },
+  {
+    "id": "ground-ambulance-denied",
+    "title": "Ground ambulance claim denied",
+    "story": "An out-of-network ground ambulance. The insurer denied the claim, and the ambulance company bills the full charge.",
+    "request": {
+      "context": {"coverage": "insured", "network": "out", "ambulance": "ground"},
+      "eob": {"claim_number": "SAMPLE-0006", "lines": [
+        {"line": 1, "service_date": "2026-07-11", "description": "Ambulance service, advanced life support",
+         "code": "A0427", "billed": 2400.00, "allowed": 0.00, "plan_paid": 0.00, "you_owe": 0.00,
+         "status": "denied", "remark": "Additional information requested"}]},
+      "bill": {"provider_type": "ambulance", "balance_due": 2400.00, "lines": [
+        {"service_date": "2026-07-11", "description": "ALS EMERGENCY TRANSPORT", "code": "A0427", "amount": 2400.00}]}
+    }
+  }
+]

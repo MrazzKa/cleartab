@@ -1,0 +1,10 @@
+{
+  "name": "ClearTab: check a medical bill",
+  "short_name": "ClearTab",
+  "description": "Check a medical bill against your explanation of benefits and the prices Arizona hospitals publish.",
+  "start_url": "/#/bill",
+  "display": "standalone",
+  "background_color": "#f7f9fa",
+  "theme_color": "#0f6b74",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

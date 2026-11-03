@@ -1,0 +1,491 @@
+{
+  "about": "Hospital financial assistance policies for the Tucson and Phoenix registry, by health system. Read from each system's own documents; checked by a second reader (research/assistance/second_reader_completed.xlsx: 114 of 131 values agreed, 87.0%; the 17 disagreements were resolved against the documents). 'Not published' means the source does not state it.",
+  "poverty_guidelines": {
+    "year": 2026,
+    "region": "48 contiguous states and DC",
+    "base": 15960,
+    "per_additional_person": 5680,
+    "source_url": "https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines",
+    "published": "2026-01-15",
+    "retrieved_at": "2026-11-02"
+  },
+  "systems": [
+    {
+      "system": "Banner Health",
+      "registry_systems": [
+        "Banner Health"
+      ],
+      "nonprofit_501r": true,
+      "policy": "Banner Health Financial Assistance Policy for Hospital Patients, No. 770, version 6",
+      "effective": "2025-07-01",
+      "covers": "Banner hospitals; uninsured and underinsured patients; physician, home care and imaging bills have a separate policy",
+      "tiers": [
+        {
+          "max_fpl": 199.99,
+          "discount_pct": 100,
+          "uninsured": "100% discount off AGB",
+          "insured": "100% discount off the balance after insurance"
+        },
+        {
+          "min_fpl": 200,
+          "max_fpl": 300,
+          "discount_pct": 75,
+          "uninsured": "75% discount off AGB",
+          "insured": "75% discount off the balance after insurance"
+        },
+        {
+          "min_fpl": 300.01,
+          "max_fpl": 400,
+          "discount_pct": 50,
+          "uninsured": "50% discount off AGB",
+          "insured": "50% discount off the balance after insurance"
+        }
+      ],
+      "above_max": "Medically indigent household (medical expenses, Banner and non-Banner, above 50% of household income): 75% discount off the remaining balance or off the self-pay rate.",
+      "insured_eligible": true,
+      "assets_test": "Only when there is no documented income: debt-to-equity ratio above 50% qualifies as medically indigent.",
+      "window": "Discount applies to covered services in the 12 months before and 180 days after qualification. Collection actions may start 120 days after the first statement.",
+      "max_charge": "Qualifying patients are not charged more than AGB. Uninsured self-pay rate is 125% of AGB.",
+      "how_to_apply": "Application online, in person at a hospital, or by mail; documents: prior-year tax return, 3 pay stubs and/or 3 bank statements.",
+      "phone": "1-888-264-2127",
+      "other_states_note": "Same policy, Colorado hospitals: free care up to 250% FPL under Colorado HB 24-1399 (Arizona: below 200%).",
+      "source_url": "https://www.bannerhealth.com/-/media/files/project/bh/patients-visitors/billing/financial-assistance/2025-documents/banner-health-financial-assistance-policy-for-hospital-patients-770-v6092925100125.pdf",
+      "page_url": "https://www.bannerhealth.com/patients/billing/financial-assistance/arizona-region",
+      "retrieved_at": "2026-11-02",
+      "application_url": "https://www.bannerhealth.com/-/media/files/project/bh/patients-visitors/billing/financial-assistance/2025-documents/9999-0061-bh-summary-of-financial-assistance-programs-and-application.pdf",
+      "documents": [
+        "Last year's income tax return",
+        "Your 3 most recent pay stubs",
+        "Your 3 most recent checking and savings statements"
+      ],
+      "send_to": "By mail or email to the address on the application form, or in person at a Banner hospital.",
+      "es": {
+        "covers": "Hospitales de Banner; pacientes sin seguro y con seguro insuficiente. Las facturas de médicos, atención en casa e imágenes tienen otra política.",
+        "window": "El descuento se aplica a servicios de los 12 meses anteriores y de los 180 días posteriores a la aprobación. Las acciones de cobro pueden empezar 120 días después de la primera factura.",
+        "documents": [
+          "Declaración de impuestos del año pasado",
+          "Sus 3 talones de pago más recientes",
+          "Sus 3 estados de cuenta más recientes de cheques y ahorros"
+        ],
+        "send_to": "Por correo postal o electrónico a la dirección del formulario, o en persona en un hospital de Banner.",
+        "assets_test": "Solo si no tiene ingresos documentados: se compara su deuda con sus activos.",
+        "notes": ""
+      }
+    },
+    {
+      "system": "HonorHealth",
+      "registry_systems": [
+        "HonorHealth"
+      ],
+      "nonprofit_501r": true,
+      "policy": "HonorHealth Financial Assistance Policy (full policy); Income Guidelines; plain language summary",
+      "effective": "2026-04-17 (full policy); income guidelines 2026-02-01",
+      "covers": "HonorHealth hospitals and HonorHealth Medical Group clinics; facility charges only (not ER physicians, pathologists, radiologists, anesthesiologists)",
+      "tiers": [
+        {
+          "max_fpl": 200,
+          "discount_pct": 100,
+          "uninsured": "Free care",
+          "insured": "Free care (application)"
+        },
+        {
+          "min_fpl": 200.01,
+          "max_fpl": 399.99,
+          "discount_pct": 87,
+          "uninsured": "87% discount off total charges (attestation form)",
+          "insured": "87% discount (application)"
+        }
+      ],
+      "above_max": "Medically indigent household: pays 13% of the patient liability (after insurance for insured patients).",
+      "insured_eligible": true,
+      "assets_test": "In extraordinary cases, assets that are disproportionately large compared with income may be treated as income.",
+      "window": "Apply within 240 days after the first post-discharge bill (can be longer); decision usually within 30 days of a complete application.",
+      "max_charge": "Not more than amounts generally billed for emergency or medically necessary care.",
+      "how_to_apply": "Uninsured: income attestation form. Insured: financial assistance application. May be asked to apply for Marketplace or public coverage first.",
+      "phone": "623-300-9044",
+      "source_url": "https://www.honorhealth.com/sites/default/files/2026-06/financial-assistance-policy-english-26.pdf",
+      "page_url": "https://www.honorhealth.com/patients-visitors/financial-assistance-policy",
+      "retrieved_at": "2026-11-02",
+      "notes": "The full policy (2026-04-17) says discounted care is for income above 200% but less than 400%; the income guidelines say 201-400%. The full policy is used here.",
+      "application_url": "https://www.honorhealth.com/patients-visitors/financial-assistance-policy",
+      "documents": [
+        "Uninsured: the Basic Financial Assistance Attestation form",
+        "The Financial Assistance Application",
+        "Proof of household income"
+      ],
+      "send_to": "As described on the HonorHealth financial assistance page; questions: 623-300-9044.",
+      "es": {
+        "covers": "Hospitales y clínicas de HonorHealth Medical Group; solo cargos del centro (no médicos de emergencias, patólogos, radiólogos ni anestesiólogos).",
+        "window": "Solicite dentro de los 240 días después de la primera factura tras el alta (puede ser más); la decisión suele tardar unos 30 días con la solicitud completa.",
+        "documents": [
+          "Sin seguro: el formulario de declaración (Basic Financial Assistance Attestation)",
+          "La solicitud de asistencia financiera",
+          "Comprobante de ingresos del hogar"
+        ],
+        "send_to": "Según la página de asistencia financiera de HonorHealth; preguntas: 623-300-9044.",
+        "assets_test": "En casos extraordinarios, si sus activos son muy grandes comparados con sus ingresos, pueden contarse como ingresos.",
+        "notes": "La política completa (17/04/2026) dice que el descuento es para ingresos de más del 200% y menos del 400%; la tabla de ingresos dice 201-400%. Aquí se usa la política completa."
+      }
+    },
+    {
+      "system": "Dignity Health (CommonSpirit)",
+      "registry_systems": [
+        "Dignity Health (CommonSpirit)"
+      ],
+      "nonprofit_501r": true,
+      "policy": "CommonSpirit Health Financial Assistance Policy, Finance G-003",
+      "effective": "2026-07-01",
+      "covers": "Uninsured and underinsured patients at Dignity Health Arizona facilities",
+      "tiers": [
+        {
+          "max_fpl": 200,
+          "discount_pct": 100,
+          "uninsured": "100% discount (charity care)",
+          "insured": "100% discount off the balance"
+        },
+        {
+          "min_fpl": 201,
+          "max_fpl": 399.99,
+          "discount_pct": null,
+          "uninsured": "Balance reduced to the amount generally billed (AGB)",
+          "insured": "Balance reduced to AGB"
+        }
+      ],
+      "above_max": "Not published on the page.",
+      "insured_eligible": true,
+      "assets_test": "Monetary assets of the family may be considered; retirement and deferred compensation plans are not counted.",
+      "window": "The later of 365 days after discharge or the date of care, or 240 days after the first post-discharge bill.",
+      "max_charge": "No patient eligible under the policy is charged more than the amount generally billed (AGB).",
+      "how_to_apply": "Application and plain language summary per hospital on the page.",
+      "phone": null,
+      "source_url": "https://www.commonspirit.org/content/dam/shared/en/pdfs/finance/assistance/g-003-financial-assistance-policy-en.pdf",
+      "page_url": "https://www.commonspirit.org/patient-resources/dignity-health-arizona-financial-assistance",
+      "retrieved_at": "2026-11-02",
+      "notes": "Bands as written: at or below 200%, and at or above 201% but lower than 400%. Income between 200% and 201% falls between the two bands.",
+      "application_url": "https://www.commonspirit.org/patient-resources/dignity-health-arizona-financial-assistance",
+      "documents": [
+        "Proof of income for every adult in the family: last year's tax return, a W-2, 3 months of pay stubs, or signed statements from employers",
+        "Proof of assets: the last 3 months of bank statements",
+        "If you have no income: a signed page explaining how you pay for housing, food and utilities"
+      ],
+      "send_to": "Choose your hospital on the Dignity Health Arizona page; each form lists its mailing address and fax. A Social Security number is not required.",
+      "es": {
+        "covers": "Pacientes sin seguro y con seguro insuficiente en los centros de Dignity Health Arizona.",
+        "window": "El plazo mayor entre 365 días desde el alta o la atención, o 240 días desde la primera factura tras el alta.",
+        "documents": [
+          "Comprobante de ingresos de cada adulto: declaración de impuestos, W-2, 3 meses de talones de pago o cartas firmadas de empleadores",
+          "Comprobante de activos: estados de cuenta bancarios de los últimos 3 meses",
+          "Si no tiene ingresos: una hoja firmada que explique cómo paga vivienda, comida y servicios"
+        ],
+        "send_to": "Elija su hospital en la página de Dignity Health Arizona; cada formulario tiene su dirección y fax. No se requiere número de Seguro Social.",
+        "assets_test": "Pueden considerarse los activos monetarios de la familia; no se cuentan los planes de jubilación.",
+        "notes": "Niveles tal como están escritos: hasta el 200%, y desde el 201% hasta menos del 400%. Un ingreso entre 200% y 201% queda entre los dos niveles."
+      }
+    },
+    {
+      "system": "TMC Health",
+      "registry_systems": [
+        "TMC Health"
+      ],
+      "nonprofit_501r": true,
+      "policy": "TMC Financial Assistance Policy (Community Care), version D; Sliding Fee Scale 2025",
+      "effective": "2025-01-03",
+      "covers": "Facility and technical fees at TMC; not ER physicians, hospitalists, radiology, anesthesia or pathology",
+      "tiers": [
+        {
+          "min_fpl": 100.01,
+          "max_fpl": 125,
+          "discount_pct": 90,
+          "uninsured": "80% discount",
+          "insured": "90% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 125.01,
+          "max_fpl": 150,
+          "discount_pct": 80,
+          "uninsured": "60% discount",
+          "insured": "80% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 150.01,
+          "max_fpl": 175,
+          "discount_pct": 70,
+          "uninsured": "40% discount",
+          "insured": "70% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 175.01,
+          "max_fpl": 200,
+          "discount_pct": 60,
+          "uninsured": "30% discount",
+          "insured": "60% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 200.01,
+          "max_fpl": 250,
+          "discount_pct": 50,
+          "uninsured": "25% discount",
+          "insured": "50% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 250.01,
+          "max_fpl": 300,
+          "discount_pct": 40,
+          "uninsured": "20% discount",
+          "insured": "40% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 300.01,
+          "max_fpl": 350,
+          "discount_pct": 30,
+          "uninsured": "15% discount",
+          "insured": "30% discount off the amount after insurance"
+        },
+        {
+          "min_fpl": 350.01,
+          "max_fpl": 400,
+          "discount_pct": 20,
+          "uninsured": "10% discount",
+          "insured": "20% discount off the amount after insurance"
+        }
+      ],
+      "uninsured_discount_differs": true,
+      "below_min": "At or below 100% FPL: not stated in the 2025 grid; ask the business office.",
+      "above_max": "Not eligible above 400% FPL; extenuating circumstances considered case by case.",
+      "insured_eligible": true,
+      "assets_test": "Yes, qualifying assets are considered.",
+      "window": "The web page says both that patients may apply at any time and that the application must be completed within 30 days of discharge.",
+      "max_charge": "Discounts applied to amounts generally billed.",
+      "how_to_apply": "Community Care application; business office 5151 E. Broadway #155, Tucson.",
+      "phone": "(520) 324-1310",
+      "notes": "Grid dollar amounts use the 2025 poverty guidelines (revised 2025-03-20). Band mapping read from the grid header; the page example (family of four at 150% FPL gets 80% off the amount after insurance) matches it.",
+      "source_url": "https://tmchdfdstorageprod.blob.core.windows.net/payload/documents/Sliding%20Scale.pdf",
+      "page_url": "https://tmctucson.tmcaz.com/en/pay-my-bill/financial-assistance",
+      "retrieved_at": "2026-11-02",
+      "application_url": "https://tmchdfdstorageprod.blob.core.windows.net/payload/documents/financial-assistance-application.pdf",
+      "documents": [
+        "Most recent W-2s and tax forms",
+        "Your last 3 pay stubs",
+        "Social Security or unemployment benefit letters, if any",
+        "Checking and savings statements",
+        "Rent receipt, lease or mortgage statement",
+        "Utility bills"
+      ],
+      "send_to": "TMC Business Office, PO Box 42195, Tucson, AZ; or in person at 5151 E. Broadway #155, Tucson, AZ 85711.",
+      "es": {
+        "covers": "Cargos del centro y técnicos en TMC; no médicos de emergencias, hospitalistas, radiología, anestesia ni patología.",
+        "window": "La página dice que puede solicitar en cualquier momento y también que debe completar la solicitud dentro de los 30 días del alta.",
+        "documents": [
+          "W-2 y formularios de impuestos más recientes",
+          "Sus últimos 3 talones de pago",
+          "Cartas de beneficios del Seguro Social o desempleo, si tiene",
+          "Estados de cuenta de cheques y ahorros",
+          "Recibo de renta, contrato o estado de hipoteca",
+          "Facturas de servicios"
+        ],
+        "send_to": "TMC Business Office, PO Box 42195, Tucson, AZ; o en persona en 5151 E. Broadway #155, Tucson, AZ 85711.",
+        "assets_test": "Sí, se consideran los activos.",
+        "notes": "La tabla usa las guías de pobreza de 2025."
+      }
+    },
+    {
+      "system": "Mayo Clinic",
+      "registry_systems": [
+        "Mayo Clinic"
+      ],
+      "nonprofit_501r": true,
+      "policy": "Mayo Clinic Financial Assistance Policy, Arizona, Florida and Wisconsin (MC5815-65)",
+      "effective": "not stated in the extracted text",
+      "covers": "Emergency and medically necessary hospital care at Mayo Clinic (policy also covers Florida and Wisconsin); not all services qualify",
+      "tiers": [
+        {
+          "max_fpl": 200,
+          "discount_pct": 100,
+          "uninsured": "100% adjustment of the self-pay balance",
+          "insured": "100% adjustment of the self-pay balance (only if Mayo Clinic is in network for your plan)"
+        },
+        {
+          "min_fpl": 200.01,
+          "max_fpl": 400,
+          "discount_pct": 50,
+          "uninsured": "50% adjustment of the self-pay balance",
+          "insured": "50% adjustment of the self-pay balance (only if Mayo Clinic is in network for your plan)"
+        }
+      ],
+      "above_max": "Not eligible under the income criteria.",
+      "insured_eligible": true,
+      "assets_test": "Yes: the thresholds apply to household income and assets.",
+      "window": "From the date of care until 240 days after the first post-discharge statement; may need to re-apply every 180 days.",
+      "max_charge": "An eligible patient's self-pay balance is limited to the amount generally billed (AGB); discounts are at least 50% of gross charges.",
+      "how_to_apply": "Application at mayoclinic.org/financialassistance or the patient portal.",
+      "phone": "1-844-217-9591",
+      "source_url": "https://mcforms.mayo.edu/mc5800-mc5899/mc5815-65.pdf",
+      "page_url": "https://www.mayoclinic.org/financialassistance",
+      "retrieved_at": "2026-11-02",
+      "notes": "Insured patients qualify only if Mayo Clinic is in network for their plan.",
+      "application_url": "https://www.mayoclinic.org/financialassistance",
+      "documents": [
+        "Proof of household income and assets as listed on the application"
+      ],
+      "send_to": "Online through the Mayo Clinic patient portal, or as described at mayoclinic.org/financialassistance.",
+      "es": {
+        "covers": "Atención de emergencia y médicamente necesaria en hospitales de Mayo Clinic (la política también cubre Florida y Wisconsin); no todos los servicios califican.",
+        "window": "Desde la fecha de atención hasta 240 días después de la primera factura tras el alta; puede tener que volver a solicitar cada 180 días.",
+        "documents": [
+          "Comprobante de ingresos y activos del hogar, según la solicitud"
+        ],
+        "send_to": "En línea por el portal de pacientes de Mayo Clinic, o según mayoclinic.org/financialassistance.",
+        "assets_test": "Sí: los límites se aplican a ingresos y activos del hogar.",
+        "notes": "Los pacientes con seguro califican solo si Mayo Clinic está dentro de la red de su plan."
+      }
+    },
+    {
+      "system": "Valleywise Health",
+      "registry_systems": [
+        "Valleywise Health"
+      ],
+      "nonprofit_501r": false,
+      "public_district": "Maricopa County Special Health Care District",
+      "policy": "Valleywise Health Financial Assistance & Uninsured Discount Schedule; Policy 99021 G (reviewed 05/26)",
+      "effective": "Policy 99021 G effective 2015-11, reviewed 2026-05; the 2026 schedule has no printed effective date",
+      "covers": "Valleywise Health services other than Federally Qualified Health Center (FQHC) clinics, which have a separate schedule",
+      "tiers": [
+        {
+          "max_fpl": 100,
+          "discount_pct": null,
+          "uninsured": "Category 1: you pay 5% for outpatient services, $75 ER visit, 0% inpatient",
+          "insured": "Category 1"
+        },
+        {
+          "min_fpl": 101,
+          "max_fpl": 138,
+          "discount_pct": null,
+          "uninsured": "Category 2: you pay 30% for outpatient and inpatient services, $100 ER visit",
+          "insured": "Category 2"
+        },
+        {
+          "min_fpl": 139,
+          "max_fpl": 150,
+          "discount_pct": null,
+          "uninsured": "Category 3: you pay 60%, $150 ER visit",
+          "insured": "Category 3"
+        },
+        {
+          "min_fpl": 151,
+          "max_fpl": 200,
+          "discount_pct": null,
+          "uninsured": "Category 4: you pay 80%, $175 ER visit",
+          "insured": "Category 4"
+        }
+      ],
+      "above_max": "Uninsured patients above the categories: most services at 115% of Medicare rates; ER visit 115% of Medicare.",
+      "insured_eligible": null,
+      "assets_test": "Resource assessment (means test) per policy 99021 G.",
+      "window": "Not published.",
+      "max_charge": "Not published.",
+      "how_to_apply": "Financial counseling at Valleywise.",
+      "phone": "602-344-8181",
+      "notes": "Schedule percentages are the share the patient pays (lower income, lower share). The schedule does not say whether the category rates apply to balances after insurance.",
+      "source_url": "https://valleywisehealth.org/wp-content/uploads/2026/09/Valleywise-Health-Financial-Assistance-Unininsured-Discount-Schedule.pdf",
+      "page_url": "https://valleywisehealth.org/patients/financial-assistance-and-discount-program-updates/",
+      "retrieved_at": "2026-11-02",
+      "application_url": "https://valleywisehealth.org/patients/financial-assistance-and-discount-program-updates/",
+      "documents": [
+        "Ask financial counseling which documents they need"
+      ],
+      "send_to": "Valleywise financial counseling; call 602-344-8181.",
+      "es": {
+        "covers": "Servicios de Valleywise Health excepto las clínicas FQHC, que tienen otra tabla.",
+        "window": "No publicado.",
+        "documents": [
+          "Pregunte en asesoría financiera qué documentos necesitan"
+        ],
+        "send_to": "Asesoría financiera de Valleywise; llame al 602-344-8181.",
+        "assets_test": "Evaluación de recursos según la política 99021 G.",
+        "notes": "Los porcentajes de la tabla son la parte que usted paga (menos ingresos, menos paga). La tabla no dice si se aplican a saldos después del seguro."
+      }
+    },
+    {
+      "system": "Tenet (Abrazo, Carondelet)",
+      "registry_systems": [
+        "Abrazo (Tenet)",
+        "Carondelet (Tenet)"
+      ],
+      "nonprofit_501r": false,
+      "policy": "Abrazo Family Assistance Program; Compact with Uninsured discounts",
+      "effective": "not published",
+      "covers": "Uninsured patients: Compact with Uninsured discount. Charity care for household income below 200% of the poverty level, subject to documented financial need. Scope for Carondelet not established.",
+      "tiers": [
+        {
+          "max_fpl": 199.99,
+          "discount_pct": null,
+          "uninsured": "Charity care may apply (amount not published)",
+          "insured": "Charity care may apply (insured eligibility not published)"
+        }
+      ],
+      "above_max": "Not published.",
+      "insured_eligible": null,
+      "assets_test": "Household finances and supporting documents are reviewed; no asset limit is published.",
+      "window": "Not published.",
+      "max_charge": "Not published.",
+      "how_to_apply": "Call a patient advocate.",
+      "phone": "(800) 374-4637 charity care; (866) 904-6871 uninsured discount",
+      "notes": "Values from the second reader's reading of the Abrazo page; the site returns HTTP 403 to automated clients, so the first reader could not confirm them.",
+      "source_url": "https://www.abrazohealth.com/patients/financial-assistance-program",
+      "page_url": "https://www.abrazohealth.com/patients/financial-assistance-program",
+      "retrieved_at": "2026-11-02",
+      "application_url": "https://www.abrazohealth.com/patients/financial-assistance-program",
+      "documents": [
+        "Information about household finances and supporting documents, as asked on the Financial Application"
+      ],
+      "send_to": "Call (800) 374-4637 for charity care or (866) 904-6871 for the uninsured discount.",
+      "es": {
+        "covers": "Sin seguro: descuento 'Compact with Uninsured'. Atención de caridad para ingresos menores al 200% del nivel de pobreza, con comprobantes.",
+        "window": "No publicado.",
+        "documents": [
+          "Información sobre las finanzas del hogar y comprobantes, según la solicitud"
+        ],
+        "send_to": "Llame al (800) 374-4637 para atención de caridad o al (866) 904-6871 para el descuento sin seguro.",
+        "assets_test": "Se revisan las finanzas del hogar; no se publica un límite de activos.",
+        "notes": "Valores leídos por el segundo revisor; el sitio bloquea la verificación automática."
+      }
+    },
+    {
+      "system": "Northwest Healthcare",
+      "registry_systems": [
+        "Northwest Healthcare"
+      ],
+      "nonprofit_501r": false,
+      "policy": "Northwest Healthcare Financial Assistance Program",
+      "effective": "not published",
+      "covers": "Northwest Medical Center, Houghton, Sahuarita, Oro Valley Hospital; uninsured and underinsured patients",
+      "tiers": [],
+      "above_max": "Uninsured discount off billed charges for those who do not qualify for charity; catastrophic care discount when the account exceeds a share of annual income (share not published).",
+      "insured_eligible": true,
+      "assets_test": "Financial criteria and supporting documentation; details not published.",
+      "window": "At the time of service or any time during the billing cycle.",
+      "max_charge": "Not published.",
+      "how_to_apply": "FAP application from the hospital (the application file is disallowed by robots.txt for automated download; see MANUAL_DOWNLOADS.md).",
+      "phone": null,
+      "notes": "Charity is 'based on multiples of the U.S. Federal Poverty Guidelines'; the multiples are not published on the page.",
+      "source_url": "https://www.healthiertucson.com/financial-assistance-program",
+      "page_url": "https://www.healthiertucson.com/financial-assistance-program",
+      "retrieved_at": "2026-11-02",
+      "application_url": "https://www.healthiertucson.com/financial-assistance-program",
+      "documents": [
+        "The hospital's Financial Assistance Program application and proof of income"
+      ],
+      "send_to": "Ask the hospital's Customer Service, Patient Access Director or a financial counselor for the application.",
+      "es": {
+        "covers": "Northwest Medical Center, Houghton, Sahuarita y Oro Valley Hospital; pacientes sin seguro y con seguro insuficiente.",
+        "window": "Al recibir la atención o en cualquier momento durante el ciclo de facturación.",
+        "documents": [
+          "La solicitud del programa de asistencia financiera y comprobante de ingresos"
+        ],
+        "send_to": "Pida la solicitud en Servicio al Cliente, al Director de Admisiones o a un asesor financiero del hospital.",
+        "assets_test": "Criterios financieros con comprobantes; los detalles no se publican.",
+        "notes": "La caridad se basa en 'múltiplos' de las guías federales de pobreza; los múltiplos no se publican."
+      }
+    }
+  ]
+}
