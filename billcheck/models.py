@@ -19,6 +19,7 @@ class EobLine(BaseModel):
     code: str | None = Field(None, max_length=8, description="CPT or HCPCS code, if the EOB shows it")
     units: int = Field(1, ge=1, le=999)
     billed: Money | None = Field(None, ge=0, description="provider charges")
+    discount: Money | None = Field(None, ge=0, description="network discount or provider write-off, if printed")
     allowed: Money | None = Field(None, ge=0, description="allowed charges, the insurer's contracted amount")
     copay: Money = Field(0, ge=0)
     deductible: Money = Field(0, ge=0)
@@ -34,6 +35,7 @@ class Eob(BaseModel):
     claim_number: str | None = Field(None, max_length=40)
     lines: list[EobLine] = Field(default_factory=list, max_length=200)
     you_owe_total: Money | None = Field(None, ge=0, description="the EOB's own total, if printed")
+    oop_max_met: bool = Field(False, description="the EOB says an out-of-pocket maximum was met")
 
 
 class BillLine(BaseModel):

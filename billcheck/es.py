@@ -157,6 +157,31 @@ def es(f: Finding) -> tuple[str, str, str] | None:
                 "(A.R.S. 36-2239(K)).",
                 "Pregunte por qué atención le cobraron. Si rechazó la atención, pida que no le cobren según A.R.S. "
                 "36-2239(K).")
+    if r == "network_discount":
+        return (f"El proveedor descontó {m(e.get('discount'))} de su cargo de {m(e.get('billed'))}",
+                "Es el descuento que negoció su aseguradora. Un proveedor de su red aceptó cobrar el monto permitido, "
+                "así que no puede cobrarle a usted ese descuento (esto se llama facturación del saldo).",
+                "Si una factura de este proveedor le cobra más de lo que dice el EOB, no pague la diferencia; llame "
+                "a la oficina de facturación con el EOB.")
+    if r == "eob_zero_allowed":
+        return (f"Línea(s) {', '.join(map(str, n))}: la aseguradora permitió $0",
+                "La aseguradora no permitió nada por este servicio, pero no lo negó, y usted no debe nada por él. "
+                "Normalmente significa que está incluido en el pago de otro servicio de la misma reclamación, como "
+                "una extracción de sangre incluida en una visita de emergencia.",
+                "No debe nada por esta línea. Si una factura la cobra por separado, pregunte por qué.")
+    if r == "oop_max_met":
+        return ("Alcanzó su máximo de gastos de bolsillo",
+                "El EOB dice que ya alcanzó su máximo de gastos de bolsillo de este año del plan. Desde entonces su "
+                "plan paga el 100% de la atención cubierta dentro de la red hasta que termine el año del plan: sin "
+                "más deducible, copagos ni coseguro.",
+                "Revise cada factura y EOB posterior de este año del plan. Si le cobran un copago, deducible o "
+                "coseguro por atención cubierta dentro de la red, pregunte a la aseguradora por qué.")
+    if r == "eob_owe_zero":
+        return ("Usted debe $0 por esta reclamación",
+                "Los descuentos y pagos de su plan cubren todo el cargo. El EOB no es una factura, pero el proveedor "
+                "debe seguirlo.",
+                "Guarde este EOB. Si el proveedor le envía una factura por estos servicios, no la pague: llame a la "
+                "oficina de facturación y dé el número de reclamación del EOB.")
     return None
 
 
@@ -175,7 +200,8 @@ def to_spanish(res: CheckResult) -> CheckResult:
             f.title, f.explanation, f.action = t
     s = res.summary
     n = s.counts.get("error", 0) if s.verdict == "likely_errors" else s.counts.get("warning", 0)
-    s.headline = HEADLINES[s.verdict](n, s.amount_at_stake)
+    s.headline = ("Su EOB dice que debe $0 por esta reclamación." if s.headline.startswith("Your EOB says you owe $0")
+                  else HEADLINES[s.verdict](n, s.amount_at_stake))
     res.disclaimer = ("ClearTab compara lo que usted ingresa con reglas y precios publicados. No es asesoría legal ni "
                       "médica; una alerta significa 'pregunte por esto', no 'esto está mal'. La carta está en inglés "
                       "porque va dirigida a la oficina de facturación.")

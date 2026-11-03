@@ -218,3 +218,28 @@ def test_spanish_findings_keep_numbers_and_english_letter():
         for f in check(CheckRequest(**c), prices=PRICES_030064_BCBS).findings:
             from billcheck.es import es
             assert es(f) is not None, f.rule
+
+
+def test_reader_aligns_amounts_to_printed_columns():
+    from billcheck.reader import ReadResult, align_columns
+    r = ReadResult(document_type="eob",
+                   eob_columns=["Service", "Date", "Amount Billed", "Network Discount", "Amount Paid By Your Plan",
+                                "Amount From Another Source", "Total Plan Discount & Payments", "Deductible",
+                                "Coinsurance", "Amount Not Covered", "Your Total Responsibility"],
+                   eob_lines=[{"description": "Office visit", "plan_paid": 0,          # the model's own guess
+                               "amounts": [200, 80, 90, 0, 170, 20, 10, 0, 30]}])
+    ln = align_columns(r).eob_lines[0]
+    assert (ln.billed, ln.discount, ln.plan_paid, ln.deductible, ln.coinsurance, ln.you_owe) == (200, 80, 90, 20, 10, 30)
+
+
+def test_eob_with_discount_column_and_zero_owed():
+    lines = [{"description": "Blood draw", "billed": 40, "discount": 40, "plan_paid": 0, "you_owe": 0},
+             {"description": "Emergency visit", "billed": 1000, "discount": 600, "plan_paid": 400, "you_owe": 0}]
+    res = check(CheckRequest(context={"coverage": "insured"},
+                             eob={"lines": lines, "you_owe_total": 0, "oop_max_met": True}))
+    r = rules(res)
+    assert res.summary.verdict == "looks_right" and "$0" in res.summary.headline
+    assert "eob_line_sum" not in r and r["eob_zero_allowed"] == "info" and r["oop_max_met"] == "info"
+    assert r["network_discount"] == "info" and r["eob_owe_zero"] == "ok"
+    bad = [{**lines[1], "plan_paid": 0}]          # a misread column must not pass silently
+    assert rules(check(CheckRequest(eob={"lines": bad}))).get("eob_line_sum") == "warning"

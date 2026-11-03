@@ -36,6 +36,7 @@ class Checker:
         self.prices = prices or {}
         self.mue, self.ptp = mue, ptp
         self.findings: list[Finding] = []
+        self.lines_checked = 0
         self.run: list[str] = []
         self.skipped: dict[str, str] = {}
 
@@ -48,19 +49,27 @@ class Checker:
             self.skipped["eob_arithmetic"] = "no EOB lines entered"
             return
         self.run.append("eob_arithmetic")
+        zero_lines = []
         for i, ln in enumerate(self.eob.lines, 1):
             share = ln.copay + ln.deductible + ln.coinsurance
-            if ln.allowed is not None and ln.plan_paid is not None and ln.status != "denied" \
-                    and abs(ln.allowed - ln.plan_paid - share) > TOL:
+            allowed = self.allowed(ln)
+            if allowed is not None and ln.plan_paid is not None and ln.status != "denied":
+                self.lines_checked += 1
+            if allowed is not None and ln.plan_paid is not None and ln.status != "denied" \
+                    and abs(allowed - ln.plan_paid - share) > TOL:
                 self.add(rule="eob_line_sum", severity="warning", lines=[i],
+                         evidence={"allowed": allowed, "plan_paid": ln.plan_paid, "patient_share": c(share)},
                          title=f"EOB line {i} does not add up",
-                         explanation=(f"The allowed amount ({money(ln.allowed)}) should equal what the plan paid "
+                         explanation=(f"The allowed amount ({money(allowed)}) should equal what the plan paid "
                                       f"({money(ln.plan_paid)}) plus your copay, deductible and coinsurance "
-                                      f"({money(c(share))}). It is off by {money(c(ln.allowed - ln.plan_paid - share))}."),
+                                      f"({money(c(share))}). It is off by {money(c(allowed - ln.plan_paid - share))}."),
                          action="Check that you copied the line correctly. If you did, ask the insurer to explain "
                                 "the difference.",
-                         evidence={"allowed": ln.allowed, "plan_paid": ln.plan_paid, "patient_share": c(share)},
                          sources=[src("cms_eob")])
+            owe_line = ln.you_owe if ln.you_owe is not None else share + ln.not_covered
+            if ln.status != "denied" and (ln.billed or 0) > 0 and allowed is not None and abs(allowed) <= TOL \
+                    and abs(owe_line) <= TOL and not ln.plan_paid:
+                zero_lines.append(i)
             if ln.you_owe is not None and abs(ln.you_owe - (share + ln.not_covered)) > TOL:
                 self.add(rule="eob_owe_sum", severity="warning", lines=[i],
                          title=f"EOB line {i}: 'what you owe' does not match its parts",
@@ -74,6 +83,16 @@ class Checker:
                          explanation="Normally the insurer allows the same or less than the provider charged.",
                          action="Usually harmless, but worth a question if your share is large.",
                          sources=[src("cms_eob")])
+        if zero_lines:
+            self.add(rule="eob_zero_allowed", severity="info", lines=zero_lines,
+                     title=f"Line(s) {', '.join(map(str, zero_lines))}: the insurer allowed $0",
+                     explanation=("The insurer allowed nothing for this service but did not deny it, and you owe "
+                                  "nothing for it. Usually this means the service is included (bundled) in the "
+                                  "payment for another service on the same claim, such as a blood draw included in "
+                                  "an emergency visit."),
+                     action="You owe nothing for this line. If a bill lists it separately with a balance, ask why.",
+                     sources=[src("cms_eob")])
+        self.eob_explain()
         owed = self.eob_owe()
         if self.eob.you_owe_total is not None and owed is not None and abs(self.eob.you_owe_total - owed) > TOL:
             self.add(rule="eob_total", severity="warning",
@@ -100,6 +119,41 @@ class Checker:
                      explanation="Until the insurer finishes processing the claim, nobody knows your final share.",
                      action="Wait for the final EOB before paying a bill for these services.",
                      sources=[src("cms_eob")])
+
+    @staticmethod
+    def allowed(ln) -> float | None:
+        """The allowed amount as printed, or billed minus the network discount and any amount not covered."""
+        if ln.allowed is not None:
+            return ln.allowed
+        if ln.billed is not None and ln.discount is not None:
+            return c(ln.billed - ln.discount - ln.not_covered)
+        return None
+
+    def eob_explain(self) -> None:
+        """What the EOB means for the patient: the network discount and the out-of-pocket maximum."""
+        lines = self.eob.lines
+        billed = c(sum(ln.billed or 0 for ln in lines))
+        disc = c(sum(ln.discount if ln.discount is not None else
+                     (ln.billed - ln.allowed if ln.billed is not None and ln.allowed is not None else 0)
+                     for ln in lines if ln.status != "denied"))
+        if disc > TOL and billed > 0:
+            self.add(rule="network_discount", severity="info", evidence={"billed": billed, "discount": disc},
+                     title=f"The provider wrote off {money(disc)} of its {money(billed)} charge",
+                     explanation=("This is the discount your insurer negotiated. A provider in your network has "
+                                  "agreed to accept the allowed amount, so it may not bill you for the discount "
+                                  "(this is called balance billing)."),
+                     action=("If a bill from this provider asks for more than the EOB says you owe, do not pay the "
+                             "difference; call the billing office with the EOB."),
+                     sources=[src("cms_eob"), src("nsa_insured")])
+        if self.eob.oop_max_met:
+            self.add(rule="oop_max_met", severity="info",
+                     title="You reached your out-of-pocket maximum",
+                     explanation=("The EOB says your out-of-pocket maximum for this plan year is met. After that, "
+                                  "your plan pays 100% of covered, in-network care until the plan year ends: no more "
+                                  "deductible, copays or coinsurance."),
+                     action=("Check every later bill and EOB from this plan year. If you are asked for a copay, "
+                             "deductible or coinsurance for covered in-network care, ask the insurer why."),
+                     sources=[src("oop_max")])
 
     def eob_owe(self) -> float | None:
         if not self.eob or not self.eob.lines:
@@ -567,8 +621,8 @@ class Checker:
         at_stake = self.amount_at_stake()
         balance = self.bill.balance_due if self.bill else None
         owed = self.eob_owe() if self.eob and self.ctx.coverage == "insured" else None
-        compared = bool(set(self.run) & {"bill_vs_eob", "published_prices", "duplicates", "mue_units", "ncci_ptp",
-                                         "az_ambulance_rate"}) \
+        compared = self.lines_checked > 0 or bool(set(self.run) & {
+            "bill_vs_eob", "published_prices", "duplicates", "mue_units", "ncci_ptp", "az_ambulance_rate"}) \
             or any(f.rule in ("gfe_dispute", "gfe_within", "balance_matches_eob") for f in self.findings)
         if counts["error"]:
             verdict = "likely_errors"
@@ -585,6 +639,15 @@ class Checker:
         else:
             verdict = "looks_right"
             headline = "Nothing in what you entered looks wrong."
+            if owed is not None and owed <= TOL and not self.bill:
+                headline = "Your EOB says you owe $0 for this claim."
+                self.add(rule="eob_owe_zero", severity="ok", title="You owe $0 for this claim",
+                         explanation=("Your plan's discounts and payments cover the whole charge. The EOB is not a "
+                                      "bill, but it is what the provider must follow."),
+                         action=("Keep this EOB. If the provider later sends a bill for these services, do not pay "
+                                 "it: call the billing office and give them the claim number on the EOB."),
+                         sources=[src("cms_eob")])
+                counts = Counter(f.severity for f in self.findings)
         return CheckResult(
             summary=Summary(verdict=verdict, headline=headline, eob_you_owe=owed, bill_balance=balance,
                             difference=c(balance - max((owed or 0) - (self.bill.patient_payments if self.bill else 0), 0))
