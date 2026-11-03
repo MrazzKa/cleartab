@@ -173,3 +173,14 @@ Each phase appends a summary of at most 15 lines.
 - My visits: all papers from one visit on the device; per provider pay, wait or question; reminders (.ics), family sharing, collector validation letter (CFPB sample structure).
 - Market check: five new "photo of a bill" apps in 2026 with almost no ratings; CFPB medical debt complaints since 2025: 15,303 US, 385 AZ, top issues "not mine or already paid" and "not enough information to verify".
 - Tests 39 passed; ruff, eslint, tsc clean.
+
+## v2: real EOB, PDF reading and redesign (2026-11-03)
+- Tested on a real, anonymized insurer EOB (ER visit, 10 lines, PDF from the insurer website). First reading put
+  the "amount from another source" column into "plan paid"; the EOB arithmetic rule flagged all 9 affected lines.
+- Fix: the reader now only copies the column headers and each row's amounts; fixed rules (billcheck/reader.py
+  COLUMNS) place each amount under its header. Result: all 10 lines and totals match the paper.
+- PDFs with a text layer are read through text (openai/gpt-oss-120b on Groq); scans still need a photo.
+- New rules: eob_owe_zero, network_discount, eob_zero_allowed (bundled line), oop_max_met; discount column
+  supported (allowed = billed - discount - not covered). Spanish text for all four. Tests: 41 passed.
+- Interface: bottom tab bar on phones, scan-first home and check page, review table of read lines before the check,
+  "See an example" in My visits.

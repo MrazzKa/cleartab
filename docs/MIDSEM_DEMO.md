@@ -11,11 +11,16 @@ the projector. Load nothing in advance; every step below is live.
 - KFF: 41% of US adults have medical debt; 44% of them did not pay a bill in full because they were not sure it was
   correct.
 
-## 2. Demo: My visits (2 min, Timur)
-1. Home, "I have a pile of bills from one visit", "+ New visit", name it "ER visit, Banner UMC Tucson".
-2. Add papers by typing: Bill Banner UMC Tucson $1,222.30; EOB Banner UMC Tucson $1,154.80; Bill Emergency physicians
-   group $652; EOB Emergency physicians group $82; Bill Radiology Ltd $95; Bill Tucson Fire Department $1,950.
-3. Result: bills ask for $3,919.30; you really owe $1,236.80 now; $637.50 in question; the radiology and ambulance bills
+## 2. Demo: scan a real EOB, then My visits (2.5 min, Timur)
+1. Home, "Scan a bill or EOB", tick the consent box, "Upload a photo or PDF", choose a real insurer EOB PDF (names
+   removed; keep it on the demo laptop, never in the repository). The table shows every line read from the PDF;
+   the reader copies the amounts and fixed rules put them under the printed column headers.
+2. Result for an ER visit where the family had met its out-of-pocket maximum: "Your EOB says you owe $0", what to do
+   if a bill still arrives, the network discount the provider may not bill, a blood draw bundled into the ER visit.
+3. My visits, "See an example" (or "+ New visit" and type: Bill Banner UMC Tucson $1,222.30; EOB Banner UMC Tucson
+   $1,154.80; Bill Emergency physicians group $652; EOB Emergency physicians group $82; Bill Radiology Ltd $95; Bill
+   Tucson Fire Department $1,950).
+4. Result: bills ask for $3,919.30; you really owe $1,236.80 now; $637.50 in question; the radiology and ambulance bills
    wait for the EOB. Show "Share summary with family" and the collector letter.
 
 ## 3. Demo: Lower my bill (1.5 min, Nikita)
