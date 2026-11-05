@@ -1,0 +1,42 @@
+# Production stack: Postgres + API + web (Caddy). Run from the repo root:
+#   docker compose -f deploy/compose.yml --env-file deploy/.env up -d --build
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cleartab
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/.env}
+      POSTGRES_DB: cleartab
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../data-server/db:/docker-entrypoint-initdb.d:ro   # cleartab.sql.gz, restored on first start only
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cleartab"]
+      interval: 5s
+      retries: 20
+  api:
+    build: {context: .., dockerfile: deploy/Dockerfile.api}
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://cleartab:${POSTGRES_PASSWORD}@db:5432/cleartab
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      READ_LIMIT_PER_HOUR: ${READ_LIMIT_PER_HOUR:-6}
+      READ_LIMIT_PER_DAY: ${READ_LIMIT_PER_DAY:-15}
+      READ_LIMIT_GLOBAL_DAY: ${READ_LIMIT_GLOBAL_DAY:-150}
+    volumes:
+      - ../data-server/reference:/app/data/raw/reference:ro   # CMS MUE zips + ncci_ptp.sqlite (AMA license)
+    depends_on:
+      db: {condition: service_healthy}
+  web:
+    build: {context: .., dockerfile: deploy/Dockerfile.web}
+    restart: unless-stopped
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    ports: ["${HTTP_PORT:-80}:80", "${HTTPS_PORT:-443}:443"]
+    volumes:
+      - caddy_data:/data
+    depends_on: [api]
+volumes:
+  pgdata:
+  caddy_data:
