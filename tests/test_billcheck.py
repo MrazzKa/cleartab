@@ -232,6 +232,20 @@ def test_reader_aligns_amounts_to_printed_columns():
     assert (ln.billed, ln.discount, ln.plan_paid, ln.deductible, ln.coinsurance, ln.you_owe) == (200, 80, 90, 20, 10, 30)
 
 
+def test_reader_aligns_unitedhealthcare_columns():
+    """Header layout of a real UnitedHealthcare EOB (2026); "Plan does not cover" once stopped the alignment."""
+    from billcheck.reader import ReadResult, align_columns
+    r = ReadResult(document_type="eob",
+                   eob_columns=["Provider billed", "Amount saved", "Plan allowed amount", "Your plan paid",
+                                "Applied to deductible", "Copay", "Coinsurance", "Plan does not cover",
+                                "Amount you owe**"],
+                   eob_lines=[{"description": "Office visits", "plan_paid": 265.68, "deductible": 0,  # model's guess
+                               "amounts": [389.0, 123.32, 265.68, 0.0, 265.68, 0.0, 0.0, 0.0, 265.68]}])
+    ln = align_columns(r).eob_lines[0]
+    assert (ln.billed, ln.allowed, ln.plan_paid, ln.deductible, ln.not_covered, ln.you_owe) == \
+        (389.0, 265.68, 0.0, 265.68, 0.0, 265.68)
+
+
 def test_eob_with_discount_column_and_zero_owed():
     lines = [{"description": "Blood draw", "billed": 40, "discount": 40, "plan_paid": 0, "you_owe": 0},
              {"description": "Emergency visit", "billed": 1000, "discount": 600, "plan_paid": 400, "you_owe": 0}]
@@ -243,3 +257,24 @@ def test_eob_with_discount_column_and_zero_owed():
     assert r["network_discount"] == "info" and r["eob_owe_zero"] == "ok"
     bad = [{**lines[1], "plan_paid": 0}]          # a misread column must not pass silently
     assert rules(check(CheckRequest(eob={"lines": bad}))).get("eob_line_sum") == "warning"
+
+
+def test_pdf_row_amounts_come_from_text_layer():
+    """A real UnitedHealthcare ER EOB: the model shifted $1,543 from deductible to copay; the text layer is exact."""
+    from billcheck.reader import ReadResult, align_columns, amounts_from_text
+    cols = ["Provider billed", "Amount saved", "Plan allowed amount", "Your plan paid", "Applied to deductible",
+            "Copay", "Coinsurance", "Plan does not cover", "Amount you owe**"]
+    text = ("Provider billed  $3,411.00\n"
+            "UG $1,588.00 $45.00 $1,543.00 $0.00 $1,543.00 $0.00 $0.00 $0.00 $1,543.00\n"
+            "D2 $5.00 $5.00 $0.00 $0.00 $0.00 $0.00 $0.00 $0.00 $0.00\n"
+            "D2 $1,818.00 $1,818.00 $0.00 $0.00 $0.00 $0.00 $0.00 $0.00 $0.00\n"
+            "Total amount $3,411.00 $1,868.00 $1,543.00 $0.00 $1,543.00 $0.00 $0.00 $0.00 $1,543.00\n")
+    misread = [1588.0, 45.0, 1543.0, 0.0, 0.0, 1543.0, 0.0, 0.0, 1543.0]
+    r = ReadResult(document_type="eob", eob_columns=cols,
+                   eob_lines=[{"amounts": misread}, {"amounts": [5.0] + [0.0] * 8}, {"amounts": [1818.0] + [0.0] * 8}])
+    ln = align_columns(amounts_from_text(r, text)).eob_lines
+    assert (ln[0].deductible, ln[0].copay, ln[0].you_owe) == (1543.0, 0, 1543.0)
+    assert (ln[2].billed, ln[2].allowed, ln[2].you_owe) == (1818.0, 0.0, 0.0)
+    # rows that do not match the model's rows one to one leave the model's copy untouched
+    r2 = ReadResult(document_type="eob", eob_columns=cols, eob_lines=[{"amounts": misread}])
+    assert amounts_from_text(r2, text).eob_lines[0].amounts == misread

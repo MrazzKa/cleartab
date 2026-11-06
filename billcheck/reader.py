@@ -8,6 +8,7 @@ the model to leave out names, addresses and member or account numbers.
 import base64
 import json
 import os
+import re
 
 import requests
 from pydantic import BaseModel, Field, ValidationError
@@ -98,7 +99,7 @@ class ReadResult(BaseModel):
 COLUMNS = [
     (("another source", "other source", "other insurance", "other carrier"), "other_source"),
     (("total plan", "plan discount & payments", "discounts & payments", "you saved", "amount saved"), None),
-    (("not covered", "non-covered", "noncovered", "not allowed", "ineligible"), "not_covered"),
+    (("not covered", "not cover", "non-covered", "noncovered", "not allowed", "ineligible"), "not_covered"),
     (("discount", "write", "adjust", "savings"), "discount"),
     (("allowed", "approved", "eligible", "negotiated", "covered amount"), "allowed"),
     (("deductible",), "deductible"),
@@ -118,12 +119,41 @@ def column_field(header: str) -> str | None:
     return "?"
 
 
+NON_MONEY = ("service", "product", "date", "description", "code", "note", "claim", "provider", "remark")
+MONEY = re.compile(r"(-?)\$\s?(-?)([\d,]+\.\d{2})")
+
+
+def money_fields(res: "ReadResult") -> list[str | None]:
+    return [column_field(h) for h in res.eob_columns
+            if not (column_field(h) == "?" and any(k in h.lower() for k in NON_MONEY))]
+
+
+def amounts_from_text(res: "ReadResult", text: str) -> "ReadResult":
+    """For a PDF with a text layer, take each row's dollar amounts from the text itself instead of the model's copy.
+    A text line counts as a service row when it holds exactly one amount per money column and is not a total.
+    Used only when the rows found match the model's rows one to one (same count, same first amount)."""
+    n = len(money_fields(res))
+    if not n or not res.eob_lines:
+        return res
+    rows = []
+    for line in text.splitlines():
+        found = MONEY.findall(line)
+        if len(found) == n and "total" not in line.lower():
+            rows.append([-float(v.replace(",", "")) if (a or b) else float(v.replace(",", "")) for a, b, v in found])
+    if len(rows) != len(res.eob_lines):
+        return res
+    if any(not ln.amounts or abs(ln.amounts[0] - row[0]) > 0.005 for ln, row in zip(res.eob_lines, rows, strict=True)):
+        return res
+    for ln, row in zip(res.eob_lines, rows, strict=True):
+        ln.amounts = row
+    res.note = (res.note + " " if res.note else "") + "Amounts were copied from the PDF text by rule."
+    return res
+
+
 def align_columns(res: "ReadResult") -> "ReadResult":
     """Put each row's amounts under the printed column headers with fixed rules, so the language model only copies
     and never decides which number is which. Rows whose count does not match the headers keep the model's fields."""
-    NON_MONEY = ("service", "product", "date", "description", "code", "note", "claim", "provider", "remark")
-    fields = [column_field(h) for h in res.eob_columns
-              if not (column_field(h) == "?" and any(k in h.lower() for k in NON_MONEY))]
+    fields = money_fields(res)
     if not fields or "?" in fields:
         return res
     for ln in res.eob_lines:
@@ -176,10 +206,11 @@ def read_document(images: list[tuple[bytes, str]], session=requests) -> ReadResu
         raise ReaderError("Send one to three photos.")
     if any(len(d) > MAX_BYTES for d, _ in images):
         raise ReaderError("Each file must be under 8 MB.")
+    pdf_source = None
     if images[0][1] == "application/pdf":
         if len(images) > 1:
             raise ReaderError("Send one PDF at a time.")
-        text = pdf_text(images[0][0])
+        text = pdf_source = pdf_text(images[0][0])
         if len(text.strip()) < 40:
             raise ReaderError("This PDF is a scan without text. Take a photo of each page instead.")
         model = TEXT_MODEL
@@ -212,6 +243,8 @@ def read_document(images: list[tuple[bytes, str]], session=requests) -> ReadResu
         raw = json.loads(r.json()["choices"][0]["message"]["content"])
         res = ReadResult(**{k: v for k, v in raw.items() if k in ReadResult.model_fields and k != "model"})
         res.model = model
+        if pdf_source is not None:
+            res = amounts_from_text(res, pdf_source)
         return align_columns(res)
     except (KeyError, IndexError, json.JSONDecodeError, ValidationError, TypeError) as e:
         raise ReaderError("The document could not be read. Try a sharper photo or enter the numbers by hand.") from e
