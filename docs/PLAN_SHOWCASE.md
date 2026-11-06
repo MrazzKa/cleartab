@@ -52,6 +52,9 @@ Gap: no free, open-source tool combines rule-based bill and EOB checks, Arizona 
 | P7 | International student mode: glossary (EOB, allowed, coinsurance), SHIP example visit, interface in more languages (human-checked strings) | Our own experience; Liu et al. 2023: about 22% could compute their costs | Nikita | Nov 28 |
 | P8 | Outcome tracker in My visits: user marks "called / letter sent / reduced / approved" and the amount saved, stored on the device only; optional anonymous count sent with consent | Lets us report outcomes without storing bills | Danil | Nov 28 |
 | P9 | Demo polish: example bills with planted errors, offline backup video, poster QR | Showcase | Nikita | Dec 5 |
+| P10 | ER visit check: compare an EOB's emergency line with the hospital's published ER visit rates (99281-99285) for that insurer, all 19 hospitals (new processed table with source_url, retrieved_at). Found on a real UnitedHealthcare EOB (Nov 6): allowed $1,543.00 = Banner UMC Tucson's published UHC commercial ER case rate | Artyom, Timur | Nov 18 |
+| P11 | Read the EOB "plan balances" box (deductible and out-of-pocket progress) and show what is left; check consistency across EOBs in My visits | Danil | Nov 21 |
+| P12 | When the EOB has no codes (common): ask for the itemized bill with CPT codes; with codes, flag a follow-up visit inside a procedure's global period (CMS PFS global days, public) and a same-day visit plus procedure | Timur | Nov 25 |
 | Later | Capacitor wrap for Google Play / App Store (Apple account $99/yr) | Decision Nov 20 | Danil | after Dec 1 if yes |
 
 Feature freeze Dec 1: after that only fixes, data refresh and demo material.
