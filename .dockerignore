@@ -1,0 +1,14 @@
+.git
+.venv
+**/node_modules
+web/dist
+data/raw
+data-server
+exports
+docs
+research
+tests
+tools
+**/__pycache__
+.env
+deploy/.env

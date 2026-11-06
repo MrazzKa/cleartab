@@ -1,0 +1,23 @@
+# SITE_ADDRESS: a domain name (HTTPS certificate is obtained automatically), or ":80" for plain HTTP tests.
+{$SITE_ADDRESS::80} {
+	encode gzip zstd
+	# No access log is configured, so request paths are not kept.
+	request_body {
+		max_size 30MB
+	}
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		Permissions-Policy "geolocation=(), microphone=()"
+		-Server
+	}
+	handle_path /api/* {
+		reverse_proxy api:8000
+	}
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

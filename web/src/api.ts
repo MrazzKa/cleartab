@@ -118,9 +118,11 @@ export interface AssistanceResponse {
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
   const r = await fetch(BASE + path, init)
   if (!r.ok) {
-    let detail = `${r.status}`
-    try { detail = JSON.stringify((await r.json()).detail ?? detail) } catch { /* not JSON */ }
-    throw new Error(`The server could not answer (${detail}).`)
+    let detail: unknown = `${r.status}`
+    try { detail = (await r.json()).detail ?? detail } catch { /* not JSON */ }
+    // Plain sentences from the API (limits, consent) are shown as they are.
+    if (typeof detail === 'string' && detail.includes(' ')) throw new Error(detail)
+    throw new Error(`The server could not answer (${JSON.stringify(detail)}).`)
   }
   return r.json() as Promise<T>
 }

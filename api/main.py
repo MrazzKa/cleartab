@@ -18,6 +18,7 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
 
+from api.limits import ReadLimiter
 from pipeline.common import DATABASE_URL, PROCESSED
 
 log = logging.getLogger("cleartab")
@@ -267,6 +268,7 @@ def assistance_policies():
 import base64 as _b64  # noqa: E402
 
 from pydantic import BaseModel as _Model  # noqa: E402
+from pydantic import Field as _Field  # noqa: E402
 
 from billcheck import reader  # noqa: E402
 
@@ -277,7 +279,7 @@ class _Image(_Model):
 
 
 class _ReadRequest(_Model):
-    images: list[_Image]
+    images: list[_Image] = _Field(min_length=1, max_length=6)
     consent: bool = False
 
 
@@ -286,11 +288,17 @@ def bill_read_status():
     return {"available": reader.available(), "model": reader.MODEL}
 
 
+_read_limiter = ReadLimiter()
+
+
 @app.post("/bill/read", response_model=reader.ReadResult)
-def bill_read(req: _ReadRequest):
+def bill_read(req: _ReadRequest, request: Request):
     """Photos go to the Groq API for this request only; ClearTab does not store or log them."""
     if not req.consent:
         raise HTTPException(400, "Consent is required before a photo is sent to the reading service.")
+    refused = _read_limiter.check(request.client.host if request.client else "unknown")
+    if refused:
+        raise HTTPException(429, refused)
     try:
         imgs = [(_b64.b64decode(i.data, validate=True), i.type) for i in req.images]
         return reader.read_document(imgs)
