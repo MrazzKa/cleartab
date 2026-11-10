@@ -70,6 +70,33 @@ def es(f: Finding) -> tuple[str, str, str] | None:
         return (f"{e.get('code')}: el monto permitido está dentro de las tarifas publicadas",
                 f"{e.get('hospital')} publicó tarifas de {m(e.get('published_min'))} a {m(e.get('published_max'))}; "
                 f"su EOB permitió {m(e.get('allowed_per_unit'))}.", "")
+    if r == "medicare_yardstick":
+        partes = [f"línea {x['line']} ({x['code']}): {'permitido' if x['what'] == 'allowed' else 'cobrado'} "
+                  f"{m(x['price'])}, Medicare {m(x['medicare'])}, {x['ratio']}x" for x in e.get("rows", [])]
+        self_pay = any(x["what"] == "charged" for x in e.get("rows", []))
+        return ("Comparado con Medicare en Arizona",
+                "Lo que Medicare paga a un profesional por el mismo código en Arizona en 2026, como referencia "
+                "pública (tarifa de consultorio; Medicare paga menos si el servicio es en un hospital): "
+                + "; ".join(partes) + ". Los planes privados suelen pagar más que Medicare; esto no es un error "
+                "por sí solo.",
+                "Si paga por su cuenta, puede pedir a la oficina de facturación que baje el precio hacia el monto de "
+                "Medicare y preguntar por la ayuda financiera." if self_pay else "")
+    if r == "global_same_day_visit":
+        return (f"Consulta {e.get('visit')} el mismo día que el procedimiento {e.get('procedure')}",
+                "Para Medicare y muchas aseguradoras, la consulta del día de un procedimiento suele estar incluida en "
+                "el pago del procedimiento, salvo que fuera un servicio aparte e importante (modificador 25) o la "
+                "decisión de una cirugía mayor (modificador 57).",
+                "Pregunte a la oficina de facturación si la consulta se facturó con el modificador 25 o 57 y por qué "
+                "es aparte del procedimiento.")
+    if r == "global_period_visit":
+        return (f"La consulta {e.get('visit')} cae dentro del período global de {e.get('global_days')} días de "
+                f"{e.get('procedure')}",
+                f"El procedimiento {e.get('procedure')} del {e.get('procedure_date')} tiene un período global de "
+                f"{e.get('global_days')} días. Las consultas de seguimiento en ese período, como la del "
+                f"{e.get('visit_date')}, suelen estar incluidas en el pago del procedimiento, salvo que sean por "
+                "otro problema (modificador 24).",
+                "Pregunte si esta consulta fue un seguimiento de rutina después del procedimiento. Si lo fue, pida "
+                "que quiten el cargo.")
     if r == "plan_balance_left":
         lines = [x.replace("Deductible", "Deducible").replace("Out-of-pocket limit", "Límite de gastos de bolsillo")
                  .replace("in network", "dentro de la red").replace("out of network", "fuera de la red")

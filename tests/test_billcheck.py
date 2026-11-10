@@ -423,3 +423,21 @@ def test_plan_balances_left_math_and_oop_met():
     assert rules["oop_met_still_owe"].amount_at_stake == 40
     eob["balances"][0]["remaining"] = 500
     assert any(f.rule == "plan_balance_math" for f in run_check(CheckRequest(eob=eob)).findings)
+
+
+def test_medicare_yardstick_and_global_period():
+    from billcheck import medicare, run_check
+    from billcheck.models import CheckRequest
+    if not medicare.table():
+        return      # data/processed/medicare_pfs_az_2026.csv not built
+    assert medicare.global_days("10060") == "010" and medicare.amount("99213") == 93.25
+    assert medicare.amount("99284") == medicare.amount("99284", facility=True)    # ED codes: facility rate only
+    line = {"billed": 250, "allowed": 120, "plan_paid": 96, "coinsurance": 24, "you_owe": 24}
+    eob = {"lines": [{**line, "service_date": "2026-02-20", "code": "10060", "description": "I&D abscess"},
+                     {**line, "service_date": "2026-02-27", "code": "99213", "description": "Office visit"}]}
+    r = run_check(CheckRequest(context={"coverage": "insured"}, eob=eob))
+    by = {f.rule: f for f in r.findings}
+    assert by["global_period_visit"].amount_at_stake == 24 and by["global_period_visit"].lines == [2, 1]
+    assert by["medicare_yardstick"].evidence["rows"][1]["ratio"] == round(120 / 93.25, 1)
+    eob["lines"][1]["service_date"] = "2026-03-20"      # after the 10-day period: no flag
+    assert not any(f.rule == "global_period_visit" for f in run_check(CheckRequest(eob=eob)).findings)

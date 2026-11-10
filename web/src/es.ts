@@ -84,6 +84,8 @@ export const ES: Record<string, string> = {
   "Hospital published prices": "Precios publicados por el hospital",
   "Hospital published ER visit rates": "Tarifas de urgencias publicadas por el hospital",
   "Deductible and out-of-pocket balances": "Saldos del deducible y de gastos de bolsillo",
+  "Medicare price in Arizona": "Precio de Medicare en Arizona",
+  "Visits inside a surgery global period": "Consultas dentro del período global de una cirugía",
   "How many people are in your household?": "¿Cuántas personas hay en su hogar?",
   "How much does the EOB say you owe?": "¿Cuánto dice el EOB que usted debe?",
   "How much does the bill ask you to pay?": "¿Cuánto le pide pagar la factura?",

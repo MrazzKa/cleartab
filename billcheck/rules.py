@@ -470,6 +470,108 @@ class Checker:
                                   "ends."),
                      action="Keep this EOB: the next one should show these numbers going up, never down.")
 
+    # ------------------------------------------------------------------ Medicare yardstick (P3)
+    def medicare_yardstick(self) -> None:
+        """How each coded price compares with what Medicare pays a clinician for the same code in Arizona. A
+        reference point, never a finding of error: private plans usually pay more than Medicare."""
+        from billcheck import medicare
+        if not medicare.table():
+            self.skipped["medicare"] = "Medicare fee schedule not loaded"
+            return
+        if self.bill and self.bill.provider_type == "facility":
+            self.skipped["medicare"] = ("hospital facility charges are paid from a different Medicare schedule "
+                                        "(OPPS), not compared yet")
+            return
+        rows = []
+        if self.ctx.coverage == "insured" and self.eob:
+            for i, ln in enumerate(self.eob.lines, 1):
+                allowed = self.allowed(ln)
+                med = medicare.amount(ln.code)
+                if med and allowed:
+                    rows.append({"line": i, "code": ln.code, "price": c(allowed / ln.units), "medicare": med,
+                                 "what": "allowed"})
+        if self.ctx.coverage == "self_pay" and self.bill:
+            for i, bl in enumerate(self.bill.lines, 1):
+                med = medicare.amount(bl.code)
+                if med and bl.amount:
+                    rows.append({"line": i, "code": bl.code, "price": c(bl.amount / bl.units), "medicare": med,
+                                 "what": "charged"})
+        if not rows:
+            self.skipped["medicare"] = "no line with a CPT or HCPCS code and a price"
+            return
+        self.run.append("medicare")
+        for r in rows:
+            r["ratio"] = round(r["price"] / r["medicare"], 1)
+        parts = [f"line {r['line']} ({r['code']}): {r['what']} {money(r['price'])}, Medicare {money(r['medicare'])}, "
+                 f"{r['ratio']}x" for r in rows]
+        self_pay = self.ctx.coverage == "self_pay"
+        self.add(rule="medicare_yardstick", severity="info", lines=[r["line"] for r in rows],
+                 evidence={"rows": rows}, sources=[src("pfs")],
+                 title="Compared with Medicare in Arizona",
+                 explanation=("What Medicare pays a clinician for the same code in Arizona in 2026, as a public "
+                              "yardstick (office rate; Medicare pays less when the service is in a hospital): "
+                              + "; ".join(parts) + ". Private plans usually pay more than Medicare; this is not "
+                              "an error by itself."),
+                 action=("If you pay on your own, you can ask the billing office to lower the price toward the "
+                         "Medicare amount, and ask about financial assistance." if self_pay else ""))
+
+    # ------------------------------------------------------------------ Global surgery period (P12)
+    def global_period(self) -> None:
+        """A visit (E/M code) inside a procedure's global period is usually part of the surgery payment (CMS:
+        0 and 10-day procedures include the day of surgery and, for 10-day codes, the 10 days after; 90-day
+        procedures include the day before, the day of and the 90 days after)."""
+        from datetime import timedelta as _td
+
+        from billcheck import medicare
+        lines = []
+        docs = (("eob", self.eob.lines if self.eob else []), ("bill", self.bill.lines if self.bill else []))
+        for doc, items in docs:
+            lines += [(doc, i, ln) for i, ln in enumerate(items, 1) if ln.code and ln.service_date]
+        if not lines:
+            return
+        procs = [(s, i, ln, medicare.global_days(ln.code)) for s, i, ln in lines]
+        procs = [(s, i, ln, g) for s, i, ln, g in procs if g in ("000", "010", "090")]
+        visits = [(s, i, ln) for s, i, ln in lines if "99202" <= (ln.code or "") <= "99499"]
+        if not procs or not visits:
+            return
+        self.run.append("global_period")
+        seen = set()
+        for ps, pi, p, g in procs:
+            days = int(g)
+            for vs, vi, v in visits:
+                if (vs, vi) in seen or vs != ps:
+                    continue
+                start = p.service_date - _td(days=1 if days == 90 else 0)
+                end = p.service_date + _td(days=days)
+                if not start <= v.service_date <= end:
+                    continue
+                seen.add((vs, vi))
+                same_day = v.service_date == p.service_date
+                ev = {"procedure": p.code, "procedure_date": str(p.service_date), "global_days": days,
+                      "visit": v.code, "visit_date": str(v.service_date), "document": vs}
+                if same_day:
+                    self.add(rule="global_same_day_visit", severity="info", lines=[vi, pi], evidence=ev,
+                             sources=[src("global_surgery")],
+                             title=f"Visit {v.code} on the same day as procedure {p.code}",
+                             explanation=("For Medicare and many insurers, the visit on the day of a procedure is "
+                                          "usually part of the procedure payment unless it was a separate, "
+                                          "significant service (modifier 25) or the decision for a major surgery "
+                                          "(modifier 57)."),
+                             action="Ask the billing office whether the visit was billed with modifier 25 or 57, and "
+                                    "why it is separate from the procedure.")
+                else:
+                    amount = v.you_owe if vs == "eob" else v.amount
+                    self.add(rule="global_period_visit", severity="warning", lines=[vi, pi], evidence=ev,
+                             sources=[src("global_surgery"), src("pfs")],
+                             title=f"Visit {v.code} falls inside the {days}-day global period of {p.code}",
+                             explanation=(f"Procedure {p.code} on {p.service_date} has a {days}-day global period in "
+                                          f"the Medicare fee schedule. Follow-up visits on {v.service_date} and "
+                                          "other days in that period are usually included in the procedure payment, "
+                                          "unless the visit was for an unrelated problem (modifier 24)."),
+                             action=("Ask the provider whether this visit was a routine follow-up after the procedure. "
+                                     "If it was, ask them to remove the charge or bill it as part of the procedure."),
+                             amount_at_stake=c(amount) if amount else None)
+
     # ------------------------------------------------------------------ Emergency visit vs published ER rates
     def er_visit(self) -> None:
         """Compare the allowed amount of an ER line with the ED visit rates (CPT 99281-99285) the hospital published
@@ -719,8 +821,8 @@ class Checker:
 
     # ------------------------------------------------------------------
     BILL_TOTALS = ("balance_over_eob", "gfe_dispute")          # whole-bill differences
-    BILL_LINES = ("duplicate_line", "bill_line_not_on_eob", "mue_units", "ncci_pair", "self_pay_over_cash",
-                  "ambulance_over_rate")
+    BILL_LINES = ("global_period_visit", "duplicate_line", "bill_line_not_on_eob", "mue_units", "ncci_pair",
+                  "self_pay_over_cash", "ambulance_over_rate")
     EOB_SIDE = ("allowed_vs_published", "eob_denied", "er_rate_over", "oop_met_still_owe")   # decided by the insurer
 
     def amount_at_stake(self) -> float:
@@ -744,7 +846,8 @@ class Checker:
                                findings=[], checks_run=[])
         for step in (self.eob_arithmetic, self.plan_balances, self.bill_vs_eob, self.duplicates, self.units_mue,
                      self.code_pairs,
-                     self.published, self.er_visit, self.surprises, self.ambulance_rates, self.paperwork):
+                     self.published, self.er_visit, self.medicare_yardstick, self.global_period, self.surprises,
+                     self.ambulance_rates, self.paperwork):
             step()
         order = {"error": 0, "warning": 1, "info": 2, "ok": 3}
         self.findings.sort(key=lambda f: (order[f.severity], -(f.amount_at_stake or 0)))

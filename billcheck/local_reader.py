@@ -19,7 +19,7 @@ from billcheck.reader import ReaderError, ReadLine, ReadResult, align_columns, c
 
 ENGINE = "ClearTab text recognition on our server (RapidOCR, no AI service)"
 MONEY = re.compile(r"\(?(-?)\s?\$?\s?(-?)(\d{1,3}(?:,\d{3})+|\d+)\.(\d{2})\)?")
-DATE = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{2}|\d{4})\b")
+DATE = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{2}|\d{4})\b|\b(\d{4})-(\d{2})-(\d{2})\b")
 CODE = re.compile(r"\b(\d{5}|[A-V]\d{4})\b")
 TOTAL_WORDS = ("total", "subtotal", "sum ")
 EOB_WORDS = ("explanation of benefits", "this is not a bill", "plan paid", "allowed amount", "plan allowed",
@@ -196,7 +196,10 @@ def line_text(ln: list[Box]) -> str:
 def iso(d: re.Match | None) -> str | None:
     if not d:
         return None
-    mo, dy, yr = int(d.group(1)), int(d.group(2)), int(d.group(3))
+    if d.group(4):
+        yr, mo, dy = int(d.group(4)), int(d.group(5)), int(d.group(6))
+    else:
+        mo, dy, yr = int(d.group(1)), int(d.group(2)), int(d.group(3))
     yr = yr + 2000 if yr < 100 else yr
     return f"{yr:04d}-{mo:02d}-{dy:02d}" if 1 <= mo <= 12 and 1 <= dy <= 31 else None
 
@@ -394,6 +397,9 @@ def _bill(lines: list[list[Box]], res: ReadResult) -> None:
                 res.patient_payments = abs(amounts[-1][0])
     if res.balance_due is None:
         return
+    # A units or quantity column: its header's position tells which small number in a row is the unit count.
+    units_x = next((b for ln in lines for b in ln if re.fullmatch(r"(?:svc\.? )?(?:units?|qty|quantity)", b.text.strip(),
+                                                                  re.I)), None)
     for ln in lines:
         t = line_text(ln)
         amounts = [a for b in ln for a in money_in(b)]
@@ -404,8 +410,14 @@ def _bill(lines: list[list[Box]], res: ReadResult) -> None:
         desc_boxes = [b for b in ln if not money_in(b) and not DATE.fullmatch(b.text.strip())
                       and not re.fullmatch(r"\d{3,5}|[A-V]\d{4}", b.text.strip())]
         codes = [b.text.strip() for b in ln if re.fullmatch(r"\d{4,5}|[A-V]\d{4}", b.text.strip())]
+        units = None
+        if units_x:
+            near = [b for b in ln if re.fullmatch(r"\d{1,3}", b.text.strip())
+                    and abs(b.cx - units_x.cx) <= max(units_x.x1 - units_x.x0, 2 * b.h)]
+            units = int(near[0].text) if near and 0 < int(near[0].text) < 1000 else None
+        desc_boxes = [b for b in desc_boxes if not re.fullmatch(r"\d{1,3}", b.text.strip())]
         res.bill_lines.append(ReadLine(service_date=iso(DATE.search(t)), description=" ".join(
-            b.text for b in desc_boxes)[:200], code=codes[0] if codes else None, amount=amounts[0][0]))
+            b.text for b in desc_boxes)[:200], code=codes[0] if codes else None, units=units, amount=amounts[0][0]))
 
 
 def read_local(images: list[tuple[bytes, str]]) -> ReadResult:

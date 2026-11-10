@@ -7,7 +7,7 @@ const LABEL: Record<Severity, string> = { error: 'Likely error', warning: 'Ask a
 const ICON: Record<Severity, string> = { error: '✕', warning: '!', info: 'i', ok: '✓' }
 const CHECK_NAMES: Record<string, string> = {
   eob_arithmetic: 'EOB math', bill_vs_eob: 'Bill against EOB', duplicates: 'Duplicate charges',
-  mue_units: 'Medicare unit limits (MUE)', ncci_ptp: 'Code pairs (NCCI)', published_prices: 'Hospital published prices', er_rates: 'Hospital published ER visit rates', plan_balances: 'Deductible and out-of-pocket balances',
+  mue_units: 'Medicare unit limits (MUE)', ncci_ptp: 'Code pairs (NCCI)', published_prices: 'Hospital published prices', er_rates: 'Hospital published ER visit rates', plan_balances: 'Deductible and out-of-pocket balances', medicare: 'Medicare price in Arizona', global_period: 'Visits inside a surgery global period',
   no_surprises_act: 'No Surprises Act', paperwork: 'Paperwork', az_ambulance_rate: 'Arizona ambulance rates',
 }
 
