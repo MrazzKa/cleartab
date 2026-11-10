@@ -70,6 +70,30 @@ def es(f: Finding) -> tuple[str, str, str] | None:
         return (f"{e.get('code')}: el monto permitido está dentro de las tarifas publicadas",
                 f"{e.get('hospital')} publicó tarifas de {m(e.get('published_min'))} a {m(e.get('published_max'))}; "
                 f"su EOB permitió {m(e.get('allowed_per_unit'))}.", "")
+    if r == "plan_balance_left":
+        lines = [x.replace("Deductible", "Deducible").replace("Out-of-pocket limit", "Límite de gastos de bolsillo")
+                 .replace("in network", "dentro de la red").replace("out of network", "fuera de la red")
+                 .replace("family", "familia").replace("individual", "individual").replace(" used, ", " usados, ")
+                 .replace(" of ", " de ").replace(" left.", " disponibles.") for x in e.get("lines", [])]
+        return ("Lo que queda de su deducible y de su límite de gastos de bolsillo",
+                " ".join(lines) + " Hasta cubrir el deducible, normalmente paga todo el monto permitido; después, "
+                "solo copagos o coseguro. Al llegar al límite de gastos de bolsillo, la atención cubierta dentro de "
+                "la red le cuesta $0 hasta que termine el año del plan.",
+                "Guarde este EOB: el siguiente debe mostrar estas cifras subiendo, nunca bajando.")
+    if r == "plan_balance_math":
+        return ("Las cifras del saldo del plan no cuadran",
+                f"El EOB muestra un límite de {m(e.get('limit'))} con {m(e.get('used'))} usados, pero dice que "
+                f"quedan {m(e.get('remaining'))}.",
+                "Pida a su aseguradora un estado de lo que ha contado para su deducible y su límite este año.")
+    if r == "plan_balance_over":
+        return ("Se cuenta como usado más que el límite",
+                f"El EOB cuenta {m(e.get('used'))} para un límite de {m(e.get('limit'))}.",
+                "Pida a su aseguradora que revise lo que se cuenta para este límite.")
+    if r == "oop_met_still_owe":
+        return ("Llegó a su límite de gastos de bolsillo, pero esta reclamación le pide pagar",
+                f"El saldo del plan muestra el límite cubierto, pero este EOB dice que debe {m(e.get('you_owe'))}.",
+                "Pregunte a su aseguradora si esta reclamación se procesó antes de llegar al límite y si debe "
+                "reprocesarse.")
     if r in ("er_rate_matches", "er_rate_over", "er_rate_within"):
         lo, hi = e.get("published_min"), e.get("published_max")
         rango = m(lo) if lo == hi else f"de {m(lo)} a {m(hi)}"

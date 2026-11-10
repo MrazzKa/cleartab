@@ -8,8 +8,12 @@ the model to leave out names, addresses and member or account numbers.
 Reading services (READER_PROVIDERS, tried in order, each used only when its key is set):
 - jetstream: Jetstream2 Inference (Indiana University, NSF ACCESS), OpenAI-compatible API, key JETSTREAM_API_KEY.
 - groq: Groq, key GROQ_API_KEY.
-READ_MODE decides what may be read: "on" (any document), "examples" (only the example documents in
-billcheck/examples, for the public site, where real documents are typed in by hand), or "off".
+READ_MODE decides what may be read and by whom:
+- "local": every document is read on this server by text recognition and fixed rules (billcheck/local_reader.py);
+  nothing goes to an outside service. The default for the public site.
+- "on": any document, by the services above (local testing and research).
+- "examples": only the example documents in billcheck/examples are read by the services; people type the rest.
+- "off": no reading.
 """
 import base64
 import hashlib
@@ -20,6 +24,8 @@ from pathlib import Path
 
 import requests
 from pydantic import BaseModel, Field, ValidationError
+
+from billcheck.models import PlanBalance
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = os.environ.get("GROQ_VISION_MODEL", "qwen/qwen3.8-27b")
@@ -64,6 +70,10 @@ Return one JSON object with exactly these keys:
  "bill_lines": [{"service_date": "YYYY-MM-DD" or null, "description": string, "code": string or null,
                  "units": integer or null, "amount": number or null}],
  "oop_max_met": true | false,             // true only if the document says an out-of-pocket maximum was met
+ "plan_balances": [{"kind": "deductible" | "out_of_pocket", "network": "in" | "out" | "unknown",
+                    "level": "individual" | "family" | "unknown",
+                    "limit": number or null, "used": number or null, "remaining": number or null}],
+                                           // the plan balances box (maximum, used so far, remaining), if printed
  "unreadable": [string]                    // fields you could not read clearly
 }
 EOB columns go by many names. "discount" is the network discount, plan discount or provider write-off for that
@@ -109,6 +119,7 @@ class ReadResult(BaseModel):
     eob_lines: list[ReadLine] = Field(default_factory=list)
     bill_lines: list[ReadLine] = Field(default_factory=list)
     oop_max_met: bool = False
+    plan_balances: list[PlanBalance] = Field(default_factory=list, max_length=12)
     unreadable: list[str] = Field(default_factory=list)
     model: str = MODEL
     note: str = "Read by a language model. Check every number against your paper before running the check."
@@ -201,13 +212,35 @@ def providers() -> list[tuple[str, dict]]:
     return [(n, PROVIDERS[n]) for n in order if n in PROVIDERS and os.environ.get(PROVIDERS[n]["key"])]
 
 
+LOCAL_LABEL = "ClearTab's own server (text recognition, no AI service)"
+
+
+def local_available() -> bool:
+    try:
+        import pdfplumber  # noqa: F401
+        import rapidocr  # noqa: F401
+    except ImportError:
+        return False
+    return True
+
+
 def available() -> bool:
-    return bool(providers()) and read_mode() != "off"
+    mode = read_mode()
+    if mode == "local":
+        return local_available()
+    return bool(providers()) and mode != "off"
+
+
+def service_label() -> str | None:
+    if read_mode() == "local":
+        return LOCAL_LABEL
+    services = providers()
+    return services[0][1]["label"] if services else None
 
 
 def read_mode() -> str:
     mode = os.environ.get("READ_MODE", "on").strip().lower()
-    return mode if mode in ("on", "examples", "off") else "off"
+    return mode if mode in ("on", "local", "examples", "off") else "off"
 
 
 def examples() -> list[dict]:
@@ -274,13 +307,20 @@ def _body(provider: str, model: str, content) -> dict:
 
 def read_document(images: list[tuple[bytes, str]], session=requests) -> ReadResult:
     """images: [(bytes, content_type)]: one to three photos, or one PDF."""
-    services = providers()
-    if not services:
-        raise ReaderError("Photo reading is not set up on this server. Enter the numbers by hand.")
     if not 1 <= len(images) <= 3:
         raise ReaderError("Send one to three photos.")
     if any(len(d) > MAX_BYTES for d, _ in images):
         raise ReaderError("Each file must be under 8 MB.")
+    if images[0][1] == "application/pdf" and len(images) > 1:
+        raise ReaderError("Send one PDF at a time.")
+    if any(t not in TYPES and t != "application/pdf" for _, t in images):
+        raise ReaderError("Use a JPEG, PNG or WebP photo, or a PDF.")
+    if read_mode() == "local":
+        from billcheck.local_reader import read_local
+        return read_local(images)
+    services = providers()
+    if not services:
+        raise ReaderError("Photo reading is not set up on this server. Enter the numbers by hand.")
     pdf_source = None
     if images[0][1] == "application/pdf":
         if len(images) > 1:

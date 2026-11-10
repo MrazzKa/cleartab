@@ -1,5 +1,7 @@
 // Spanish interface text. Keys are the English strings used with t(); see i18n.tsx.
 export const ES: Record<string, string> = {
+  "I agree to let ClearTab read it on its own server. It is not sent to any AI service and not stored.": "Acepto que ClearTab lo lea en su propio servidor. No se envía a ningún servicio de IA y no se guarda.",
+  "This can take up to 30 seconds.": "Puede tardar hasta 30 segundos.",
   "Type three numbers from your bill and insurance statement. In about a minute you’ll know what you really owe, what to question and what help you can get.": "Escriba tres números de su factura y del estado de su seguro. En un minuto sabrá cuánto debe de verdad, qué preguntar y qué ayuda puede recibir.",
   "Try it with an example": "Pruébelo con un ejemplo",
   "A made-up ER visit: an insurance statement (EOB) and the hospital bill. No real person.": "Una visita a urgencias inventada: un estado de su seguro (EOB) y la factura del hospital. Ninguna persona real.",
@@ -81,6 +83,7 @@ export const ES: Record<string, string> = {
   "Hospital": "Hospital",
   "Hospital published prices": "Precios publicados por el hospital",
   "Hospital published ER visit rates": "Tarifas de urgencias publicadas por el hospital",
+  "Deductible and out-of-pocket balances": "Saldos del deducible y de gastos de bolsillo",
   "How many people are in your household?": "¿Cuántas personas hay en su hogar?",
   "How much does the EOB say you owe?": "¿Cuánto dice el EOB que usted debe?",
   "How much does the bill ask you to pay?": "¿Cuánto le pide pagar la factura?",

@@ -344,3 +344,82 @@ def test_er_visit_rate_matches_published_case_rate():
     req["eob"]["lines"][0].update(allowed=2100, deductible=2100, you_owe=2100)
     over = [f for f in run_check(CheckRequest(**req)).findings if f.rule == "er_rate_over"]
     assert over and over[0].amount_at_stake == 557.0
+
+
+def _boxes(rows):
+    """[(y, [(x0, x1, text), ...]), ...] -> Box list, 10 px high."""
+    from billcheck.local_reader import Box
+    return [Box(x0, y, x1, y + 10, t) for y, cells in rows for x0, x1, t in cells]
+
+
+def test_local_reader_picks_claim_table_and_bottom_header_line():
+    from billcheck.local_reader import parse
+    cols = [(300, 360), (380, 440), (460, 520), (540, 600)]
+
+    def money(vals, y):
+        return y, [(10, 200, "01/02/26 Office visit 99213")] + [(a, b, v) for (a, b), v in zip(cols, vals, strict=True)]
+
+    boxes = _boxes([
+        (0, [(10, 300, "Explanation of Benefits")]),
+        (40, [(300, 520, "Total you owe")]),                     # a group title above two columns
+        (55, [(300, 360, "Amount billed"), (380, 440, "Allowed"), (460, 520, "Coinsurance"), (540, 600, "You owe")]),
+        money(["$200.00", "$120.00", "$24.00", "$24.00"], 70),
+        (85, [(10, 200, "Total")] + money(["$200.00", "$120.00", "$24.00", "$24.00"], 85)[1][1:]),
+        (140, [(300, 360, "Maximum"), (380, 440, "So far"), (460, 520, "Remaining")]),
+        (155, [(10, 200, "Deductible"), (300, 360, "$500.00"), (380, 440, "$100.00"), (460, 520, "$400.00")]),
+        (170, [(10, 200, "Out-of-pocket"), (300, 360, "$3,000.00"), (380, 440, "$124.00"), (460, 520, "$2,876.00")]),
+        (185, [(10, 200, "Family"), (300, 360, "$6,000.00"), (380, 440, "$124.00"), (460, 520, "$5,876.00")]),
+    ])
+    r = parse(boxes)
+    assert r.document_type == "eob" and len(r.eob_lines) == 1
+    ln = r.eob_lines[0]
+    assert (ln.billed, ln.allowed, ln.coinsurance, ln.you_owe) == (200, 120, 24, 24)
+    assert ln.service_date == "2026-01-02" and ln.code == "99213" and r.you_owe_total == 24
+    assert r.eob_columns[2] == "Coinsurance"
+
+
+def test_local_reader_bill_balance_and_lines():
+    from billcheck.local_reader import parse
+    r = parse(_boxes([
+        (0, [(10, 200, "Patient Statement")]),
+        (30, [(10, 90, "10/18/2026"), (100, 300, "Emergency room services"), (320, 360, "0450"), (400, 470, "$1,588.00")]),
+        (45, [(10, 90, "10/18/2026"), (100, 300, "Lab tests"), (320, 360, "80053"), (400, 470, "$95.00")]),
+        (70, [(250, 380, "Insurance adjustments"), (400, 470, "-$50.00")]),
+        (85, [(250, 380, "Patient payments"), (400, 470, "$35.00")]),
+        (100, [(250, 380, "Balance due"), (400, 470, "$1,598.00")]),
+    ]))
+    assert r.document_type == "bill" and r.balance_due == 1598 and r.patient_payments == 35
+    assert [(b.amount, b.code) for b in r.bill_lines] == [(1588, "0450"), (95, "80053")]
+
+
+def test_local_reader_example_documents(monkeypatch):
+    import pathlib
+
+    import pytest
+
+    from billcheck import reader
+    pytest.importorskip("pdfplumber")
+    ex = pathlib.Path(reader.EXAMPLES_DIR)
+    monkeypatch.setenv("READ_MODE", "local")
+    assert reader.available() and reader.service_label().startswith("ClearTab")
+    r = reader.read_document([((ex / "er_eob.pdf").read_bytes(), "application/pdf")])
+    assert r.you_owe_total == 1543 and [ln.allowed for ln in r.eob_lines] == [1543, 0, 0]
+    assert r.provider_name == "Banner - University Medical Center Tucson" and r.insurer_name == "UnitedHealthcare"
+    pytest.importorskip("rapidocr")
+    b = reader.read_document([((ex / "er_bill.png").read_bytes(), "image/png")])
+    assert b.balance_due == 3361 and [x.amount for x in b.bill_lines] == [1588, 5, 1818]
+
+
+def test_plan_balances_left_math_and_oop_met():
+    from billcheck import run_check
+    from billcheck.models import CheckRequest
+    eob = {"you_owe_total": 40, "lines": [{"description": "Office visit", "billed": 300, "allowed": 200,
+                                           "coinsurance": 40, "plan_paid": 160, "you_owe": 40}],
+           "balances": [{"kind": "deductible", "network": "in", "limit": 2000, "used": 1543, "remaining": 457},
+                        {"kind": "out_of_pocket", "network": "in", "limit": 6000, "used": 6000, "remaining": 0}]}
+    r = run_check(CheckRequest(context={"coverage": "insured"}, eob=eob))
+    rules = {f.rule: f for f in r.findings}
+    assert "$457.00 left" in rules["plan_balance_left"].explanation
+    assert rules["oop_met_still_owe"].amount_at_stake == 40
+    eob["balances"][0]["remaining"] = 500
+    assert any(f.rule == "plan_balance_math" for f in run_check(CheckRequest(eob=eob)).findings)

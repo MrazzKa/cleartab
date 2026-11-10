@@ -76,10 +76,12 @@ New database content: run `prepare_data.sh` again, copy `data-server/db`, then
 and `up -d`.
 
 ## Limits and privacy on the public server
-- `READ_MODE=examples` (the default here): a language model reads only the synthetic example documents in
-  `billcheck/examples/`. People type the amounts from their own papers, so real bills never go to a reading
-  service. Neither Jetstream2 nor Groq is rated for health information (HIPAA), and our advisor asked that private
-  documents be processed only by a locally deployed model. Use `READ_MODE=on` only for local testing.
+- `READ_MODE=local` (the default here): documents are read on this server only, from the PDF text layer or by
+  text recognition (RapidOCR, models baked into the image), then fixed rules place each amount. No language model
+  and no outside service sees a real bill, as our advisor asked (Jetstream2 and Groq are not rated for health
+  information). A page takes about 5 seconds on 2 OCPUs; 4 OCPUs (still Always Free) make it faster.
+  `READ_MODE=examples` sends only the synthetic examples to a language model; `on` sends any document (local
+  testing only).
 - Reading services: Jetstream2 Inference (Indiana University, free for ACCESS users; `gpt-oss-120b` for PDF text,
   `muse-glimmer` for photos; key from llm.jetstream-cloud.org, Settings, Account, API keys), then Groq as a
   fallback. Example reads are cached in memory, so each example uses the service once per restart.

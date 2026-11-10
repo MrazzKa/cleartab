@@ -76,7 +76,12 @@ export default function Visits() {
   const [letter, setLetter] = useState('')
   useEffect(() => { save(visits) }, [visits])
   const [readService, setReadService] = useState('')
-  useEffect(() => { reader.info().then((x) => { setCanRead(x.available && x.mode === 'on'); setReadService(x.service ?? '') }) }, [])
+  const [readLocal, setReadLocal] = useState(false)
+  useEffect(() => {
+    reader.info().then((x) => {
+      setCanRead(x.available && (x.mode === 'on' || x.mode === 'local')); setReadService(x.service ?? ''); setReadLocal(x.mode === 'local')
+    })
+  }, [])
 
   const visit = visits.find((v) => v.id === open) ?? null
   const lines = useMemo(() => (visit ? summarize(visit) : []), [visit])
@@ -203,7 +208,7 @@ export default function Visits() {
             {canRead && (
               <>
                 <label className="check small"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-                  <span>{t('I agree to send it to an AI reading service ({service}) that copies the numbers. ClearTab does not store it. Cover your name and member ID if you can.', { service: readService })}</span></label>
+                  <span>{readLocal ? t('I agree to let ClearTab read it on its own server. It is not sent to any AI service and not stored.') : t('I agree to send it to an AI reading service ({service}) that copies the numbers. ClearTab does not store it. Cover your name and member ID if you can.', { service: readService })}</span></label>
                 <div className="scan-buttons">
                   <label className={`scan-btn ${consent && !busy ? '' : 'disabled'}`}>
                     <input type="file" accept="image/*" capture="environment" multiple disabled={!consent || busy}

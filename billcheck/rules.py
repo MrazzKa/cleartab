@@ -412,6 +412,64 @@ class Checker:
                          action="Your share depends on the allowed amount, not the charge, but you may ask why.",
                          sources=[src("hpt", as_of=p["retrieved_at"], url=p["source_url"])])
 
+    # ------------------------------------------------------------------ Plan balances box (P11)
+    def plan_balances(self) -> None:
+        """What is left of the deductible and the out-of-pocket limit, from the EOB's plan balances box, and
+        whether its numbers add up."""
+        if not self.eob or not self.eob.balances or self.ctx.coverage != "insured":
+            return
+        self.run.append("plan_balances")
+        names = {"deductible": "Deductible", "out_of_pocket": "Out-of-pocket limit"}
+        summary = []
+        for b in self.eob.balances:
+            scope = ", ".join(x for x in ({"in": "in network", "out": "out of network"}.get(b.network),
+                                         {"family": "family", "individual": "individual"}.get(b.level)) if x)
+            label = names[b.kind] + (f" ({scope})" if scope else "")
+            ev = {"kind": b.kind, "network": b.network, "level": b.level, "limit": b.limit, "used": b.used,
+                  "remaining": b.remaining}
+            if None not in (b.limit, b.used, b.remaining) and abs(b.limit - b.used - b.remaining) > TOL:
+                self.add(rule="plan_balance_math", severity="warning", evidence=ev, sources=[src("cms_eob")],
+                         title=f"{label}: the plan balance numbers do not add up",
+                         explanation=(f"The EOB shows a limit of {money(b.limit)} with {money(b.used)} used, which "
+                                      f"leaves {money(c(b.limit - b.used))}, but it says {money(b.remaining)} remains."),
+                         action="Ask the insurer for a statement of what has counted toward your deductible and "
+                                "out-of-pocket limit this plan year.")
+            if b.limit is not None and b.used is not None and b.used > b.limit + TOL:
+                self.add(rule="plan_balance_over", severity="warning", evidence=ev, sources=[src("cms_eob")],
+                         title=f"{label}: more than the limit is counted as used",
+                         explanation=(f"The EOB counts {money(b.used)} toward a limit of {money(b.limit)}. Once a "
+                                      "limit is reached, it should not keep growing."),
+                         action="Ask the insurer to check the amounts counted toward this limit.")
+            if b.network != "out" and (b.remaining is not None or None not in (b.limit, b.used)):
+                left = b.remaining if b.remaining is not None else c(max(b.limit - b.used, 0))
+                used = f"{money(b.used)} of {money(b.limit)} used, " if None not in (b.used, b.limit) else ""
+                summary.append(f"{label}: {used}{money(left)} left.")
+            oop_met = b.kind == "out_of_pocket" and b.network != "out" and (
+                (b.remaining is not None and b.remaining <= TOL)
+                or (None not in (b.limit, b.used) and b.used >= b.limit - TOL))
+            owe = self.eob_owe()
+            if oop_met and owe and owe > TOL:
+                not_cov = c(sum(ln.not_covered for ln in self.eob.lines))
+                self.add(rule="oop_met_still_owe", severity="warning", evidence={**ev, "you_owe": owe},
+                         sources=[src("cms_eob")],
+                         title="Your out-of-pocket limit is reached, but this claim still asks you to pay",
+                         explanation=(f"The plan balances box shows the {label.lower()} is used up. After that, "
+                                      "covered in-network care should cost you $0 for the rest of the plan year, "
+                                      f"but this EOB says you owe {money(owe)}"
+                                      + (f" ({money(not_cov)} of it for services the plan does not cover, which do "
+                                         "not count toward the limit)." if not_cov else ".")),
+                         action=("Ask the insurer whether this claim was processed before the limit was reached and "
+                                 "whether it should be reprocessed."),
+                         amount_at_stake=c(max(owe - not_cov, 0)) or None)
+        if summary:
+            self.add(rule="plan_balance_left", severity="info", evidence={"lines": summary}, sources=[src("cms_eob")],
+                     title="What is left of your deductible and out-of-pocket limit",
+                     explanation=(" ".join(summary) + " Until the deductible is met you usually pay the whole "
+                                  "allowed amount; after it, only copays or coinsurance. Once the out-of-pocket "
+                                  "limit is reached, covered in-network care costs you $0 until the plan year "
+                                  "ends."),
+                     action="Keep this EOB: the next one should show these numbers going up, never down.")
+
     # ------------------------------------------------------------------ Emergency visit vs published ER rates
     def er_visit(self) -> None:
         """Compare the allowed amount of an ER line with the ED visit rates (CPT 99281-99285) the hospital published
@@ -663,7 +721,7 @@ class Checker:
     BILL_TOTALS = ("balance_over_eob", "gfe_dispute")          # whole-bill differences
     BILL_LINES = ("duplicate_line", "bill_line_not_on_eob", "mue_units", "ncci_pair", "self_pay_over_cash",
                   "ambulance_over_rate")
-    EOB_SIDE = ("allowed_vs_published", "eob_denied", "er_rate_over")          # amounts decided by the insurer
+    EOB_SIDE = ("allowed_vs_published", "eob_denied", "er_rate_over", "oop_met_still_owe")   # decided by the insurer
 
     def amount_at_stake(self) -> float:
         """Money in question without double counting: line-level bill problems usually explain the whole-bill
@@ -684,7 +742,8 @@ class Checker:
             return CheckResult(summary=Summary(verdict="not_enough_data",
                                                headline="Enter your EOB, your bill, or both."),
                                findings=[], checks_run=[])
-        for step in (self.eob_arithmetic, self.bill_vs_eob, self.duplicates, self.units_mue, self.code_pairs,
+        for step in (self.eob_arithmetic, self.plan_balances, self.bill_vs_eob, self.duplicates, self.units_mue,
+                     self.code_pairs,
                      self.published, self.er_visit, self.surprises, self.ambulance_rates, self.paperwork):
             step()
         order = {"error": 0, "warning": 1, "info": 2, "ok": 3}
