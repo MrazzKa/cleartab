@@ -404,6 +404,8 @@ def test_local_reader_example_documents(monkeypatch):
     assert reader.available() and reader.service_label().startswith("ClearTab")
     r = reader.read_document([((ex / "er_eob.pdf").read_bytes(), "application/pdf")])
     assert r.you_owe_total == 1543 and [ln.allowed for ln in r.eob_lines] == [1543, 0, 0]
+    assert r.balance_due is None and r.document_type == "eob"       # "Remaining: $457" is a plan balance, not a bill
+    assert [(b.kind, b.remaining) for b in r.plan_balances] == [("deductible", 457), ("out_of_pocket", 4457)]
     assert r.provider_name == "Banner - University Medical Center Tucson" and r.insurer_name == "UnitedHealthcare"
     pytest.importorskip("rapidocr")
     b = reader.read_document([((ex / "er_bill.png").read_bytes(), "image/png")])

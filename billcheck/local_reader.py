@@ -374,13 +374,18 @@ def _balances(lines: list[list[Box]], res: ReadResult) -> None:
 
 def _bill(lines: list[list[Box]], res: ReadResult) -> None:
     table_rows = {id(ln) for ln in lines if len([a for b in ln for a in money_in(b)]) >= 3}
-    for key in BALANCE_KEYS:
+    plan_words = re.compile(r"deductible|out[- ]of[- ]pocket|plan balances|remaining|so far|maximum")
+    is_eob = bool(res.eob_lines)
+    # On an EOB only an explicit amount due counts: "balance" there is usually the plan balances box.
+    keys = BALANCE_KEYS[:5] if is_eob else BALANCE_KEYS
+    for key in keys:
         for i, ln in enumerate(lines):
             t = line_text(ln).lower()
-            if key not in t or id(ln) in table_rows or (key == "amount you owe" and res.eob_lines):
+            if not re.search(r"\b" + re.escape(key) + r"\b", t) or id(ln) in table_rows or plan_words.search(t) \
+                    or (key == "amount you owe" and is_eob):
                 continue
             amounts = [a for b in ln for a in money_in(b)]
-            if not amounts and i + 1 < len(lines):
+            if not amounts and i + 1 < len(lines) and not plan_words.search(line_text(lines[i + 1]).lower()):
                 amounts = [a for b in lines[i + 1] for a in money_in(b)]
             if amounts:
                 res.balance_due = abs(sorted(amounts, key=lambda t: t[1])[-1][0])
