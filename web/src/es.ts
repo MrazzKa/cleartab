@@ -1,5 +1,14 @@
 // Spanish interface text. Keys are the English strings used with t(); see i18n.tsx.
 export const ES: Record<string, string> = {
+  "Your plan year so far": "Su año del plan hasta ahora",
+  "Deductible": "Deducible",
+  "Deductible (family)": "Deducible (familia)",
+  "Out-of-pocket limit": "Límite de gastos de bolsillo",
+  "Out-of-pocket limit (family)": "Límite de gastos de bolsillo (familia)",
+  "{left} left": "quedan {left}",
+  "{used} of {limit} used": "{used} de {limit} usados",
+  "EOB of {d}": "EOB del {d}",
+  "{label}: the amount used went down from {a} ({da}) to {b} ({db}). It should only go up during a plan year: ask your insurer why.": "{label}: lo usado bajó de {a} ({da}) a {b} ({db}). Solo debería subir durante el año del plan: pregunte a su aseguradora por qué.",
   "First step: ask for an itemized bill": "Primer paso: pida una factura detallada",
   "We could not confirm this bill yet. Before you pay, ask the billing office for an itemized bill with a code for each charge. Asking is free, and you can ask them to hold the account while you wait.": "Todavía no pudimos confirmar esta factura. Antes de pagar, pida a la oficina de facturación una factura detallada con un código para cada cargo. Pedirla es gratis, y puede pedir que detengan la cuenta mientras espera.",
   "Get the letter and phone script": "Obtener la carta y el guion para llamar",

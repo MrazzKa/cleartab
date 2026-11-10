@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { money, reader } from '../api'
+import type { PlanBalance } from '../api'
 import Icon from '../icons'
 import { useT } from '../i18n'
 
@@ -7,7 +8,7 @@ import { useT } from '../i18n'
 // answer per provider: what to pay, what to wait for, what to question. Stored only in this browser (localStorage);
 // nothing is sent to the server except photos the user chooses to have read.
 type Kind = 'bill' | 'eob' | 'receipt'
-interface Doc { id: string; kind: Kind; provider: string; amount: number | null; date: string }
+interface Doc { id: string; kind: Kind; provider: string; amount: number | null; date: string; balances?: PlanBalance[] }
 interface Visit { id: string; title: string; date: string; docs: Doc[] }
 
 const KEY = 'cleartab-visits'
@@ -37,6 +38,33 @@ export function summarize(v: Visit): Line[] {
     else if (expected != null && expected > 0) status = 'wait_bill'
     return { provider: docs[0].provider || '?', billed, eobOwe, paid, expected, status, extra }
   })
+}
+
+// Plan balances across every EOB on this device: the latest numbers, and any "used so far" that went down between
+// two EOBs (it should only go up during a plan year).
+interface BalanceView { label: string; left: number | null; used: number | null; limit: number | null; date: string }
+interface BalanceDrop { label: string; from: number; to: number; fromDate: string; toDate: string }
+// eslint-disable-next-line react-refresh/only-export-components
+export function balances(visits: Visit[]): { latest: BalanceView[]; drops: BalanceDrop[] } {
+  const rows = visits.flatMap((v) => v.docs.filter((d) => d.kind === 'eob' && d.balances?.length)
+    .flatMap((d) => (d.balances ?? []).filter((b) => b.network !== 'out').map((b) => ({ b, date: d.date }))))
+  const key = (b: PlanBalance) => `${b.kind}|${b.level}`
+  const label = (b: PlanBalance) => (b.kind === 'deductible' ? 'Deductible' : 'Out-of-pocket limit') + (b.level === 'family' ? ' (family)' : '')
+  const groups = new Map<string, { b: PlanBalance; date: string }[]>()
+  rows.forEach((r) => groups.set(key(r.b), [...(groups.get(key(r.b)) ?? []), r]))
+  const latest: BalanceView[] = []; const drops: BalanceDrop[] = []
+  groups.forEach((list) => {
+    list.sort((a, b) => a.date.localeCompare(b.date))
+    const last = list[list.length - 1]
+    const left = last.b.remaining ?? (last.b.limit != null && last.b.used != null ? Math.max(last.b.limit - last.b.used, 0) : null)
+    latest.push({ label: label(last.b), left, used: last.b.used, limit: last.b.limit, date: last.date })
+    for (let i = 1; i < list.length; i++) {
+      const a = list[i - 1], c = list[i]
+      if (a.b.used != null && c.b.used != null && c.b.used < a.b.used - 0.01 && c.date > a.date)
+        drops.push({ label: label(c.b), from: a.b.used, to: c.b.used, fromDate: a.date, toDate: c.date })
+    }
+  })
+  return { latest, drops }
 }
 
 function ics(title: string, date: Date, text: string) {
@@ -85,6 +113,7 @@ export default function Visits() {
 
   const visit = visits.find((v) => v.id === open) ?? null
   const lines = useMemo(() => (visit ? summarize(visit) : []), [visit])
+  const plan = useMemo(() => balances(visits), [visits])
   const totals = useMemo(() => ({
     billed: lines.reduce((s, l) => s + (l.billed ?? 0), 0),
     payNow: lines.filter((l) => l.status === 'pay' || l.status === 'dispute').reduce((s, l) => s + Math.min(l.billed ?? 0, l.expected ?? l.billed ?? 0), 0),
@@ -124,7 +153,7 @@ export default function Visits() {
       const provider = r.provider_name || t('Unknown provider')
       const date = r.statement_date || visit?.date || ''
       if (r.balance_due != null) addDoc({ kind: 'bill', provider, amount: r.balance_due, date })
-      if (r.you_owe_total != null) addDoc({ kind: 'eob', provider, amount: r.you_owe_total, date })
+      if (r.you_owe_total != null) addDoc({ kind: 'eob', provider, amount: r.you_owe_total, date, balances: r.plan_balances ?? [] })
       if (r.patient_payments) addDoc({ kind: 'receipt', provider, amount: r.patient_payments, date })
       setMsg(t('Added from your document. Check the numbers against your paper.'))
     } catch (e) { setMsg((e as Error).message) } finally { setBusy(false) }
@@ -176,6 +205,21 @@ export default function Visits() {
                 <div className="figure"><span className="small muted">{t('You really owe now')}</span><b>{money(totals.payNow)}</b></div>
                 {totals.question > 0 && <div className="figure"><span className="small muted">{t('In question')}</span><b>{money(totals.question)}</b></div>}
               </div>
+            </section>
+          )}
+
+          {plan.latest.length > 0 && (
+            <section className="card stack">
+              <h2>{t('Your plan year so far')}</h2>
+              {plan.latest.map((b) => (
+                <p key={b.label}><b>{t(b.label)}:</b> {b.left != null ? t('{left} left', { left: money(b.left) }) : ''}
+                  {b.used != null && b.limit != null && <span className="muted"> · {t('{used} of {limit} used', { used: money(b.used), limit: money(b.limit) })}</span>}
+                  <span className="small muted"> ({t('EOB of {d}', { d: b.date })})</span></p>
+              ))}
+              {plan.drops.map((d, i) => (
+                <p key={i} className="error-box">{t('{label}: the amount used went down from {a} ({da}) to {b} ({db}). It should only go up during a plan year: ask your insurer why.',
+                  { label: t(d.label), a: money(d.from), da: d.fromDate, b: money(d.to), db: d.toDate })}</p>
+              ))}
             </section>
           )}
 
