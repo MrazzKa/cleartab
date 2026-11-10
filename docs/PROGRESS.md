@@ -211,3 +211,21 @@ Each phase appends a summary of at most 15 lines.
 - Example visit: "Banner - University Medical Center Tucson publishes $1,543.00 per visit (any visit level) for
   UnitedHealthcare (Commercial plan, case rate)"; the same hospital's UnitedHealthcare ER rates range from $54.54
   (Medicaid) to $1,543.00. Tests: 49 passed.
+
+## Local reading, plan balances, Medicare yardstick, global period (2026-11-10)
+- Decision: real documents are read on our server only (advisor: private documents only on a local model; Jetstream2
+  is not rated for health information). READ_MODE=local is the public default.
+- billcheck/local_reader.py: PDF text layer (pdfplumber; rotated watermark text dropped) or on-server text
+  recognition (RapidOCR, ONNX, CPU) for photos and scans, then fixed layout rules. Real anonymized EOBs: 19 of 19
+  service lines and 4 of 4 totals right, from PDF and from images (about 5 s per page on CPU).
+- R2 condition D (local reader + rules, no model): 100% on all 100 synthetic cases (exploratory, after a units fix).
+- P11: plan balances box read (deductible and out-of-pocket: limit, used, remaining, network, family); rules for
+  what is left, numbers that do not add up, limit reached but still billed. My visits: balances across EOBs, warning
+  when the amount used goes down.
+- P3: Arizona 2026 Medicare physician fee schedule (CMS RVU26D, 9,526 priced codes, data/processed/
+  medicare_pfs_az_2026.csv, no AMA descriptors); "N x Medicare" per coded line (not for hospital facility charges;
+  OPPS Addendum B needs a manual AMA-license download, see MANUAL_DOWNLOADS.md).
+- P12: E/M visit inside a 10 or 90-day global period of a procedure (CMS global days, MLN907166) -> warning; same-day
+  visit with a procedure -> ask about modifier 25/57.
+- P1: dispute kit covers the new findings; when a bill cannot be confirmed, the first step is an itemized bill
+  request (letter and phone script). Tests: 55 passed; ruff, eslint, build clean.
