@@ -61,6 +61,8 @@ class Context(BaseModel):
     coverage: Literal["insured", "self_pay"] = "insured"
     hospital_ccn: str | None = Field(None, max_length=10)
     insurer: str | None = Field(None, max_length=80, description="canonical insurer name from GET /plans")
+    provider_name: str | None = Field(None, max_length=120, description="hospital name as printed on the paper")
+    insurer_name: str | None = Field(None, max_length=120, description="insurer or plan name as printed")
     network: Literal["in", "out", "unknown"] = "unknown"
     emergency: bool = False
     ambulance: Literal["none", "ground", "air"] = "none"

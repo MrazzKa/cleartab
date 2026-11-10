@@ -7,7 +7,7 @@ const LABEL: Record<Severity, string> = { error: 'Likely error', warning: 'Ask a
 const ICON: Record<Severity, string> = { error: '✕', warning: '!', info: 'i', ok: '✓' }
 const CHECK_NAMES: Record<string, string> = {
   eob_arithmetic: 'EOB math', bill_vs_eob: 'Bill against EOB', duplicates: 'Duplicate charges',
-  mue_units: 'Medicare unit limits (MUE)', ncci_ptp: 'Code pairs (NCCI)', published_prices: 'Hospital published prices',
+  mue_units: 'Medicare unit limits (MUE)', ncci_ptp: 'Code pairs (NCCI)', published_prices: 'Hospital published prices', er_rates: 'Hospital published ER visit rates',
   no_surprises_act: 'No Surprises Act', paperwork: 'Paperwork', az_ambulance_rate: 'Arizona ambulance rates',
 }
 
@@ -118,7 +118,7 @@ export default function Results({ result, simple = false }: { result: CheckResul
       ) : <section className="stack">{info.map((f, i) => <FindingCard key={i} f={f} />)}</section>)}
 
       {passed.length > 0 && (
-        <details className="card" open={!simple}>
+        <details className="card" open={!simple || passed.some((f) => f.rule === 'er_rate_matches')}>
           <summary>{t('Checks that passed')} ({passed.length})</summary>
           <div className="stack" style={{ marginTop: 12 }}>
             {passed.map((f, i) => <p key={i}><span className="badge ok">✓ {t('Checked')}</span> <b>{f.title}.</b> {f.explanation}</p>)}

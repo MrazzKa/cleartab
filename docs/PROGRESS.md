@@ -198,3 +198,16 @@ Each phase appends a summary of at most 15 lines.
   write off a $1,818.00 line the plan zeroed. The quick check finds "likely error, $1,818.00".
 - Web: "Try it with an example" on the check page; scan buttons and home page copy follow READ_MODE; consent text
   names the service in use. Tests: 48 passed; ruff, eslint, build clean.
+
+## P10: emergency visit vs published ER rates (2026-11-09)
+- New table data/processed/er_rates.csv (python -m pipeline.er_rates, 2 seconds from the normalized files):
+  CPT 99281-99285 negotiated dollar rates per hospital, insurer, plan and plan type, plus cash and gross;
+  2,696 rows, 17 of 19 hospitals (the two specialty hospitals have no ED). Case rates F4 dropped as above_gross
+  are kept with that flag (a per-visit case rate is often above the level-1 line's gross).
+- Rule er_visit: an EOB line with an ER code or an ER description; hospital and insurer from the context or from
+  the names printed on the papers. Allowed equal to a published rate -> ok (er_rate_matches); above every
+  published rate for that insurer and plan type -> warning (er_rate_over, amount limited to the patient's share);
+  otherwise info. Spanish text added. The reader now also copies the insurer name.
+- Example visit: "Banner - University Medical Center Tucson publishes $1,543.00 per visit (any visit level) for
+  UnitedHealthcare (Commercial plan, case rate)"; the same hospital's UnitedHealthcare ER rates range from $54.54
+  (Medicaid) to $1,543.00. Tests: 49 passed.

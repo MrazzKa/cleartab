@@ -134,6 +134,8 @@ export default function BillCheck() {
         ambulance_con: a.ambulance === 'ground' ? a.con || null : null, ambulance_level: a.level ?? 'unknown',
         ambulance_miles: a.miles ?? null, transported: a.ambulance === 'ground' ? a.transported ?? null : null,
         gfe_received: !insured && a.gfe != null, lang,
+        // Names printed on the papers (not personal data): let the server find the hospital's published ER rates.
+        provider_name: read?.provider_name ?? null, insurer_name: read?.insurer_name ?? null,
       },
       eob: insured && hasEob ? {
         lines: read && useLines ? toEobLines(read.eob_lines) : [], you_owe_total: a.eobOwe ?? null,

@@ -324,3 +324,23 @@ def test_read_mode_examples_only(monkeypatch):
         reader.check_allowed([(b"x", "image/png")])
     monkeypatch.setenv("READ_MODE", "anything else")
     assert reader.read_mode() == "off"
+
+
+def test_er_visit_rate_matches_published_case_rate():
+    from billcheck import er, run_check
+    from billcheck.models import CheckRequest
+    assert er.is_er_line(None, "Emergency room services") and er.is_er_line("99284", "")
+    assert not er.is_er_line(None, "Medical supplies")
+    if not er.table():
+        return      # data/processed/er_rates.csv not built
+    assert er.find_hospital("BANNER - UNIVERSITY MEDICAL CENTER TUCSON") == "030064"
+    req = {"context": {"coverage": "insured", "provider_name": "Banner - University Medical Center Tucson",
+                       "insurer_name": "UnitedHealthcare commercial plan"},
+           "eob": {"lines": [{"description": "Emergency room services", "billed": 1588, "allowed": 1543,
+                              "deductible": 1543, "plan_paid": 0, "you_owe": 1543}]}}
+    r = run_check(CheckRequest(**req))
+    hit = [f for f in r.findings if f.rule == "er_rate_matches"]
+    assert hit and hit[0].evidence["plans"] == ["Commercial"]
+    req["eob"]["lines"][0].update(allowed=2100, deductible=2100, you_owe=2100)
+    over = [f for f in run_check(CheckRequest(**req)).findings if f.rule == "er_rate_over"]
+    assert over and over[0].amount_at_stake == 557.0

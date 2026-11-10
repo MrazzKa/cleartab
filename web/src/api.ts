@@ -36,6 +36,8 @@ export interface Context {
   coverage: 'insured' | 'self_pay'
   hospital_ccn?: string | null
   insurer?: string | null
+  provider_name?: string | null
+  insurer_name?: string | null
   network: 'in' | 'out' | 'unknown'
   emergency: boolean
   ambulance: 'none' | 'ground' | 'air'
@@ -150,7 +152,7 @@ export interface ReadLine {
 }
 
 export interface ReadResult {
-  document_type: 'eob' | 'bill' | 'both' | 'other'; provider_type: string; provider_name: string | null; statement_date: string | null
+  document_type: 'eob' | 'bill' | 'both' | 'other'; provider_type: string; provider_name: string | null; insurer_name?: string | null; statement_date: string | null
   claim_number: string | null; balance_due: number | null; patient_payments: number | null
   you_owe_total: number | null; oop_max_met: boolean; eob_lines: ReadLine[]; bill_lines: ReadLine[]
   unreadable: string[]; note: string
