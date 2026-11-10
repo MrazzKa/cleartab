@@ -184,3 +184,17 @@ Each phase appends a summary of at most 15 lines.
   supported (allowed = billed - discount - not covered). Spanish text for all four. Tests: 41 passed.
 - Interface: bottom tab bar on phones, scan-first home and check page, review table of read lines before the check,
   "See an example" in My visits.
+
+## v2: reading services and example-only public mode (2026-11-09)
+- Advisor (Dr. Li): private documents may only be processed by a locally deployed model. UA faculty (Greg Chism)
+  offered Jetstream2 Inference (free, Indiana University) but it is not rated for health information (HIPAA) and
+  advised representative documents for the iShowcase demo.
+- Reader: services tried in order (READER_PROVIDERS=jetstream,groq; Jetstream2 gpt-oss-120b for PDF text,
+  muse-glimmer for photos), next service on error or 429; answers parsed also when wrapped in a code fence.
+- READ_MODE: on (any document, local testing), examples (public site: only synthetic example documents are read,
+  people type their own amounts), off. Example reads are cached in memory.
+- Two synthetic example documents (billcheck/examples, rendered from HTML): an ER EOB whose allowed amount,
+  $1,543.00, is Banner UMC Tucson's published UnitedHealthcare commercial ER rate, and a hospital bill that did not
+  write off a $1,818.00 line the plan zeroed. The quick check finds "likely error, $1,818.00".
+- Web: "Try it with an example" on the check page; scan buttons and home page copy follow READ_MODE; consent text
+  names the service in use. Tests: 48 passed; ruff, eslint, build clean.

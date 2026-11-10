@@ -173,9 +173,16 @@ async function toUploads(files: FileList | File[]): Promise<{ data: string; type
   return Promise.all(list.slice(0, 3).map(shrinkPhoto))
 }
 
+export interface ReaderInfo { available: boolean; mode: 'on' | 'examples' | 'off'; service: string | null }
+const noReader: ReaderInfo = { available: false, mode: 'off', service: null }
+
 export const reader = {
-  status: () => call<{ available: boolean }>('/bill/read/status').then((x) => x.available).catch(() => false),
+  info: () => call<ReaderInfo>('/bill/read/status').catch(() => noReader),
+  /** True when the user's own documents may be read (READ_MODE=on). */
+  status: () => reader.info().then((x) => x.available && x.mode === 'on'),
   read: async (files: FileList | File[]) => call<ReadResult>('/bill/read', post({ images: await toUploads(files), consent: true })),
+  /** Read a synthetic example document kept on the server (no upload). */
+  example: (name: string) => call<ReadResult>(`/bill/read/example/${encodeURIComponent(name)}`, post({})),
 }
 
 /** Turn read EOB lines into check lines. Empty amounts stay empty: the rule engine skips what it cannot check. */

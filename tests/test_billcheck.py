@@ -175,6 +175,7 @@ def test_reader_parses_model_json(monkeypatch):
             assert kw["json"]["response_format"] == {"type": "json_object"}
             return Resp()
 
+    monkeypatch.delenv("JETSTREAM_API_KEY", raising=False)
     monkeypatch.setenv("GROQ_API_KEY", "test")
     r = reader.read_document([(b"\xff\xd8fake", "image/jpeg")], session=Session())
     assert r.document_type == "eob" and r.you_owe_total == 35 and r.eob_lines[0].allowed == 118.12
@@ -278,3 +279,48 @@ def test_pdf_row_amounts_come_from_text_layer():
     # rows that do not match the model's rows one to one leave the model's copy untouched
     r2 = ReadResult(document_type="eob", eob_columns=cols, eob_lines=[{"amounts": misread}])
     assert amounts_from_text(r2, text).eob_lines[0].amounts == misread
+
+
+def test_reader_falls_back_to_next_service_and_parses_fenced_json(monkeypatch):
+    import json as _json
+
+    from billcheck import reader
+    calls = []
+
+    class Resp:
+        def __init__(self, code, content=""):
+            self.status_code, self.content = code, content
+
+        def json(self):
+            return {"choices": [{"message": {"content": self.content}}]}
+
+    class Session:
+        def post(self, url, **kw):
+            calls.append((url, kw["json"]["model"]))
+            if "jetstream" in url:
+                return Resp(503)
+            return Resp(200, "Here it is:\n```json\n" + _json.dumps({"document_type": "bill", "balance_due": 40}) + "\n```")
+
+    monkeypatch.setenv("JETSTREAM_API_KEY", "j")
+    monkeypatch.setenv("GROQ_API_KEY", "g")
+    monkeypatch.delenv("READER_PROVIDERS", raising=False)
+    r = reader.read_document([(b"\xff\xd8fake", "image/jpeg")], session=Session())
+    assert [m for _, m in calls] == ["muse-glimmer", reader.MODEL]
+    assert r.balance_due == 40 and "Groq" in r.model
+
+
+def test_read_mode_examples_only(monkeypatch):
+    import pytest
+
+    from billcheck import reader
+    monkeypatch.setenv("READ_MODE", "examples")
+    with pytest.raises(reader.ReaderError):
+        reader.check_allowed([(b"a real bill", "image/jpeg")])
+    for e in reader.examples():
+        reader.check_allowed([((reader.EXAMPLES_DIR / e["name"]).read_bytes(), "application/pdf")])
+    monkeypatch.setenv("READ_MODE", "off")
+    assert not reader.available()
+    with pytest.raises(reader.ReaderError):
+        reader.check_allowed([(b"x", "image/png")])
+    monkeypatch.setenv("READ_MODE", "anything else")
+    assert reader.read_mode() == "off"

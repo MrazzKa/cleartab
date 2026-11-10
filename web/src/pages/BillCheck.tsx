@@ -69,7 +69,28 @@ export default function BillCheck() {
   const [read, setRead] = useState<ReadResult | null>(null)
   const [useLines, setUseLines] = useState(true)
   const [services, setServices] = useState<AmbulanceService[]>([])
-  useEffect(() => { reader.status().then(setCanRead); ambulanceServices().then(setServices) }, [])
+  const [readService, setReadService] = useState('')
+  const [readMode, setReadMode] = useState<'on' | 'examples' | 'off'>('off')
+  useEffect(() => {
+    reader.info().then((x) => {
+      setCanRead(x.available && x.mode === 'on'); setReadService(x.service ?? ''); setReadMode(x.available ? x.mode : 'off')
+    })
+    ambulanceServices().then(setServices)
+  }, [])
+
+  // The example visit: a synthetic EOB (PDF) and the matching hospital bill (photo), read on the server.
+  const onExample = async () => {
+    setReading(true); setError(''); setReadNote('')
+    try {
+      const eob = await reader.example('er_eob.pdf')
+      const bill = await reader.example('er_bill.png')
+      setRead({ ...eob, bill_lines: bill.bill_lines }); setUseLines(true)
+      setA((x) => ({ ...x, docs: 'both', insured: true, network: 'in', emergency: true,
+        billDue: bill.balance_due, eobOwe: eob.you_owe_total, paid: bill.patient_payments }))
+      setReadNote(t('We read these numbers from the example documents. On your own bill you would check each one against your paper.'))
+      setStep(2)
+    } catch (e) { setError((e as Error).message) } finally { setReading(false) }
+  }
 
   const onPhotos = async (files: FileList | null) => {
     if (!files || files.length === 0) return
@@ -149,7 +170,7 @@ export default function BillCheck() {
                   <p className="small muted">{t('A photo, or the PDF from your insurer’s website.')}</p></div>
               </div>
               <label className="check small"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-                <span>{t('I agree to send it to an AI reading service (Groq) that copies the numbers. ClearTab does not store it. Cover your name and member ID if you can.')}</span></label>
+                <span>{t('I agree to send it to an AI reading service ({service}) that copies the numbers. ClearTab does not store it. Cover your name and member ID if you can.', { service: readService })}</span></label>
               <div className="scan-buttons">
                 <label className={`scan-btn ${consent && !reading ? '' : 'disabled'}`}>
                   <input type="file" accept="image/*" capture="environment" multiple disabled={!consent || reading}
@@ -167,7 +188,20 @@ export default function BillCheck() {
               {error && <p className="error-box" role="alert">{error}</p>}
             </div>
           )}
-          {canRead && <p className="divider">{t('or answer three questions')}</p>}
+          {readMode !== 'off' && (
+            <div className="scan">
+              <div className="scan-head">
+                <span className="door-icon"><Icon name="file" size={24} /></span>
+                <div><h2>{t('Try it with an example')}</h2>
+                  <p className="small muted">{t('A made-up ER visit: an insurance statement (EOB) and the hospital bill. No real person.')}</p></div>
+              </div>
+              <div><button type="button" disabled={reading} onClick={onExample}>{t('Read the example')}</button></div>
+              {reading && !canRead && <p className="row small" role="status"><span className="spinner" aria-hidden="true" />{t('Reading the example…')}</p>}
+              {error && !canRead && <p className="error-box" role="alert">{error}</p>}
+            </div>
+          )}
+          {readMode === 'examples' && <p className="small muted">{t('To protect your privacy, this public site does not send your own documents to an AI service. Type the numbers below; it takes a minute.')}</p>}
+          {(canRead || readMode !== 'off') && <p className="divider">{t('or answer three questions')}</p>}
           <h2>{t('What did you get?')}</h2>
           <p className="muted small">{t('An explanation of benefits (EOB) comes from your insurer and says "This is not a bill". The bill comes from the hospital or doctor.')}</p>
           <Choice onPick={(v) => { set({ docs: v as Docs, insured: v === 'bill' ? undefined : true }); next() }} options={[

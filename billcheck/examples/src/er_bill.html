@@ -1,0 +1,51 @@
+<!doctype html>
+<!-- Synthetic example hospital statement for the ClearTab demo (pairs with er_eob.html). No real person or document.
+     Planted problem: the $1,818.00 line the plan zeroed out (Amount saved, you owe $0) was not written off, so the
+     balance is $3,361.00 instead of the $1,543.00 the EOB says the patient owes. Render: billcheck/examples/render.sh -->
+<html><head><meta charset="utf-8"><title>Sample bill</title>
+<style>
+body { margin: 0; background: #fff; font-family: "Liberation Sans", Arial, sans-serif; color: #111; }
+.page { width: 760px; padding: 36px 40px; position: relative; }
+.sample { position: absolute; top: 380px; left: 60px; transform: rotate(-28deg); font-size: 110px; font-weight: 700;
+          color: rgba(200, 30, 30, .12); letter-spacing: 8px; }
+.banner { border: 2px solid #b22; color: #b22; padding: 6px 10px; font-weight: 700; font-size: 13px; margin-bottom: 18px; }
+h1 { font-size: 26px; margin: 0; }
+.sub { color: #444; font-size: 15px; margin: 2px 0 18px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 20px; font-size: 15px; margin-bottom: 18px; }
+.grid span { color: #555; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+th { text-align: left; border-bottom: 2px solid #333; padding: 6px 4px; }
+th.r, td.r { text-align: right; }
+td { padding: 8px 4px; border-bottom: 1px solid #ddd; }
+.sum { margin-top: 18px; margin-left: auto; width: 360px; font-size: 16px; }
+.sum div { display: flex; justify-content: space-between; padding: 4px 0; }
+.due { border-top: 2px solid #333; margin-top: 6px; padding-top: 8px !important; font-size: 21px; font-weight: 700; }
+.small { font-size: 13px; color: #444; margin-top: 22px; }
+</style></head><body><div class="page">
+<div class="sample">SAMPLE</div>
+<div class="banner">SAMPLE DOCUMENT made by ClearTab for demonstration. Not issued by any hospital. No real patient.</div>
+<h1>Patient Statement</h1>
+<div class="sub">Hospital services, emergency department</div>
+<div class="grid">
+  <div><span>Patient:</span> Alex Sample</div>
+  <div><span>Statement date:</span> 11/05/2026</div>
+  <div><span>Facility:</span> Banner - University Medical Center Tucson</div>
+  <div><span>Account:</span> XXXXXXXX</div>
+  <div><span>Insurance:</span> UnitedHealthcare (example)</div>
+  <div><span>Visit date:</span> 10/18/2026</div>
+</div>
+<table>
+  <tr><th>Date</th><th>Description</th><th class="r">Rev code</th><th class="r">Amount</th></tr>
+  <tr><td>10/18/2026</td><td>Emergency room services</td><td class="r">0450</td><td class="r">$1,588.00</td></tr>
+  <tr><td>10/18/2026</td><td>Medical/surgical supplies</td><td class="r">0270</td><td class="r">$5.00</td></tr>
+  <tr><td>10/18/2026</td><td>Emergency room services</td><td class="r">0450</td><td class="r">$1,818.00</td></tr>
+</table>
+<div class="sum">
+  <div><span>Total charges</span><span>$3,411.00</span></div>
+  <div><span>Insurance payments</span><span>$0.00</span></div>
+  <div><span>Insurance adjustments</span><span>-$50.00</span></div>
+  <div><span>Patient payments</span><span>$0.00</span></div>
+  <div class="due"><span>Balance due</span><span>$3,361.00</span></div>
+</div>
+<div class="small">Please pay by 12/05/2026. Questions about your bill? Call the number on the back of this statement.</div>
+</div></body></html>

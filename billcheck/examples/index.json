@@ -1,0 +1,6 @@
+[
+  {"file": "er_eob.pdf", "title": "Example: insurance statement (EOB) for an ER visit",
+   "about": "Synthetic, no real person. The allowed amount, $1,543.00, is the ER visit rate Banner - University Medical Center Tucson publishes for UnitedHealthcare commercial plans."},
+  {"file": "er_bill.png", "title": "Example: hospital bill for the same ER visit (photo)",
+   "about": "Synthetic, no real person. Read it together with the EOB to see what ClearTab finds."}
+]

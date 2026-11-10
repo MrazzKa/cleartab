@@ -1,5 +1,7 @@
 import Icon from '../icons'
 import type { IconName } from '../icons'
+import { useEffect, useState } from 'react'
+import { reader } from '../api'
 import { useT } from '../i18n'
 
 const DOORS: [string, IconName, string, string][] = [
@@ -11,14 +13,20 @@ const DOORS: [string, IconName, string, string][] = [
 
 export default function Home() {
   const t = useT()
+  const [scan, setScan] = useState(true)
+  useEffect(() => { reader.status().then(setScan) }, [])
   return (
     <div className="stack-lg">
       <section className="hero-card">
         <p className="eyebrow">{t('Free help for Arizona patients')}</p>
         <h1>{t('Got a hospital bill?')}</h1>
-        <p className="hero-sub">{t('Snap a photo or upload the PDF of your bill or insurance statement. In about a minute you’ll know what you really owe, what to question and what help you can get.')}</p>
+        <p className="hero-sub">{scan
+          ? t('Snap a photo or upload the PDF of your bill or insurance statement. In about a minute you’ll know what you really owe, what to question and what help you can get.')
+          : t('Type three numbers from your bill and insurance statement. In about a minute you’ll know what you really owe, what to question and what help you can get.')}</p>
         <div className="hero-actions">
-          <a className="button-primary" href="#/bill"><Icon name="camera" />{t('Scan a bill or EOB')}</a>
+          {scan
+            ? <a className="button-primary" href="#/bill"><Icon name="camera" />{t('Scan a bill or EOB')}</a>
+            : <a className="button-primary" href="#/bill"><Icon name="check" />{t('Check a medical bill')}</a>}
           <a className="button-quiet" href="#/help">{t('I can’t afford it')} <Icon name="arrow" size={18} /></a>
         </div>
         <ul className="trust">

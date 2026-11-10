@@ -1,5 +1,12 @@
 // Spanish interface text. Keys are the English strings used with t(); see i18n.tsx.
 export const ES: Record<string, string> = {
+  "Type three numbers from your bill and insurance statement. In about a minute you’ll know what you really owe, what to question and what help you can get.": "Escriba tres números de su factura y del estado de su seguro. En un minuto sabrá cuánto debe de verdad, qué preguntar y qué ayuda puede recibir.",
+  "Try it with an example": "Pruébelo con un ejemplo",
+  "A made-up ER visit: an insurance statement (EOB) and the hospital bill. No real person.": "Una visita a urgencias inventada: un estado de su seguro (EOB) y la factura del hospital. Ninguna persona real.",
+  "Read the example": "Leer el ejemplo",
+  "Reading the example…": "Leyendo el ejemplo…",
+  "To protect your privacy, this public site does not send your own documents to an AI service. Type the numbers below; it takes a minute.": "Para proteger su privacidad, este sitio público no envía sus propios documentos a un servicio de IA. Escriba los números abajo; toma un minuto.",
+  "We read these numbers from the example documents. On your own bill you would check each one against your paper.": "Leímos estos números de los documentos de ejemplo. Con su propia factura, revisaría cada uno con su papel.",
   "41% of US adults have debt from medical or dental bills, and 44% of them did not pay a bill in full because they were not sure it was correct (KFF, 2022). Most people don’t know that nonprofit hospitals must offer financial assistance.": "El 41% de los adultos en EE. UU. tiene deudas por facturas médicas o dentales, y el 44% de ellos no pagó una factura completa porque no estaba seguro de que fuera correcta (KFF, 2022). La mayoría no sabe que los hospitales sin fines de lucro deben ofrecer asistencia financiera.",
   "A bill": "Una factura",
   "A bill and an EOB": "Una factura y un EOB",
@@ -250,7 +257,7 @@ export const ES: Record<string, string> = {
   "Check a medical bill": "Revise una factura médica",
   "Scan your bill or EOB": "Escanee su factura o EOB",
   "A photo, or the PDF from your insurer’s website.": "Una foto, o el PDF del sitio web de su aseguradora.",
-  "I agree to send it to an AI reading service (Groq) that copies the numbers. ClearTab does not store it. Cover your name and member ID if you can.": "Acepto enviarlo a un servicio de lectura con IA (Groq) que copia las cifras. ClearTab no lo guarda. Tape su nombre y su número de miembro si puede.",
+  "I agree to send it to an AI reading service ({service}) that copies the numbers. ClearTab does not store it. Cover your name and member ID if you can.": "Acepto enviarlo a un servicio de lectura con IA ({service}) que copia las cifras. ClearTab no lo guarda. Tape su nombre y su número de miembro si puede.",
   "Take a photo": "Tomar una foto",
   "Upload a photo or PDF": "Subir foto o PDF",
   "Reading your document…": "Leyendo su documento…",

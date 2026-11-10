@@ -15,6 +15,7 @@ import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.responses import FileResponse
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
 
@@ -266,6 +267,8 @@ def assistance_policies():
 
 # ---------------------------------------------------------------- v2: read a photo (Feature 10, optional)
 import base64 as _b64  # noqa: E402
+import hashlib as _hashlib  # noqa: E402
+import json as _json  # noqa: E402
 
 from pydantic import BaseModel as _Model  # noqa: E402
 from pydantic import Field as _Field  # noqa: E402
@@ -285,27 +288,81 @@ class _ReadRequest(_Model):
 
 @app.get("/bill/read/status")
 def bill_read_status():
-    return {"available": reader.available(), "model": reader.MODEL}
+    services = reader.providers()
+    return {"available": reader.available(), "mode": reader.read_mode(),
+            "service": services[0][1]["label"] if services else None,
+            "models": {k: services[0][1][k] for k in ("text", "vision")} if services else None}
+
+
+@app.get("/bill/examples")
+def bill_examples():
+    """Synthetic example documents (no real person). They can be read in every READ_MODE."""
+    meta = {}
+    index = reader.EXAMPLES_DIR / "index.json"
+    if index.exists():
+        meta = {e["file"]: e for e in _json.loads(index.read_text())}
+    return {"examples": [{"name": e["name"], "title": meta.get(e["name"], {}).get("title", e["name"]),
+                          "about": meta.get(e["name"], {}).get("about", "")} for e in reader.examples()]}
+
+
+@app.get("/bill/examples/{name}")
+def bill_example_file(name: str):
+    if name not in {e["name"] for e in reader.examples()}:
+        raise HTTPException(404, "No such example.")
+    return FileResponse(reader.EXAMPLES_DIR / name)
 
 
 _read_limiter = ReadLimiter()
+_example_reads: dict[str, reader.ReadResult] = {}     # example documents never change, so one read is enough
+_TYPES = {".pdf": "application/pdf", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+          ".webp": "image/webp"}
+
+
+@app.post("/bill/read/example/{name}", response_model=reader.ReadResult)
+def bill_read_example(name: str):
+    """Read one synthetic example document (works in every READ_MODE except off; read once, then cached)."""
+    if name not in {e["name"] for e in reader.examples()}:
+        raise HTTPException(404, "No such example.")
+    path = reader.EXAMPLES_DIR / name
+    data = path.read_bytes()
+    key = _hashlib.sha256(data).hexdigest()
+    if key not in _example_reads:
+        if reader.read_mode() == "off":
+            raise HTTPException(403, "Document reading is turned off on this server.")
+        try:
+            _example_reads[key] = reader.read_document([(data, _TYPES[path.suffix.lower()])])
+        except reader.ReaderError as e:
+            raise HTTPException(422, str(e)) from e
+    return _example_reads[key]
 
 
 @app.post("/bill/read", response_model=reader.ReadResult)
 def bill_read(req: _ReadRequest, request: Request):
-    """Photos go to the Groq API for this request only; ClearTab does not store or log them."""
+    """Documents go to the reading service for this request only; ClearTab does not store or log them."""
     if not req.consent:
         raise HTTPException(400, "Consent is required before a photo is sent to the reading service.")
+    try:
+        imgs = [(_b64.b64decode(i.data, validate=True), i.type) for i in req.images]
+    except ValueError as e:
+        raise HTTPException(400, "The photo data is not valid.") from e
+    try:
+        reader.check_allowed(imgs)
+    except reader.ReaderError as e:
+        raise HTTPException(403, str(e)) from e
+    key = "|".join(_hashlib.sha256(d).hexdigest() for d, _ in imgs)
+    if key in _example_reads:
+        return _example_reads[key]
     refused = _read_limiter.check(request.client.host if request.client else "unknown")
     if refused:
         raise HTTPException(429, refused)
     try:
-        imgs = [(_b64.b64decode(i.data, validate=True), i.type) for i in req.images]
-        return reader.read_document(imgs)
+        res = reader.read_document(imgs)
     except reader.ReaderError as e:
         raise HTTPException(422, str(e)) from e
-    except ValueError as e:
-        raise HTTPException(400, "The photo data is not valid.") from e
+    examples = {e["sha256"] for e in reader.examples()}
+    if all(h in examples for h in key.split("|")):
+        _example_reads[key] = res
+    return res
 
 
 # ---------------------------------------------------------------- v2: Arizona ground ambulance services (ADHS rates)
