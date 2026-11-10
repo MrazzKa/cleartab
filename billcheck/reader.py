@@ -1,14 +1,22 @@
 """Read an EOB or bill photo into fields (Feature 10, optional, with the user's consent).
 
-An open-weights vision model on Groq copies the numbers it sees into JSON. It never decides anything: the user
-checks every number on screen before the rule engine runs, and the rule engine, not the model, produces the
-findings. Images are sent to Groq for this one request and are not stored or logged by ClearTab. The prompt asks
+An open-weights model copies the numbers it sees into JSON. It never decides anything: the user checks every
+number on screen before the rule engine runs, and the rule engine, not the model, produces the findings. Documents
+are sent to the reading service for this one request and are not stored or logged by ClearTab. The prompt asks
 the model to leave out names, addresses and member or account numbers.
+
+Reading services (READER_PROVIDERS, tried in order, each used only when its key is set):
+- jetstream: Jetstream2 Inference (Indiana University, NSF ACCESS), OpenAI-compatible API, key JETSTREAM_API_KEY.
+- groq: Groq, key GROQ_API_KEY.
+READ_MODE decides what may be read: "on" (any document), "examples" (only the example documents in
+billcheck/examples, for the public site, where real documents are typed in by hand), or "off".
 """
 import base64
+import hashlib
 import json
 import os
 import re
+from pathlib import Path
 
 import requests
 from pydantic import BaseModel, Field, ValidationError
@@ -16,6 +24,15 @@ from pydantic import BaseModel, Field, ValidationError
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = os.environ.get("GROQ_VISION_MODEL", "qwen/qwen3.8-27b")
 TEXT_MODEL = os.environ.get("GROQ_TEXT_MODEL", "openai/gpt-oss-120b")
+PROVIDERS = {
+    "jetstream": {"url": os.environ.get("JETSTREAM_URL", "https://llm.jetstream-cloud.org/api/chat/completions"),
+                  "key": "JETSTREAM_API_KEY",
+                  "vision": os.environ.get("JETSTREAM_VISION_MODEL", "muse-glimmer"),
+                  "text": os.environ.get("JETSTREAM_TEXT_MODEL", "gpt-oss-120b"),
+                  "label": "Jetstream2 (Indiana University)"},
+    "groq": {"url": GROQ_URL, "key": "GROQ_API_KEY", "vision": MODEL, "text": TEXT_MODEL, "label": "Groq"},
+}
+EXAMPLES_DIR = Path(__file__).parent / "examples"
 MAX_BYTES = 8 * 1024 * 1024
 TYPES = {"image/jpeg", "image/png", "image/webp"}
 PDF_MAX_PAGES = 8
@@ -30,6 +47,7 @@ Return one JSON object with exactly these keys:
 {"document_type": "eob" | "bill" | "both" | "other",
  "provider_type": "facility" | "professional" | "ambulance" | "unknown",
  "provider_name": string or null,          // the hospital, doctor group or ambulance company that billed
+ "insurer_name": string or null,           // the insurance company or plan name, e.g. "UnitedHealthcare"
  "statement_date": "YYYY-MM-DD" or null,
  "claim_number": string or null,
  "balance_due": number or null,            // bill: amount due / balance / pay this amount
@@ -81,6 +99,7 @@ class ReadResult(BaseModel):
     document_type: str = "other"
     provider_type: str = "unknown"
     provider_name: str | None = Field(None, max_length=120)
+    insurer_name: str | None = Field(None, max_length=120)
     statement_date: str | None = None
     claim_number: str | None = None
     balance_due: float | None = None
@@ -176,8 +195,52 @@ class ReaderError(Exception):
     pass
 
 
+def providers() -> list[tuple[str, dict]]:
+    """Reading services with a key, in the order of READER_PROVIDERS."""
+    order = [n.strip() for n in os.environ.get("READER_PROVIDERS", "jetstream,groq").split(",")]
+    return [(n, PROVIDERS[n]) for n in order if n in PROVIDERS and os.environ.get(PROVIDERS[n]["key"])]
+
+
 def available() -> bool:
-    return bool(os.environ.get("GROQ_API_KEY"))
+    return bool(providers()) and read_mode() != "off"
+
+
+def read_mode() -> str:
+    mode = os.environ.get("READ_MODE", "on").strip().lower()
+    return mode if mode in ("on", "examples", "off") else "off"
+
+
+def examples() -> list[dict]:
+    """Example documents (synthetic, no real person) that may be read in every mode."""
+    out = []
+    for f in sorted(EXAMPLES_DIR.glob("*")):
+        if f.suffix.lower() in (".pdf", ".png", ".jpg", ".jpeg", ".webp"):
+            out.append({"name": f.name, "sha256": hashlib.sha256(f.read_bytes()).hexdigest()})
+    return out
+
+
+def check_allowed(images: list[tuple[bytes, str]]) -> None:
+    """Raise ReaderError when READ_MODE does not allow these documents to go to a reading service."""
+    mode = read_mode()
+    if mode == "off":
+        raise ReaderError("Document reading is turned off on this server. Type the amounts instead.")
+    if mode == "examples":
+        allowed = {e["sha256"] for e in examples()}
+        if any(hashlib.sha256(d).hexdigest() not in allowed for d, _ in images):
+            raise ReaderError("On the public site only the example documents are read automatically, so your "
+                              "own papers never leave ClearTab. Type the amounts from your bill instead.")
+
+
+def parse_json(content: str) -> dict:
+    """The JSON object in a model answer, also when it is wrapped in a code fence or follows a reasoning block."""
+    content = re.sub(r"<think>.*?</think>", "", content or "", flags=re.S).strip()
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        start, end = content.find("{"), content.rfind("}")
+        if start < 0 or end <= start:
+            raise
+        return json.loads(content[start:end + 1])
 
 
 def pdf_text(data: bytes) -> str:
@@ -197,10 +260,22 @@ def pdf_text(data: bytes) -> str:
     return "\n\n".join(t.strip() for t in keep)[:PDF_MAX_CHARS]
 
 
+def _body(provider: str, model: str, content) -> dict:
+    body = {"model": model, "temperature": 0, "messages": [{"role": "user", "content": content}]}
+    if provider == "groq":
+        body["response_format"] = {"type": "json_object"}
+        if model.startswith("openai/gpt-oss"):
+            body["reasoning_effort"] = "low"
+        if model.startswith("qwen/"):
+            body["reasoning_effort"] = "none"
+            body["max_completion_tokens"] = 900    # Groq free tier caps this model at 1,000 output tokens per minute
+    return body
+
+
 def read_document(images: list[tuple[bytes, str]], session=requests) -> ReadResult:
     """images: [(bytes, content_type)]: one to three photos, or one PDF."""
-    key = os.environ.get("GROQ_API_KEY")
-    if not key:
+    services = providers()
+    if not services:
         raise ReaderError("Photo reading is not set up on this server. Enter the numbers by hand.")
     if not 1 <= len(images) <= 3:
         raise ReaderError("Send one to three photos.")
@@ -213,11 +288,8 @@ def read_document(images: list[tuple[bytes, str]], session=requests) -> ReadResu
         text = pdf_source = pdf_text(images[0][0])
         if len(text.strip()) < 40:
             raise ReaderError("This PDF is a scan without text. Take a photo of each page instead.")
-        model = TEXT_MODEL
-        body = {"model": model, "temperature": 0, "response_format": {"type": "json_object"},
-                "messages": [{"role": "user", "content": PROMPT + "\n\nDocument text:\n" + text}]}
-        if model.startswith("openai/gpt-oss"):
-            body["reasoning_effort"] = "low"
+        content = PROMPT + "\n\nDocument text:\n" + text
+        kind = "text"
     else:
         content = [{"type": "text", "text": PROMPT}]
         for data, ctype in images:
@@ -225,26 +297,28 @@ def read_document(images: list[tuple[bytes, str]], session=requests) -> ReadResu
                 raise ReaderError("Use a JPEG, PNG or WebP photo, or a PDF.")
             content.append({"type": "image_url",
                             "image_url": {"url": f"data:{ctype};base64,{base64.b64encode(data).decode()}"}})
-        model = MODEL
-        body = {"model": model, "temperature": 0, "response_format": {"type": "json_object"},
-                "messages": [{"role": "user", "content": content}]}
-        if model.startswith("qwen/"):
-            body["reasoning_effort"] = "none"
-            body["max_completion_tokens"] = 900    # Groq free tier caps this model at 1,000 output tokens per minute
-    try:
-        r = session.post(GROQ_URL, json=body, timeout=90, headers={"Authorization": f"Bearer {key}"})
-    except requests.RequestException as e:
-        raise ReaderError("The reader did not respond. Try again or enter the numbers by hand.") from e
-    if r.status_code == 429:
-        raise ReaderError("The reader is busy (429). Wait a minute and try again.")
-    if r.status_code != 200:
-        raise ReaderError(f"The reader returned an error ({r.status_code}). Enter the numbers by hand.")
-    try:
-        raw = json.loads(r.json()["choices"][0]["message"]["content"])
-        res = ReadResult(**{k: v for k, v in raw.items() if k in ReadResult.model_fields and k != "model"})
-        res.model = model
-        if pdf_source is not None:
-            res = amounts_from_text(res, pdf_source)
-        return align_columns(res)
-    except (KeyError, IndexError, json.JSONDecodeError, ValidationError, TypeError) as e:
-        raise ReaderError("The document could not be read. Try a sharper photo or enter the numbers by hand.") from e
+        kind = "vision"
+    error = "The reader did not respond. Try again or enter the numbers by hand."
+    for name, p in services:          # the next service is tried only when one is down or busy
+        model = p[kind]
+        try:
+            r = session.post(p["url"], json=_body(name, model, content), timeout=90,
+                             headers={"Authorization": f"Bearer {os.environ[p['key']]}"})
+        except requests.RequestException:
+            continue
+        if r.status_code == 429:
+            error = "The reader is busy (429). Wait a minute and try again."
+            continue
+        if r.status_code != 200:
+            error = f"The reader returned an error ({r.status_code}). Enter the numbers by hand."
+            continue
+        try:
+            raw = parse_json(r.json()["choices"][0]["message"]["content"])
+            res = ReadResult(**{k: v for k, v in raw.items() if k in ReadResult.model_fields and k != "model"})
+            res.model = f"{model} ({p['label']})"
+            if pdf_source is not None:
+                res = amounts_from_text(res, pdf_source)
+            return align_columns(res)
+        except (KeyError, IndexError, json.JSONDecodeError, ValidationError, TypeError, AttributeError) as e:
+            raise ReaderError("The document could not be read. Try a sharper photo or enter the numbers by hand.") from e
+    raise ReaderError(error)

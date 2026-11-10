@@ -75,7 +75,8 @@ export default function Visits() {
   const [msg, setMsg] = useState('')
   const [letter, setLetter] = useState('')
   useEffect(() => { save(visits) }, [visits])
-  useEffect(() => { reader.status().then(setCanRead) }, [])
+  const [readService, setReadService] = useState('')
+  useEffect(() => { reader.info().then((x) => { setCanRead(x.available && x.mode === 'on'); setReadService(x.service ?? '') }) }, [])
 
   const visit = visits.find((v) => v.id === open) ?? null
   const lines = useMemo(() => (visit ? summarize(visit) : []), [visit])
@@ -202,7 +203,7 @@ export default function Visits() {
             {canRead && (
               <>
                 <label className="check small"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-                  <span>{t('I agree to send it to an AI reading service (Groq) that copies the numbers. ClearTab does not store it. Cover your name and member ID if you can.')}</span></label>
+                  <span>{t('I agree to send it to an AI reading service ({service}) that copies the numbers. ClearTab does not store it. Cover your name and member ID if you can.', { service: readService })}</span></label>
                 <div className="scan-buttons">
                   <label className={`scan-btn ${consent && !busy ? '' : 'disabled'}`}>
                     <input type="file" accept="image/*" capture="environment" multiple disabled={!consent || busy}

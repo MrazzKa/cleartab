@@ -184,3 +184,30 @@ Each phase appends a summary of at most 15 lines.
   supported (allowed = billed - discount - not covered). Spanish text for all four. Tests: 41 passed.
 - Interface: bottom tab bar on phones, scan-first home and check page, review table of read lines before the check,
   "See an example" in My visits.
+
+## v2: reading services and example-only public mode (2026-11-09)
+- Advisor (Dr. Li): private documents may only be processed by a locally deployed model. UA faculty (Greg Chism)
+  offered Jetstream2 Inference (free, Indiana University) but it is not rated for health information (HIPAA) and
+  advised representative documents for the iShowcase demo.
+- Reader: services tried in order (READER_PROVIDERS=jetstream,groq; Jetstream2 gpt-oss-120b for PDF text,
+  muse-glimmer for photos), next service on error or 429; answers parsed also when wrapped in a code fence.
+- READ_MODE: on (any document, local testing), examples (public site: only synthetic example documents are read,
+  people type their own amounts), off. Example reads are cached in memory.
+- Two synthetic example documents (billcheck/examples, rendered from HTML): an ER EOB whose allowed amount,
+  $1,543.00, is Banner UMC Tucson's published UnitedHealthcare commercial ER rate, and a hospital bill that did not
+  write off a $1,818.00 line the plan zeroed. The quick check finds "likely error, $1,818.00".
+- Web: "Try it with an example" on the check page; scan buttons and home page copy follow READ_MODE; consent text
+  names the service in use. Tests: 48 passed; ruff, eslint, build clean.
+
+## P10: emergency visit vs published ER rates (2026-11-09)
+- New table data/processed/er_rates.csv (python -m pipeline.er_rates, 2 seconds from the normalized files):
+  CPT 99281-99285 negotiated dollar rates per hospital, insurer, plan and plan type, plus cash and gross;
+  2,696 rows, 17 of 19 hospitals (the two specialty hospitals have no ED). Case rates F4 dropped as above_gross
+  are kept with that flag (a per-visit case rate is often above the level-1 line's gross).
+- Rule er_visit: an EOB line with an ER code or an ER description; hospital and insurer from the context or from
+  the names printed on the papers. Allowed equal to a published rate -> ok (er_rate_matches); above every
+  published rate for that insurer and plan type -> warning (er_rate_over, amount limited to the patient's share);
+  otherwise info. Spanish text added. The reader now also copies the insurer name.
+- Example visit: "Banner - University Medical Center Tucson publishes $1,543.00 per visit (any visit level) for
+  UnitedHealthcare (Commercial plan, case rate)"; the same hospital's UnitedHealthcare ER rates range from $54.54
+  (Medicaid) to $1,543.00. Tests: 49 passed.

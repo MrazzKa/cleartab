@@ -36,6 +36,8 @@ export interface Context {
   coverage: 'insured' | 'self_pay'
   hospital_ccn?: string | null
   insurer?: string | null
+  provider_name?: string | null
+  insurer_name?: string | null
   network: 'in' | 'out' | 'unknown'
   emergency: boolean
   ambulance: 'none' | 'ground' | 'air'
@@ -150,7 +152,7 @@ export interface ReadLine {
 }
 
 export interface ReadResult {
-  document_type: 'eob' | 'bill' | 'both' | 'other'; provider_type: string; provider_name: string | null; statement_date: string | null
+  document_type: 'eob' | 'bill' | 'both' | 'other'; provider_type: string; provider_name: string | null; insurer_name?: string | null; statement_date: string | null
   claim_number: string | null; balance_due: number | null; patient_payments: number | null
   you_owe_total: number | null; oop_max_met: boolean; eob_lines: ReadLine[]; bill_lines: ReadLine[]
   unreadable: string[]; note: string
@@ -173,9 +175,16 @@ async function toUploads(files: FileList | File[]): Promise<{ data: string; type
   return Promise.all(list.slice(0, 3).map(shrinkPhoto))
 }
 
+export interface ReaderInfo { available: boolean; mode: 'on' | 'examples' | 'off'; service: string | null }
+const noReader: ReaderInfo = { available: false, mode: 'off', service: null }
+
 export const reader = {
-  status: () => call<{ available: boolean }>('/bill/read/status').then((x) => x.available).catch(() => false),
+  info: () => call<ReaderInfo>('/bill/read/status').catch(() => noReader),
+  /** True when the user's own documents may be read (READ_MODE=on). */
+  status: () => reader.info().then((x) => x.available && x.mode === 'on'),
   read: async (files: FileList | File[]) => call<ReadResult>('/bill/read', post({ images: await toUploads(files), consent: true })),
+  /** Read a synthetic example document kept on the server (no upload). */
+  example: (name: string) => call<ReadResult>(`/bill/read/example/${encodeURIComponent(name)}`, post({})),
 }
 
 /** Turn read EOB lines into check lines. Empty amounts stay empty: the rule engine skips what it cannot check. */

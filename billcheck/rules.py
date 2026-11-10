@@ -25,6 +25,10 @@ def money(x: float | None) -> str:
     return "n/a" if x is None else f"${x:,.2f}"
 
 
+def span(lo: float, hi: float) -> str:
+    return money(lo) if hi - lo <= TOL else f"{money(lo)} to {money(hi)}"
+
+
 def c(x: float) -> float:
     return round(x + 0.0, 2)
 
@@ -408,6 +412,74 @@ class Checker:
                          action="Your share depends on the allowed amount, not the charge, but you may ask why.",
                          sources=[src("hpt", as_of=p["retrieved_at"], url=p["source_url"])])
 
+    # ------------------------------------------------------------------ Emergency visit vs published ER rates
+    def er_visit(self) -> None:
+        """Compare the allowed amount of an ER line with the ED visit rates (CPT 99281-99285) the hospital published
+        for the insurer. EOBs often print the ER line without a code, so the line is found by its description."""
+        from billcheck import er
+        from pipeline.payers import match
+        if self.ctx.coverage != "insured" or not self.eob:
+            return
+        lines = [(i, ln) for i, ln in enumerate(self.eob.lines, 1)
+                 if er.is_er_line(ln.code, ln.description) and (self.allowed(ln) or 0) > 0]
+        if not lines:
+            return
+        ccn = self.ctx.hospital_ccn or er.find_hospital(self.ctx.provider_name)
+        payer, plan_type = self.ctx.insurer, None
+        if self.ctx.insurer_name:
+            m = match(self.ctx.insurer_name, "")
+            payer = payer or (m["canonical_payer"] if m["canonical_payer"] != "other" else None)
+            plan_type = m.get("plan_type") or None
+        if not ccn or not payer:
+            self.skipped["er_rates"] = "hospital or insurer not known"
+            return
+        rows = er.rates(ccn, payer)
+        if not rows:
+            self.skipped["er_rates"] = f"no published ER visit rates for {payer} at this hospital in our data"
+            return
+        self.run.append("er_rates")
+        hospital = er.hospital_name(ccn)
+        s = [src("hpt", as_of=rows[0]["retrieved_at"][:10], url=rows[0]["source_url"])]
+        same_type = [r for r in rows if plan_type and r["plan_type"] == plan_type] or rows
+        lo_all, hi_all = min(r["amount"] for r in rows), max(r["amount"] for r in rows)
+        for i, ln in lines:
+            allowed = self.allowed(ln)
+            cand = [r for r in same_type if not ln.code or r["code"] == ln.code] or same_type
+            hit = [r for r in cand if abs(r["amount"] - allowed) <= TOL]
+            lo, hi = min(r["amount"] for r in cand), max(r["amount"] for r in cand)
+            ev = {"hospital": hospital, "insurer": payer, "allowed": allowed, "published_min": lo,
+                  "published_max": hi, "all_plans_min": lo_all, "all_plans_max": hi_all,
+                  "plans": sorted({r["plan_name"] for r in (hit or cand)})}
+            if hit:
+                r = hit[0]
+                per = "per visit (any visit level)" if r["methodology"] == "case rate" and len(
+                    {x["code"] for x in hit}) == 5 else f"for visit level {r['code'][-1]} (CPT {r['code']})"
+                ev["methodology"] = r["methodology"]
+                self.add(rule="er_rate_matches", severity="ok", lines=[i], evidence=ev, sources=s,
+                         title="Emergency visit: the allowed amount matches the hospital's published rate",
+                         explanation=(f"{hospital} publishes {money(r['amount'])} {per} for {payer} "
+                                      f"({', '.join(ev['plans'])} plan, {r['methodology']}). Your EOB allowed "
+                                      f"{money(allowed)}, so the insurer applied the published contract rate."
+                                      + (f" For comparison, the same hospital's published ER visit rates for all "
+                                         f"{payer} plans range from {money(lo_all)} to {money(hi_all)}."
+                                         if hi_all - lo_all > TOL else "")))
+            elif allowed > hi * (1 + PRICE_TOL):
+                share = ln.you_owe if ln.you_owe is not None else allowed - (ln.plan_paid or 0)
+                self.add(rule="er_rate_over", severity="warning", lines=[i], evidence=ev, sources=s,
+                         title="Emergency visit: allowed amount is above the hospital's published rates",
+                         explanation=(f"{hospital} publishes ER visit rates for {payer} of {span(lo, hi)}. "
+                                      f"Your EOB allowed {money(allowed)}. The claim may have been "
+                                      "processed under the wrong contract or visit level."),
+                         action=("Ask the insurer which contract rate and visit level were applied, and ask the "
+                                 "hospital for the itemized bill with the CPT code of the ER visit."),
+                         amount_at_stake=c(min(allowed - hi, share)) if share and share > 0 else None)
+            else:
+                self.add(rule="er_rate_within", severity="info", lines=[i], evidence=ev, sources=s,
+                         title="Emergency visit: allowed amount is within the hospital's published rates",
+                         explanation=(f"{hospital} publishes ER visit rates for {payer} of {span(lo, hi)}, "
+                                      f"depending on the plan and visit level. Your EOB allowed "
+                                      f"{money(allowed)}."))
+
     # ------------------------------------------------------------------ No Surprises Act
     def nsa_applies(self) -> bool:
         x = self.ctx
@@ -591,7 +663,7 @@ class Checker:
     BILL_TOTALS = ("balance_over_eob", "gfe_dispute")          # whole-bill differences
     BILL_LINES = ("duplicate_line", "bill_line_not_on_eob", "mue_units", "ncci_pair", "self_pay_over_cash",
                   "ambulance_over_rate")
-    EOB_SIDE = ("allowed_vs_published", "eob_denied")          # amounts decided by the insurer
+    EOB_SIDE = ("allowed_vs_published", "eob_denied", "er_rate_over")          # amounts decided by the insurer
 
     def amount_at_stake(self) -> float:
         """Money in question without double counting: line-level bill problems usually explain the whole-bill
@@ -613,7 +685,7 @@ class Checker:
                                                headline="Enter your EOB, your bill, or both."),
                                findings=[], checks_run=[])
         for step in (self.eob_arithmetic, self.bill_vs_eob, self.duplicates, self.units_mue, self.code_pairs,
-                     self.published, self.surprises, self.ambulance_rates, self.paperwork):
+                     self.published, self.er_visit, self.surprises, self.ambulance_rates, self.paperwork):
             step()
         order = {"error": 0, "warning": 1, "info": 2, "ok": 3}
         self.findings.sort(key=lambda f: (order[f.severity], -(f.amount_at_stake or 0)))

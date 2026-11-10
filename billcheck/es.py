@@ -70,6 +70,23 @@ def es(f: Finding) -> tuple[str, str, str] | None:
         return (f"{e.get('code')}: el monto permitido está dentro de las tarifas publicadas",
                 f"{e.get('hospital')} publicó tarifas de {m(e.get('published_min'))} a {m(e.get('published_max'))}; "
                 f"su EOB permitió {m(e.get('allowed_per_unit'))}.", "")
+    if r in ("er_rate_matches", "er_rate_over", "er_rate_within"):
+        lo, hi = e.get("published_min"), e.get("published_max")
+        rango = m(lo) if lo == hi else f"de {m(lo)} a {m(hi)}"
+        if r == "er_rate_matches":
+            return ("Visita a urgencias: el monto permitido coincide con la tarifa publicada por el hospital",
+                    f"{e.get('hospital')} publica {m(e.get('allowed'))} para {e.get('insurer')} "
+                    f"(plan {', '.join(e.get('plans', []))}, {e.get('methodology', '')}). Su EOB permitió "
+                    f"{m(e.get('allowed'))}: la aseguradora aplicó la tarifa de contrato publicada.", "")
+        if r == "er_rate_over":
+            return ("Visita a urgencias: el monto permitido es mayor que las tarifas publicadas",
+                    f"{e.get('hospital')} publica tarifas de urgencias para {e.get('insurer')} {rango}. Su EOB "
+                    f"permitió {m(e.get('allowed'))}. Puede que se haya usado otro contrato u otro nivel de visita.",
+                    "Pregunte a su aseguradora qué tarifa y qué nivel de visita se aplicaron, y pida al hospital la "
+                    "factura detallada con el código CPT de la visita.")
+        return ("Visita a urgencias: el monto permitido está dentro de las tarifas publicadas",
+                f"{e.get('hospital')} publica tarifas de urgencias para {e.get('insurer')} {rango}, según el plan "
+                f"y el nivel de visita. Su EOB permitió {m(e.get('allowed'))}.", "")
     if r == "self_pay_over_cash":
         return (f"{e.get('code')}: le cobraron más que el precio en efectivo publicado",
                 f"{e.get('hospital')} publica un precio con descuento en efectivo de {m(e.get('published_cash'))}. "

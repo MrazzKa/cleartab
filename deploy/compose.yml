@@ -21,6 +21,9 @@ services:
     environment:
       DATABASE_URL: postgresql://cleartab:${POSTGRES_PASSWORD}@db:5432/cleartab
       GROQ_API_KEY: ${GROQ_API_KEY:-}
+      JETSTREAM_API_KEY: ${JETSTREAM_API_KEY:-}
+      READER_PROVIDERS: ${READER_PROVIDERS:-jetstream,groq}
+      READ_MODE: ${READ_MODE:-examples}
       READ_LIMIT_PER_HOUR: ${READ_LIMIT_PER_HOUR:-6}
       READ_LIMIT_PER_DAY: ${READ_LIMIT_PER_DAY:-15}
       READ_LIMIT_GLOBAL_DAY: ${READ_LIMIT_GLOBAL_DAY:-150}

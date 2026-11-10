@@ -7,7 +7,7 @@ What lives where:
 - Code: this repository (public).
 - `data-server/` (never in git): `db/cleartab.sql.gz` (database dump, 2 MB) and `reference/` (CMS MUE zips and
   `ncci_ptp.sqlite`, about 240 MB; CPT codes under the AMA license, so they stay private on the server).
-- `deploy/.env` (never in git): database password, Groq key, site address.
+- `deploy/.env` (never in git): database password, reading service keys (Jetstream2, Groq), site address.
 
 ## 1. Create the VM (once)
 1. Sign up at https://www.oracle.com/cloud/free/ (a card is asked for identity; Always Free resources are not
@@ -41,7 +41,7 @@ On the VM:
 ```
 git clone https://github.com/MrazzKa/cleartab.git ~/cleartab
 cd ~/cleartab && git checkout main          # or the branch being deployed
-cp deploy/.env.example deploy/.env && nano deploy/.env   # strong POSTGRES_PASSWORD, GROQ_API_KEY
+cp deploy/.env.example deploy/.env && nano deploy/.env   # strong POSTGRES_PASSWORD, JETSTREAM_API_KEY, GROQ_API_KEY
 ```
 On the machine with the loaded database (WSL):
 ```
@@ -76,6 +76,13 @@ New database content: run `prepare_data.sh` again, copy `data-server/db`, then
 and `up -d`.
 
 ## Limits and privacy on the public server
+- `READ_MODE=examples` (the default here): a language model reads only the synthetic example documents in
+  `billcheck/examples/`. People type the amounts from their own papers, so real bills never go to a reading
+  service. Neither Jetstream2 nor Groq is rated for health information (HIPAA), and our advisor asked that private
+  documents be processed only by a locally deployed model. Use `READ_MODE=on` only for local testing.
+- Reading services: Jetstream2 Inference (Indiana University, free for ACCESS users; `gpt-oss-120b` for PDF text,
+  `muse-glimmer` for photos; key from llm.jetstream-cloud.org, Settings, Account, API keys), then Groq as a
+  fallback. Example reads are cached in memory, so each example uses the service once per restart.
 - Document reading is limited per visitor (6 per hour, 15 per day) and in total (150 per day) so the free model
   quota is not used up; change the numbers in `deploy/.env`. Typing amounts always works.
 - No access logs are kept by Caddy or uvicorn; the API logs the path and status only, never query strings,
