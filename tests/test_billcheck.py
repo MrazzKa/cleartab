@@ -441,3 +441,17 @@ def test_medicare_yardstick_and_global_period():
     assert by["medicare_yardstick"].evidence["rows"][1]["ratio"] == round(120 / 93.25, 1)
     eob["lines"][1]["service_date"] = "2026-03-20"      # after the 10-day period: no flag
     assert not any(f.rule == "global_period_visit" for f in run_check(CheckRequest(eob=eob)).findings)
+
+
+def test_itemized_request_is_the_first_step_when_nothing_is_confirmed():
+    from billcheck import run_check
+    from billcheck.models import CheckRequest
+    r = run_check(CheckRequest(context={"coverage": "insured"},
+                               bill={"provider_type": "facility", "balance_due": 812.40, "lines": []}))
+    assert "itemized bill" in r.letter and any("itemized bill" in s for s in r.call_script)
+    eob = {"lines": [{"description": "Office visit", "service_date": "2026-02-20", "code": "10060", "billed": 250,
+                      "allowed": 120, "plan_paid": 96, "coinsurance": 24, "you_owe": 24},
+                     {"description": "Office visit", "service_date": "2026-02-27", "code": "99213", "billed": 250,
+                      "allowed": 120, "plan_paid": 96, "coinsurance": 24, "you_owe": 24}]}
+    r = run_check(CheckRequest(context={"coverage": "insured"}, eob=eob))
+    assert "global period" in r.letter

@@ -103,6 +103,14 @@ export default function Results({ result, simple = false }: { result: CheckResul
         </section>
       )}
 
+      {simple && problems.length === 0 && result.letter && (
+        <section className="card stack">
+          <h2>{t('First step: ask for an itemized bill')}</h2>
+          <p>{t('We could not confirm this bill yet. Before you pay, ask the billing office for an itemized bill with a code for each charge. Asking is free, and you can ask them to hold the account while you wait.')}</p>
+          {!showKit && <div><button type="button" onClick={() => setShowKit(true)}>{t('Get the letter and phone script')}</button></div>}
+        </section>
+      )}
+
       {problems.length > 0 && (
         <section className="stack">
           {simple && <h2>{t('Why')}</h2>}

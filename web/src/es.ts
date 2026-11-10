@@ -1,5 +1,8 @@
 // Spanish interface text. Keys are the English strings used with t(); see i18n.tsx.
 export const ES: Record<string, string> = {
+  "First step: ask for an itemized bill": "Primer paso: pida una factura detallada",
+  "We could not confirm this bill yet. Before you pay, ask the billing office for an itemized bill with a code for each charge. Asking is free, and you can ask them to hold the account while you wait.": "Todavía no pudimos confirmar esta factura. Antes de pagar, pida a la oficina de facturación una factura detallada con un código para cada cargo. Pedirla es gratis, y puede pedir que detengan la cuenta mientras espera.",
+  "Get the letter and phone script": "Obtener la carta y el guion para llamar",
   "I agree to let ClearTab read it on its own server. It is not sent to any AI service and not stored.": "Acepto que ClearTab lo lea en su propio servidor. No se envía a ningún servicio de IA y no se guarda.",
   "This can take up to 30 seconds.": "Puede tardar hasta 30 segundos.",
   "Type three numbers from your bill and insurance statement. In about a minute you’ll know what you really owe, what to question and what help you can get.": "Escriba tres números de su factura y del estado de su seguro. En un minuto sabrá cuánto debe de verdad, qué preguntar y qué ayuda puede recibir.",
