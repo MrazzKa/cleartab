@@ -115,7 +115,8 @@ def build_kit(req: CheckRequest, res: CheckResult) -> tuple[str, list[str]]:
         # is to ask for the itemized bill; a bill that matches the EOB needs no letter.
         owes = req.bill is not None and (req.bill.balance_due or 0) > 0
         coded = req.bill is not None and any(bl.code for bl in req.bill.lines)
-        confirmed = any(f.rule in ("balance_matches_eob", "self_pay_at_cash", "gfe_within", "ambulance_within_rate")
+        confirmed = any(f.rule in ("balance_matches_eob", "balance_under_eob", "self_pay_at_cash", "gfe_within",
+                                   "ambulance_within_rate")
                         for f in res.findings)
         if owes and not coded and not confirmed and req.bill.provider_type != "ambulance":
             return itemized_request(req)

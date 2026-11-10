@@ -22,6 +22,11 @@ run (new seed, rule fixed in advance in docs/PROPOSAL_V2_CHANGES.md, H4) follows
   - C: `qwen/qwen3.8-27b` reads rendered images of the two documents (`node research/r2/render.cjs`) into fields
     with the ClearTab reader (billcheck/reader.py), then the rule engine checks them. 40 cases (4 per error kind,
     8 clean) because of the free tier's limits.
+  - D (added 2026-11-10): ClearTab's local reader (billcheck/local_reader.py) reads the EOB image and the bill
+    image separately with text recognition on the same machine (RapidOCR, PP-OCRv4 detection + PP-OCRv6
+    recognition, ONNX on CPU) and fixed layout rules (money columns from rows with the same number of amounts,
+    headers from the text above each column, the same column rules as the model reader); the rule engine then
+    checks what was copied. No language model and no outside service. All 100 cases.
 - **Scores**: errors caught (sensitivity), clean bills passed (specificity), the main error kind named, and the
   correct amount due within $1.
 
@@ -33,6 +38,7 @@ run (new seed, rule fixed in advance in docs/PROPOSAL_V2_CHANGES.md, H4) follows
 | B gpt-oss-20b | 63% | 85% | 64% | 69% |
 | B qwen3.8-27b | 43% | 100% | 54% | 58% |
 | C qwen3.8-27b reads images + rules, **12 of 40 so far** | 10 of 10 | 2 of 2 | 10 of 12 | 12 of 12 |
+| D local text recognition + rules (no model) | 100% (80/80) | 100% (20/20) | 100% | 100% |
 
 By error kind (caught and named; of 10, clean of 20):
 
@@ -53,6 +59,11 @@ image pair uses about 3,500. Rerun `python -m research.r2.run --conditions A,C` 
 reads are kept). In the 12 cases read so far the totals on both documents were read exactly in all 12; both missed
 kinds are NCCI pairs, where a misread line changed which codes the rules saw.
 
+Condition D read every total on both documents exactly in all 100 cases (`read_totals_exact` 1.0) and found all
+eight error kinds, 10 of 10 each, including units above the MUE limit (the units column is located by its header).
+A first run that did not read the units column missed all 10 MUE cases (90% overall); the result above is after
+that fix, so D is also exploratory until the confirmatory run on new cases.
+
 ## Reading the results
 - The rule engine was built for these eight kinds of error, so its 100% is an upper bound on these cases, not an
   accuracy claim for real bills.
@@ -64,8 +75,16 @@ kinds are NCCI pairs, where a misread line changed which codes the rules saw.
 - The amount the patient should pay was right in 58-71% of model answers; the rules give it in every case.
 - Implication for the product, pending the confirmatory run: models are useful for reading documents; findings and
   amounts stay with the rules.
+- Condition D suggests that, at least for clearly printed documents, a model is not needed even for reading: text
+  recognition plus layout rules copied every amount. This matters for privacy, because real bills can then be read
+  without sending them to any outside service (the public site uses this reader). On four real, anonymized insurer
+  EOBs (kept outside the repository), the local reader matched the checked values on all 19 service lines and all
+  four totals, both from the PDF text layer and from the PDF pages rendered as images. Phone photos (angle, light,
+  folds) are not tested yet and are the next test.
 
 ## Limits
+- Conditions C and D read clean rendered images from one template; real bills vary far more in layout. D's layout
+  rules were written by the same team that rendered the images.
 Synthetic cases from one hospital and one insurer; one error per case; text versions are cleaner than real bills;
 free-tier settings (qwen without reasoning) may understate qwen; a single prompt; no human baseline yet (R3 adds
 one).

@@ -6,11 +6,13 @@ Conditions
      amount due?). Models: open-weights models on Groq.
 - C  hybrid: a vision model reads rendered images of the two documents into fields (billcheck.reader), then the
      rule engine checks them. Needs research/r2/data/images/ (python -m research.r2.render).
+- D  local: ClearTab's local reader (text recognition on this machine + fixed rules, no language model, no
+     outside service) reads the two images, then the rule engine checks them. All cases.
 
 Scoring per case: detection (any error vs none), main error category found, correct amount due within $1.
 Model answers are cached in research/r2/data/responses/<condition>__<model>.jsonl so a rerun resumes.
 
-Usage: python -m research.r2.run [--conditions A,B,C] [--models openai/gpt-oss-120b,...] [--limit N]
+Usage: python -m research.r2.run [--conditions A,B,C,D] [--models openai/gpt-oss-120b,...] [--limit N]
 """
 import argparse
 import json
@@ -166,12 +168,17 @@ def condition_c(cases: list[dict]) -> list[dict]:
             f.write(json.dumps(rec) + "\n")
             f.flush()
             done[c["id"]] = rec
+    return evaluate_reads(cases, done, "C")
+
+
+def evaluate_reads(cases: list[dict], done: dict, label: str) -> list[dict]:
+    """Run the rule engine on what a reader copied from the two images of each case, and score it."""
     out = []
     conn = db()
     for c in cases:
         rec = done.get(c["id"])
         if rec is None:
-            print(f"C: {c['id']} not read yet (rate limit); rerun to complete")
+            print(f"{label}: {c['id']} not read yet; rerun to complete")
             continue
         if "read" not in rec:
             out.append({"id": c["id"], "error": c["error"], "parsed": False, "detected": False, "category": False,
@@ -199,6 +206,31 @@ def condition_c(cases: list[dict]) -> list[dict]:
         out.append({"id": c["id"], "error": c["error"], "parsed": True, "rules": sorted(flagged),
                     "read_totals": totals_ok, **score(c, bool(flagged), flagged, amount, by_rule=True)})
     return out
+
+
+def condition_d(cases: list[dict]) -> list[dict]:
+    """D: ClearTab's local reader (text recognition on this machine + fixed rules, no language model) reads the
+    EOB image and the bill image separately; the rule engine checks what it copied."""
+    from billcheck.local_reader import read_local
+    path = RESP / "D__local_ocr.jsonl"
+    done = cached(path)
+    with path.open("a") as f:
+        for c in cases:
+            if c["id"] in done:
+                continue
+            try:
+                eob = read_local([((DATA / "images" / f"{c['id']}_eob.png").read_bytes(), "image/png")])
+                bill = read_local([((DATA / "images" / f"{c['id']}_bill.png").read_bytes(), "image/png")])
+                rd = eob.model_dump()
+                rd.update(balance_due=bill.balance_due, patient_payments=bill.patient_payments,
+                          bill_lines=bill.model_dump()["bill_lines"])
+                rec = {"id": c["id"], "read": rd}
+            except ReaderError as e:
+                rec = {"id": c["id"], "error": str(e)}
+            f.write(json.dumps(rec) + "\n")
+            f.flush()
+            done[c["id"]] = rec
+    return evaluate_reads(cases, done, "D")
 
 
 def summarize(name: str, rows: list[dict]) -> dict:
@@ -249,10 +281,16 @@ def main() -> None:
         results["C qwen/qwen3.8-27b reads + rules"] = condition_c(sub)
         results["A rules, same cases as C"] = [r for r in results.get("A rules", condition_a(sub))
                                                if r["id"] in {c["id"] for c in sub}]
+    if "D" in conds:
+        results["D local text recognition + rules"] = condition_d(cases)
     for name, rows in results.items():
         summaries.append(summarize(name, rows))
         print(json.dumps(summaries[-1]))
-    (DATA / "results.json").write_text(json.dumps({"summaries": summaries, "rows": results}, indent=1))
+    out = DATA / "results.json"       # keep earlier conditions; replace only the ones run now
+    old = json.loads(out.read_text()) if out.exists() else {"summaries": [], "rows": {}}
+    rows = {**old.get("rows", {}), **results}
+    keep = [x for x in old.get("summaries", []) if x["condition"] not in results]
+    out.write_text(json.dumps({"summaries": keep + summaries, "rows": rows}, indent=1))
 
 
 if __name__ == "__main__":
