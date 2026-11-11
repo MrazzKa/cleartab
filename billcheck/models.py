@@ -31,11 +31,22 @@ class EobLine(BaseModel):
     remark: str = ""
 
 
+class PlanBalance(BaseModel):
+    """One row of an EOB's plan balances box: a deductible or out-of-pocket limit and how much of it is used."""
+    kind: Literal["deductible", "out_of_pocket"]
+    network: Literal["in", "out", "unknown"] = "unknown"
+    level: Literal["individual", "family", "unknown"] = "unknown"
+    limit: Money | None = Field(None, ge=0)
+    used: Money | None = Field(None, ge=0)
+    remaining: Money | None = Field(None, ge=0)
+
+
 class Eob(BaseModel):
     claim_number: str | None = Field(None, max_length=40)
     lines: list[EobLine] = Field(default_factory=list, max_length=200)
     you_owe_total: Money | None = Field(None, ge=0, description="the EOB's own total, if printed")
     oop_max_met: bool = Field(False, description="the EOB says an out-of-pocket maximum was met")
+    balances: list[PlanBalance] = Field(default_factory=list, max_length=12, description="plan balances box, if printed")
 
 
 class BillLine(BaseModel):

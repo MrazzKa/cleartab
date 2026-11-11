@@ -70,10 +70,12 @@ export default function BillCheck() {
   const [useLines, setUseLines] = useState(true)
   const [services, setServices] = useState<AmbulanceService[]>([])
   const [readService, setReadService] = useState('')
-  const [readMode, setReadMode] = useState<'on' | 'examples' | 'off'>('off')
+  const [readMode, setReadMode] = useState<'on' | 'local' | 'examples' | 'off'>('off')
+  const readLocal = readMode === 'local'
   useEffect(() => {
     reader.info().then((x) => {
-      setCanRead(x.available && x.mode === 'on'); setReadService(x.service ?? ''); setReadMode(x.available ? x.mode : 'off')
+      setCanRead(x.available && (x.mode === 'on' || x.mode === 'local')); setReadService(x.service ?? '')
+      setReadMode(x.available ? x.mode : 'off')
     })
     ambulanceServices().then(setServices)
   }, [])
@@ -140,6 +142,7 @@ export default function BillCheck() {
       eob: insured && hasEob ? {
         lines: read && useLines ? toEobLines(read.eob_lines) : [], you_owe_total: a.eobOwe ?? null,
         oop_max_met: !!(read && useLines && read.oop_max_met),
+        balances: read && useLines ? read.plan_balances ?? [] : [],
       } : null,
       bill: a.docs === 'eob' ? null : {
         provider_type: a.ambulance && a.ambulance !== 'none' ? 'ambulance' : 'unknown', lines: [],
@@ -172,7 +175,7 @@ export default function BillCheck() {
                   <p className="small muted">{t('A photo, or the PDF from your insurer’s website.')}</p></div>
               </div>
               <label className="check small"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-                <span>{t('I agree to send it to an AI reading service ({service}) that copies the numbers. ClearTab does not store it. Cover your name and member ID if you can.', { service: readService })}</span></label>
+                <span>{readLocal ? t('I agree to let ClearTab read it on its own server. It is not sent to any AI service and not stored.') : t('I agree to send it to an AI reading service ({service}) that copies the numbers. ClearTab does not store it. Cover your name and member ID if you can.', { service: readService })}</span></label>
               <div className="scan-buttons">
                 <label className={`scan-btn ${consent && !reading ? '' : 'disabled'}`}>
                   <input type="file" accept="image/*" capture="environment" multiple disabled={!consent || reading}
@@ -185,7 +188,7 @@ export default function BillCheck() {
                   <Icon name="file" size={26} />{t('Upload a photo or PDF')}
                 </label>
               </div>
-              {reading && <p className="row small" role="status"><span className="spinner" aria-hidden="true" />{t('Reading your document…')}</p>}
+              {reading && <p className="row small" role="status"><span className="spinner" aria-hidden="true" />{t('Reading your document…')} {readLocal && t('This can take up to 30 seconds.')}</p>}
               {!consent && <p className="small muted">{t('Tick the box first.')}</p>}
               {error && <p className="error-box" role="alert">{error}</p>}
             </div>

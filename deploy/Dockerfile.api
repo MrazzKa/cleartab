@@ -8,6 +8,8 @@ COPY pipeline/ pipeline/
 COPY billcheck/ billcheck/
 COPY api/ api/
 COPY data/processed/ data/processed/
+# Bake the text recognition models into the image (about 50 MB) so reading works without network at run time.
+RUN python -c "from billcheck.local_reader import _engine; _engine()"
 RUN useradd --create-home app && mkdir -p data/raw && chown -R app /app/data/raw
 USER app
 EXPOSE 8000

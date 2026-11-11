@@ -1,7 +1,7 @@
 # R2 pilot: can a language model check a medical bill? (2026-11-02, exploratory)
 
-**Status: pilot, exploratory.** The results below were seen before a decision rule was written. The confirmatory
-run (new seed, rule fixed in advance in docs/PROPOSAL_V2_CHANGES.md, H4) follows.
+**Status:** the pilot (Groq, 2026-11-02) and the Jetstream2 rerun of its cases are exploratory. The confirmatory run
+(new seed 20261111, plan committed before the cases were generated) is below: **H4 not supported** on detection.
 
 ## Design
 - **Cases** (`python -m research.r2.cases`, seed 20261102): 100 synthetic pairs of an explanation of benefits (EOB)
@@ -22,6 +22,11 @@ run (new seed, rule fixed in advance in docs/PROPOSAL_V2_CHANGES.md, H4) follows
   - C: `qwen/qwen3.8-27b` reads rendered images of the two documents (`node research/r2/render.cjs`) into fields
     with the ClearTab reader (billcheck/reader.py), then the rule engine checks them. 40 cases (4 per error kind,
     8 clean) because of the free tier's limits.
+  - D (added 2026-11-10): ClearTab's local reader (billcheck/local_reader.py) reads the EOB image and the bill
+    image separately with text recognition on the same machine (RapidOCR, PP-OCRv4 detection + PP-OCRv6
+    recognition, ONNX on CPU) and fixed layout rules (money columns from rows with the same number of amounts,
+    headers from the text above each column, the same column rules as the model reader); the rule engine then
+    checks what was copied. No language model and no outside service. All 100 cases.
 - **Scores**: errors caught (sensitivity), clean bills passed (specificity), the main error kind named, and the
   correct amount due within $1.
 
@@ -33,6 +38,7 @@ run (new seed, rule fixed in advance in docs/PROPOSAL_V2_CHANGES.md, H4) follows
 | B gpt-oss-20b | 63% | 85% | 64% | 69% |
 | B qwen3.8-27b | 43% | 100% | 54% | 58% |
 | C qwen3.8-27b reads images + rules, **12 of 40 so far** | 10 of 10 | 2 of 2 | 10 of 12 | 12 of 12 |
+| D local text recognition + rules (no model) | 100% (80/80) | 100% (20/20) | 100% | 100% |
 
 By error kind (caught and named; of 10, clean of 20):
 
@@ -53,7 +59,119 @@ image pair uses about 3,500. Rerun `python -m research.r2.run --conditions A,C` 
 reads are kept). In the 12 cases read so far the totals on both documents were read exactly in all 12; both missed
 kinds are NCCI pairs, where a misread line changed which codes the rules saw.
 
-## Reading the results
+Condition D read every total on both documents exactly in all 100 cases (`read_totals_exact` 1.0) and found all
+eight error kinds, 10 of 10 each, including units above the MUE limit (the units column is located by its header).
+A first run that did not read the units column missed all 10 MUE cases (90% overall); the result above is after
+that fix, so D is also exploratory until the confirmatory run on new cases.
+
+## Jetstream2 rerun on the pilot cases (2026-11-11, exploratory)
+Same 100 cases, same prompt, temperature 0, through Jetstream2 Inference (Indiana University, ACCESS allocation;
+`python -m research.r2.run --provider jetstream --conditions A,B,C`). Default model settings: no reasoning cap and
+no output limit, unlike the Groq free tier. Condition C ran on all 100 cases with `gemma-4-31b-it` reading the
+images. All 400 model answers parsed; no request failed.
+
+| Condition | Errors caught | Clean passed | Kind named | Amount due right |
+|---|---|---|---|---|
+| A ClearTab rules | 100% (80/80) | 100% (20/20) | 100% | 100% |
+| B gpt-oss-120b | 84% (67/80) | 95% (19/20) | 84% | 82% |
+| B gemma-4-31b-it | 88% (70/80) | 65% (13/20) | 73% | 94% |
+| B qwen-3.8-27b | 99% (79/80) | 100% (20/20) | 98% | 86% |
+| C gemma-4-31b-it reads images + rules | 100% (80/80) | 100% (20/20) | 100% | 100% |
+
+By error kind (caught and named; of 10, clean of 20):
+
+| Error | gpt-oss-120b | gemma-4-31b-it | qwen-3.8-27b |
+|---|---|---|---|
+| Payment not subtracted | 3 | 9 | 8 |
+| Balance billing | 10 | 8 | 10 |
+| Duplicate charge | 10 | 10 | 10 |
+| Charge not on the EOB | 10 | 10 | 10 |
+| Units above MUE | 10 | 10 | 10 |
+| NCCI code pair | 7 | 0 | 10 |
+| EOB arithmetic | 5 | 4 | 10 |
+| Allowed above published rate | 10 | 9 | 10 |
+| Clean (no false alarm) | 19 of 20 | 13 of 20 | 20 of 20 |
+
+What changed against the Groq pilot:
+- qwen went from 43% to 99% of errors caught. The pilot ran it with reasoning off and 600 output tokens to stay
+  inside the free tier; with default settings it catches almost every planted error. The pilot understated it, as
+  the limits section warned.
+- gpt-oss-120b is stable (84% both times); its amount due improved from 71% to 82%.
+- "Payment not subtracted" is no longer missed by every model: qwen 8 of 10, gemma 9 of 10, gpt-oss-120b 3 of 10.
+  The pilot statement below ("caught once in 30 model answers") holds for the Groq settings only.
+- Even the best model gives the wrong amount due in 14 of 100 cases; rules and the hybrid give it in all 100.
+- C on all 100 cases: gemma read every total on both images exactly (`read_totals_exact` 1.0), so the hybrid's
+  result equals the rules' upper bound. gemma alone, as a checker, raised 7 false alarms in 20 clean bills.
+
+This rerun uses the pilot cases, which were seen while the rules and the prompt were written, so it is exploratory.
+For H4, the best model alone (qwen, 98.8% sensitivity, 100% specificity) is within 5 percentage points of the hybrid
+(100%, 100%) on these cases; whether that holds is decided on the confirmatory set (new seed), as fixed in
+docs/PROPOSAL_V2_CHANGES.md. H4's rule looks at detection only; the amount due is reported next to it.
+
+## Confirmatory run plan (written 2026-11-11, before the confirmatory cases were generated)
+- Cases: `R2_DATA=data_confirm python -m research.r2.cases --seed 20261111`, the same generator and error mix
+  (100 cases: 20 clean, 10 of each of the eight error kinds). Images: `R2_DATA=data_confirm node research/r2/render.cjs`.
+- Run once, nothing changed after the cases are seen: `R2_DATA=data_confirm python -m research.r2.run --provider
+  jetstream --conditions A,B,C,D`. Rules, prompt, readers and models are frozen at this commit.
+- Conditions: A rules; B gpt-oss-120b, gemma-4-31b-it, qwen-3.8-27b (Jetstream2, the prompt above, temperature 0);
+  C hybrid, gemma-4-31b-it reads the two images and the rules check; D local text recognition + rules.
+- H4 (docs/PROPOSAL_V2_CHANGES.md): "best model" is the B model with the highest sensitivity (ties: higher
+  specificity). If it is within 5 percentage points of C on both sensitivity and specificity, the product may use
+  the model as the checker with the rules as a verifier; otherwise the rules stay the only source of findings.
+  Amount due right and kind named are reported next to it but are not part of the rule.
+- Every result is reported, including failed requests (counted as misses).
+
+## Confirmatory run (2026-11-11, seed 20261111)
+Run exactly as planned above, once, on 100 new cases. All 500 model answers parsed; no request failed.
+
+| Condition | Errors caught | Clean passed | Kind named | Amount due right |
+|---|---|---|---|---|
+| A ClearTab rules | 100% (80/80) | 100% (20/20) | 100% | 100% |
+| B gpt-oss-120b | 82.5% (66/80) | 90% (18/20) | 81% | 76% |
+| B gemma-4-31b-it | 92.5% (74/80) | 70% (14/20) | 77% | 94% |
+| B qwen-3.8-27b | 100% (80/80) | 100% (20/20) | 100% | 88% |
+| C gemma-4-31b-it reads images + rules | 100% (80/80) | 100% (20/20) | 100% | 100% |
+| D local text recognition + rules (no model) | 100% (80/80) | 100% (20/20) | 100% | 100% |
+
+By error kind (caught and named; of 10, clean of 20):
+
+| Error | gpt-oss-120b | gemma-4-31b-it | qwen-3.8-27b |
+|---|---|---|---|
+| Payment not subtracted | 2 | 10 | 10 |
+| Balance billing | 9 | 10 | 10 |
+| Duplicate charge | 10 | 10 | 10 |
+| Charge not on the EOB | 10 | 10 | 10 |
+| Units above MUE | 10 | 10 | 10 |
+| NCCI code pair | 7 | 0 | 10 |
+| EOB arithmetic | 6 | 4 | 10 |
+| Allowed above published rate | 9 | 9 | 10 |
+| Clean (no false alarm) | 18 of 20 | 14 of 20 | 20 of 20 |
+
+**H4 decision (rule fixed before the run): not supported.** The best model alone, qwen-3.8-27b, matched the hybrid
+on both sensitivity (100% vs 100%) and specificity (100% vs 100%), so it is within 5 percentage points. By the
+rule, the product may use the model as the checker with the rules as a verifier.
+
+What the rule does not cover, reported next to it:
+- Amount due: qwen gave the benchmark's amount in 88 of 100 cases. 9 of its 12 differences are "allowed above
+  published rate" cases, where it answered what the patient would owe if the allowed amount were cut to the
+  published maximum; the benchmark counts the amount owed on the current EOB until the insurer reprocesses the
+  claim. Both readings are defensible; the other 90 cases had 3 differences (96.7%).
+- The other two models fall well short: gpt-oss-120b misses 8 of 10 unsubtracted payments; gemma raises false
+  alarms on 6 of 20 clean bills and never names an NCCI pair.
+- D (local reader + rules, no model, no outside service) repeated its 100% on new cases, so the pilot's D result
+  was not an artifact of tuning on the pilot set; it is still one rendered template, not real bills.
+
+What this means for the product: on clean synthetic bills a strong open model alone checks as well as the rules.
+The product still keeps the rules as the source of findings, for reasons outside H4: real bills may only be read by
+a model on our own server (advisor), which rules out the hosted models, and the rules give a fixed answer with a
+source for every finding. The paper result is the comparison itself: which errors each approach catches or misses,
+and that model choice and serving limits change the answer (qwen: 43% on the Groq free tier, 100% here).
+
+Limits of the confirmatory set: same generator and one template, one hospital and insurer, one error per case,
+the prompt names the error kinds and gives the published rates, so it measures checking with a list, not finding
+unknown problems. Real bills (R3, phone photos) are the next test.
+
+## Reading the results (Groq pilot, 2026-11-02)
 - The rule engine was built for these eight kinds of error, so its 100% is an upper bound on these cases, not an
   accuracy claim for real bills.
 - The models catch errors that show on the page (duplicates, a units number, a price above a given range) and miss
@@ -63,9 +181,17 @@ kinds are NCCI pairs, where a misread line changed which codes the rules saw.
   paid.
 - The amount the patient should pay was right in 58-71% of model answers; the rules give it in every case.
 - Implication for the product, pending the confirmatory run: models are useful for reading documents; findings and
-  amounts stay with the rules.
+  amounts stay with the rules. The Jetstream2 rerun above narrows the gap on detection but not on the amount due.
+- Condition D suggests that, at least for clearly printed documents, a model is not needed even for reading: text
+  recognition plus layout rules copied every amount. This matters for privacy, because real bills can then be read
+  without sending them to any outside service (the public site uses this reader). On four real, anonymized insurer
+  EOBs (kept outside the repository), the local reader matched the checked values on all 19 service lines and all
+  four totals, both from the PDF text layer and from the PDF pages rendered as images. Phone photos (angle, light,
+  folds) are not tested yet and are the next test.
 
 ## Limits
+- Conditions C and D read clean rendered images from one template; real bills vary far more in layout. D's layout
+  rules were written by the same team that rendered the images.
 Synthetic cases from one hospital and one insurer; one error per case; text versions are cleaner than real bills;
-free-tier settings (qwen without reasoning) may understate qwen; a single prompt; no human baseline yet (R3 adds
+free-tier settings (qwen without reasoning) understated qwen (see the Jetstream2 rerun); a single prompt; no human baseline yet (R3 adds
 one).

@@ -211,3 +211,39 @@ Each phase appends a summary of at most 15 lines.
 - Example visit: "Banner - University Medical Center Tucson publishes $1,543.00 per visit (any visit level) for
   UnitedHealthcare (Commercial plan, case rate)"; the same hospital's UnitedHealthcare ER rates range from $54.54
   (Medicaid) to $1,543.00. Tests: 49 passed.
+
+## Local reading, plan balances, Medicare yardstick, global period (2026-11-10)
+- Decision: real documents are read on our server only (advisor: private documents only on a local model; Jetstream2
+  is not rated for health information). READ_MODE=local is the public default.
+- billcheck/local_reader.py: PDF text layer (pdfplumber; rotated watermark text dropped) or on-server text
+  recognition (RapidOCR, ONNX, CPU) for photos and scans, then fixed layout rules. Real anonymized EOBs: 19 of 19
+  service lines and 4 of 4 totals right, from PDF and from images (about 5 s per page on CPU).
+- R2 condition D (local reader + rules, no model): 100% on all 100 synthetic cases (exploratory, after a units fix).
+- P11: plan balances box read (deductible and out-of-pocket: limit, used, remaining, network, family); rules for
+  what is left, numbers that do not add up, limit reached but still billed. My visits: balances across EOBs, warning
+  when the amount used goes down.
+- P3: Arizona 2026 Medicare physician fee schedule (CMS RVU26D, 9,526 priced codes, data/processed/
+  medicare_pfs_az_2026.csv, no AMA descriptors); "N x Medicare" per coded line (not for hospital facility charges;
+  OPPS Addendum B needs a manual AMA-license download, see MANUAL_DOWNLOADS.md).
+- P12: E/M visit inside a 10 or 90-day global period of a procedure (CMS global days, MLN907166) -> warning; same-day
+  visit with a procedure -> ask about modifier 25/57.
+- P1: dispute kit covers the new findings; when a bill cannot be confirmed, the first step is an itemized bill
+  request (letter and phone script). Tests: 55 passed; ruff, eslint, build clean.
+
+## R2 rerun on Jetstream2 (2026-11-11)
+- Jetstream2 Inference access through Greg Chism's ACCESS allocation (Indiana University, free). Models:
+  gpt-oss-120b, gemma-4-31b-it, muse-glimmer, qwen-3.8-27b. Used only for research and the synthetic examples.
+- Photo reading default is now gemma-4-31b-it: the sample bill photo read correctly in about 4 s (muse-glimmer 26 s).
+- research/r2/run.py --provider jetstream: same pilot cases, default model settings, condition C on all 100 cases.
+- Errors caught / clean passed / amount due right: qwen-3.8-27b 99% / 100% / 86%; gemma-4-31b-it 88% / 65% / 94%;
+  gpt-oss-120b 84% / 95% / 82%; gemma reads images + rules 100% / 100% / 100%.
+- The pilot's low qwen score (43%) came from free-tier limits (reasoning off, 600 tokens). On these exploratory
+  cases the best model is within 5 points of the hybrid on detection; H4 is decided on the confirmatory set.
+
+## R2 confirmatory run (2026-11-11)
+- Plan committed first (940c245), then 100 new cases (seed 20261111), run once on Jetstream2, A/B/C/D.
+- Rules, hybrid (gemma reads images + rules) and local reader + rules: 100% caught, 100% clean passed, 100% amount.
+- qwen-3.8-27b alone: 100% / 100%, amount due 88% (9 of 12 differences are a defensible different reading of
+  "allowed above published rate"). gpt-oss-120b 82.5% / 90% / 76%; gemma-4-31b-it 92.5% / 70% / 94%.
+- H4 ("AI alone is not enough") not supported by its fixed rule. Product keeps rules for privacy (no hosted model on
+  real bills) and sourced findings; the comparison and the serving-limit effect are the paper result.

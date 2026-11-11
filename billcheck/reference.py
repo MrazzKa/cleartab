@@ -39,9 +39,13 @@ SOURCES = {
     "nsa_ground": ("CMS, Action plan: ground ambulance bill",
                    "https://www.cms.gov/medical-bill-rights/help/plan/insurance-ground-ambulance-bill"),
     "hpt": ("Hospital standard charges file (45 CFR 180.50)", None),
+    "pfs": ("CMS Medicare Physician Fee Schedule 2026, Arizona (RVU26D, locality 03102-00)",
+            "https://www.cms.gov/medicare/payment/fee-schedules/physician/pfs-relative-value-files/rvu26d"),
     "adhs_ambulance": ("ADHS Arizona Ground Ambulance Service Rate Schedule",
                        "https://www.azdhs.gov/documents/preparedness/emergency-medical-services-trauma-system/ambulance/"
                        "ground/rates/ground-ambulance-rate-schedule.pdf"),
+    "global_surgery": ("CMS, Global Surgery booklet (MLN907166, December 2025)",
+                       "https://www.cms.gov/files/document/mln907166-global-surgery-booklet.pdf"),
     "oop_max": ("HealthCare.gov, Out-of-pocket maximum/limit",
                 "https://www.healthcare.gov/glossary/out-of-pocket-maximum-limit/"),
     "ars_36_2239": ("A.R.S. 36-2239, ground ambulance rates and charges", "https://www.azleg.gov/ars/36/02239.htm"),
