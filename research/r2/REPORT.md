@@ -1,7 +1,7 @@
 # R2 pilot: can a language model check a medical bill? (2026-11-02, exploratory)
 
-**Status: pilot, exploratory.** The results below were seen before a decision rule was written. The confirmatory
-run (new seed, rule fixed in advance in docs/PROPOSAL_V2_CHANGES.md, H4) follows.
+**Status:** the pilot (Groq, 2026-11-02) and the Jetstream2 rerun of its cases are exploratory. The confirmatory run
+(new seed 20261111, plan committed before the cases were generated) is below: **H4 not supported** on detection.
 
 ## Design
 - **Cases** (`python -m research.r2.cases`, seed 20261102): 100 synthetic pairs of an explanation of benefits (EOB)
@@ -120,6 +120,56 @@ docs/PROPOSAL_V2_CHANGES.md. H4's rule looks at detection only; the amount due i
   the model as the checker with the rules as a verifier; otherwise the rules stay the only source of findings.
   Amount due right and kind named are reported next to it but are not part of the rule.
 - Every result is reported, including failed requests (counted as misses).
+
+## Confirmatory run (2026-11-11, seed 20261111)
+Run exactly as planned above, once, on 100 new cases. All 500 model answers parsed; no request failed.
+
+| Condition | Errors caught | Clean passed | Kind named | Amount due right |
+|---|---|---|---|---|
+| A ClearTab rules | 100% (80/80) | 100% (20/20) | 100% | 100% |
+| B gpt-oss-120b | 82.5% (66/80) | 90% (18/20) | 81% | 76% |
+| B gemma-4-31b-it | 92.5% (74/80) | 70% (14/20) | 77% | 94% |
+| B qwen-3.8-27b | 100% (80/80) | 100% (20/20) | 100% | 88% |
+| C gemma-4-31b-it reads images + rules | 100% (80/80) | 100% (20/20) | 100% | 100% |
+| D local text recognition + rules (no model) | 100% (80/80) | 100% (20/20) | 100% | 100% |
+
+By error kind (caught and named; of 10, clean of 20):
+
+| Error | gpt-oss-120b | gemma-4-31b-it | qwen-3.8-27b |
+|---|---|---|---|
+| Payment not subtracted | 2 | 10 | 10 |
+| Balance billing | 9 | 10 | 10 |
+| Duplicate charge | 10 | 10 | 10 |
+| Charge not on the EOB | 10 | 10 | 10 |
+| Units above MUE | 10 | 10 | 10 |
+| NCCI code pair | 7 | 0 | 10 |
+| EOB arithmetic | 6 | 4 | 10 |
+| Allowed above published rate | 9 | 9 | 10 |
+| Clean (no false alarm) | 18 of 20 | 14 of 20 | 20 of 20 |
+
+**H4 decision (rule fixed before the run): not supported.** The best model alone, qwen-3.8-27b, matched the hybrid
+on both sensitivity (100% vs 100%) and specificity (100% vs 100%), so it is within 5 percentage points. By the
+rule, the product may use the model as the checker with the rules as a verifier.
+
+What the rule does not cover, reported next to it:
+- Amount due: qwen gave the benchmark's amount in 88 of 100 cases. 9 of its 12 differences are "allowed above
+  published rate" cases, where it answered what the patient would owe if the allowed amount were cut to the
+  published maximum; the benchmark counts the amount owed on the current EOB until the insurer reprocesses the
+  claim. Both readings are defensible; the other 90 cases had 3 differences (96.7%).
+- The other two models fall well short: gpt-oss-120b misses 8 of 10 unsubtracted payments; gemma raises false
+  alarms on 6 of 20 clean bills and never names an NCCI pair.
+- D (local reader + rules, no model, no outside service) repeated its 100% on new cases, so the pilot's D result
+  was not an artifact of tuning on the pilot set; it is still one rendered template, not real bills.
+
+What this means for the product: on clean synthetic bills a strong open model alone checks as well as the rules.
+The product still keeps the rules as the source of findings, for reasons outside H4: real bills may only be read by
+a model on our own server (advisor), which rules out the hosted models, and the rules give a fixed answer with a
+source for every finding. The paper result is the comparison itself: which errors each approach catches or misses,
+and that model choice and serving limits change the answer (qwen: 43% on the Groq free tier, 100% here).
+
+Limits of the confirmatory set: same generator and one template, one hospital and insurer, one error per case,
+the prompt names the error kinds and gives the published rates, so it measures checking with a list, not finding
+unknown problems. Real bills (R3, phone photos) are the next test.
 
 ## Reading the results (Groq pilot, 2026-11-02)
 - The rule engine was built for these eight kinds of error, so its 100% is an upper bound on these cases, not an

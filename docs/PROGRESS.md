@@ -239,3 +239,11 @@ Each phase appends a summary of at most 15 lines.
   gpt-oss-120b 84% / 95% / 82%; gemma reads images + rules 100% / 100% / 100%.
 - The pilot's low qwen score (43%) came from free-tier limits (reasoning off, 600 tokens). On these exploratory
   cases the best model is within 5 points of the hybrid on detection; H4 is decided on the confirmatory set.
+
+## R2 confirmatory run (2026-11-11)
+- Plan committed first (940c245), then 100 new cases (seed 20261111), run once on Jetstream2, A/B/C/D.
+- Rules, hybrid (gemma reads images + rules) and local reader + rules: 100% caught, 100% clean passed, 100% amount.
+- qwen-3.8-27b alone: 100% / 100%, amount due 88% (9 of 12 differences are a defensible different reading of
+  "allowed above published rate"). gpt-oss-120b 82.5% / 90% / 76%; gemma-4-31b-it 92.5% / 70% / 94%.
+- H4 ("AI alone is not enough") not supported by its fixed rule. Product keeps rules for privacy (no hosted model on
+  real bills) and sourced findings; the comparison and the serving-limit effect are the paper result.
