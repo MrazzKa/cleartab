@@ -83,7 +83,8 @@ and `up -d`.
   `READ_MODE=examples` sends only the synthetic examples to a language model; `on` sends any document (local
   testing only).
 - Reading services: Jetstream2 Inference (Indiana University, free for ACCESS users; `gpt-oss-120b` for PDF text,
-  `muse-glimmer` for photos; key from llm.jetstream-cloud.org, Settings, Account, API keys), then Groq as a
+  `gemma-4-31b-it` for photos, read our sample bill photo in about 4 s against 26 s
+  for `muse-glimmer`; key from llm.jetstream-cloud.org, Settings, Account, API keys), then Groq as a
   fallback. Example reads are cached in memory, so each example uses the service once per restart.
 - Document reading is limited per visitor (6 per hour, 15 per day) and in total (150 per day) so the free model
   quota is not used up; change the numbers in `deploy/.env`. Typing amounts always works.

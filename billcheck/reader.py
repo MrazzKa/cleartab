@@ -33,7 +33,7 @@ TEXT_MODEL = os.environ.get("GROQ_TEXT_MODEL", "openai/gpt-oss-120b")
 PROVIDERS = {
     "jetstream": {"url": os.environ.get("JETSTREAM_URL", "https://llm.jetstream-cloud.org/api/chat/completions"),
                   "key": "JETSTREAM_API_KEY",
-                  "vision": os.environ.get("JETSTREAM_VISION_MODEL", "muse-glimmer"),
+                  "vision": os.environ.get("JETSTREAM_VISION_MODEL", "gemma-4-31b-it"),
                   "text": os.environ.get("JETSTREAM_TEXT_MODEL", "gpt-oss-120b"),
                   "label": "Jetstream2 (Indiana University)"},
     "groq": {"url": GROQ_URL, "key": "GROQ_API_KEY", "vision": MODEL, "text": TEXT_MODEL, "label": "Groq"},

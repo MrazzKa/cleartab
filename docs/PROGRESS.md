@@ -229,3 +229,13 @@ Each phase appends a summary of at most 15 lines.
   visit with a procedure -> ask about modifier 25/57.
 - P1: dispute kit covers the new findings; when a bill cannot be confirmed, the first step is an itemized bill
   request (letter and phone script). Tests: 55 passed; ruff, eslint, build clean.
+
+## R2 rerun on Jetstream2 (2026-11-11)
+- Jetstream2 Inference access through Greg Chism's ACCESS allocation (Indiana University, free). Models:
+  gpt-oss-120b, gemma-4-31b-it, muse-glimmer, qwen-3.8-27b. Used only for research and the synthetic examples.
+- Photo reading default is now gemma-4-31b-it: the sample bill photo read correctly in about 4 s (muse-glimmer 26 s).
+- research/r2/run.py --provider jetstream: same pilot cases, default model settings, condition C on all 100 cases.
+- Errors caught / clean passed / amount due right: qwen-3.8-27b 99% / 100% / 86%; gemma-4-31b-it 88% / 65% / 94%;
+  gpt-oss-120b 84% / 95% / 82%; gemma reads images + rules 100% / 100% / 100%.
+- The pilot's low qwen score (43%) came from free-tier limits (reasoning off, 600 tokens). On these exploratory
+  cases the best model is within 5 points of the hybrid on detection; H4 is decided on the confirmatory set.

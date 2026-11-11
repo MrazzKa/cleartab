@@ -3,7 +3,7 @@
 Conditions
 - A  rules: the ClearTab rule engine on the exact structured case (upper bound for reading).
 - B  model: a language model reads both documents as text and answers in JSON (error? which kinds? correct
-     amount due?). Models: open-weights models on Groq.
+     amount due?). Models: open-weights models on Groq (pilot) or Jetstream2 Inference (--provider jetstream).
 - C  hybrid: a vision model reads rendered images of the two documents into fields (billcheck.reader), then the
      rule engine checks them. Needs research/r2/data/images/ (python -m research.r2.render).
 - D  local: ClearTab's local reader (text recognition on this machine + fixed rules, no language model, no
@@ -13,6 +13,9 @@ Scoring per case: detection (any error vs none), main error category found, corr
 Model answers are cached in research/r2/data/responses/<condition>__<model>.jsonl so a rerun resumes.
 
 Usage: python -m research.r2.run [--conditions A,B,C,D] [--models openai/gpt-oss-120b,...] [--limit N]
+       [--provider groq|jetstream]
+Jetstream2 runs (free for ACCESS users, Indiana University) take condition C on all cases, since there is no daily
+token limit to work around; their answers go to separate cache files (B__jetstream_<model>, C__jetstream_<model>).
 """
 import argparse
 import json
@@ -30,7 +33,10 @@ from pipeline import common  # loads .env
 DATA = pathlib.Path(__file__).with_name("data")
 RESP = DATA / "responses"
 GROQ = "https://api.groq.com/openai/v1/chat/completions"
+JETSTREAM = "https://llm.jetstream-cloud.org/api/chat/completions"
 MODELS = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"]
+JETSTREAM_MODELS = ["gpt-oss-120b", "gemma-4-31b-it", "qwen-3.8-27b"]
+JETSTREAM_VISION = "gemma-4-31b-it"
 MAIN_RULE = {"payment_not_subtracted": "balance_over_eob", "balance_billing": "balance_over_eob",
              "duplicate_line": "duplicate_line", "line_not_on_eob": "bill_line_not_on_eob", "mue_units": "mue_units",
              "ncci_pair": "ncci_pair", "eob_math": "eob_line_sum", "allowed_above_published": "allowed_vs_published"}
@@ -68,15 +74,18 @@ def wait_for(r: requests.Response, attempt: int) -> float:
     return min(60.0, 3 * 2 ** attempt)
 
 
-def groq(model: str, prompt: str) -> str:
-    key = os.environ["GROQ_API_KEY"]
+def chat(model: str, prompt: str, provider: str = "groq") -> str:
+    if provider == "jetstream":
+        url, key = JETSTREAM, os.environ["JETSTREAM_API_KEY"]
+    else:
+        url, key = GROQ, os.environ["GROQ_API_KEY"]
     body = {"model": model, "temperature": 0, "response_format": {"type": "json_object"},
             "messages": [{"role": "user", "content": prompt}]}
-    if model.startswith("qwen/"):
+    if provider == "groq" and model.startswith("qwen/"):
         body["reasoning_effort"] = "none"       # keeps responses inside the free-tier token rate
         body["max_completion_tokens"] = 600     # free tier: 1,000 output tokens per minute for this model
     for attempt in range(10):
-        r = requests.post(GROQ, json=body, timeout=180, headers={"Authorization": f"Bearer {key}"})
+        r = requests.post(url, json=body, timeout=300, headers={"Authorization": f"Bearer {key}"})
         if r.status_code == 429 or r.status_code >= 500:
             time.sleep(wait_for(r, attempt))
             continue
@@ -112,8 +121,9 @@ def condition_a(cases: list[dict]) -> list[dict]:
     return out
 
 
-def condition_b(cases: list[dict], cats: dict, model: str) -> list[dict]:
-    path = RESP / f"B__{model.replace('/', '_')}.jsonl"
+def condition_b(cases: list[dict], cats: dict, model: str, provider: str = "groq") -> list[dict]:
+    prefix = "B__jetstream_" if provider == "jetstream" else "B__"
+    path = RESP / f"{prefix}{model.replace('/', '_')}.jsonl"
     done = cached(path)
     cat_text = "\n".join(f"- {k}: {v}" for k, v in cats.items())
     with path.open("a") as f:
@@ -121,7 +131,7 @@ def condition_b(cases: list[dict], cats: dict, model: str) -> list[dict]:
             if c["id"] in done:
                 continue
             try:
-                raw = groq(model, PROMPT.format(cats=cat_text, doc=c["text"]))
+                raw = chat(model, PROMPT.format(cats=cat_text, doc=c["text"]), provider)
             except requests.HTTPError as e:
                 raw = json.dumps({"error": str(e)[:200]})
             rec = {"id": c["id"], "model": model, "raw": raw}
@@ -131,7 +141,7 @@ def condition_b(cases: list[dict], cats: dict, model: str) -> list[dict]:
     out = []
     for c in cases:
         try:
-            j = json.loads(done[c["id"]]["raw"])
+            j = parse_answer(done[c["id"]]["raw"])
             keys = {k for k in j.get("problems", []) if k in cats}
             amt = j.get("correct_amount_due")
             amt = float(amt) if isinstance(amt, (int, float, str)) and str(amt).replace(".", "", 1).isdigit() else None
@@ -143,8 +153,24 @@ def condition_b(cases: list[dict], cats: dict, model: str) -> list[dict]:
     return out
 
 
-def condition_c(cases: list[dict]) -> list[dict]:
-    path = RESP / "C__qwen_qwen3.8-27b.jsonl"
+def parse_answer(raw: str) -> dict:
+    """A model answer as JSON; a code fence or text around the object is ignored."""
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        start, end = raw.find("{"), raw.rfind("}")
+        return json.loads(raw[start:end + 1]) if start >= 0 < end else json.loads(raw)
+
+
+def condition_c(cases: list[dict], provider: str = "groq") -> list[dict]:
+    if provider == "jetstream":
+        os.environ["READER_PROVIDERS"] = "jetstream"
+        os.environ["READ_MODE"] = "on"
+        from billcheck import reader
+        reader.PROVIDERS["jetstream"]["vision"] = JETSTREAM_VISION
+        path = RESP / f"C__jetstream_{JETSTREAM_VISION}.jsonl"
+    else:
+        path = RESP / "C__qwen_qwen3.8-27b.jsonl"
     done = cached(path)
     with path.open("a") as f:
         for c in cases:
@@ -253,10 +279,22 @@ def summarize(name: str, rows: list[dict]) -> dict:
     return s
 
 
+def stratified(cases: list[dict], n: int) -> list[dict]:
+    """The first n cases of each error type in file order, 2n clean cases (the Groq pilot's daily token limit)."""
+    sub, seen = [], {}
+    for c in cases:
+        k = 2 * n if c["error"] == "none" else n
+        if seen.get(c["error"], 0) < k:
+            sub.append(c)
+            seen[c["error"]] = seen.get(c["error"], 0) + 1
+    return sub
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--conditions", default="A,B")
-    ap.add_argument("--models", default=",".join(MODELS))
+    ap.add_argument("--models", default="")
+    ap.add_argument("--provider", default="groq", choices=["groq", "jetstream"])
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--c-per-type", type=int, default=4, help="condition C: cases per error type (none: twice)")
     args = ap.parse_args()
@@ -266,21 +304,20 @@ def main() -> None:
     RESP.mkdir(parents=True, exist_ok=True)
     results, summaries = {}, []
     conds = args.conditions.split(",")
+    jet = args.provider == "jetstream"
     if "A" in conds:
         results["A rules"] = condition_a(cases)
     if "B" in conds:
-        for m in args.models.split(","):
-            results[f"B {m}"] = condition_b(cases, cats, m)
+        models = args.models.split(",") if args.models else (JETSTREAM_MODELS if jet else MODELS)
+        for m in models:
+            results[f"B {'Jetstream2 ' if jet else ''}{m}"] = condition_b(cases, cats, m, args.provider)
     if "C" in conds:
-        sub, seen = [], {}
-        for c in cases:      # stratified: the first N cases of each error type in file order, 2N clean cases
-            k = 2 * args.c_per_type if c["error"] == "none" else args.c_per_type
-            if seen.get(c["error"], 0) < k:
-                sub.append(c)
-                seen[c["error"]] = seen.get(c["error"], 0) + 1
-        results["C qwen/qwen3.8-27b reads + rules"] = condition_c(sub)
-        results["A rules, same cases as C"] = [r for r in results.get("A rules", condition_a(sub))
-                                               if r["id"] in {c["id"] for c in sub}]
+        sub = cases if jet else stratified(cases, args.c_per_type)
+        name = f"C Jetstream2 {JETSTREAM_VISION} reads + rules" if jet else "C qwen/qwen3.8-27b reads + rules"
+        results[name] = condition_c(sub, args.provider)
+        if not jet:
+            results["A rules, same cases as C"] = [r for r in results.get("A rules", condition_a(sub))
+                                                   if r["id"] in {c["id"] for c in sub}]
     if "D" in conds:
         results["D local text recognition + rules"] = condition_d(cases)
     for name, rows in results.items():

@@ -305,7 +305,7 @@ def test_reader_falls_back_to_next_service_and_parses_fenced_json(monkeypatch):
     monkeypatch.setenv("GROQ_API_KEY", "g")
     monkeypatch.delenv("READER_PROVIDERS", raising=False)
     r = reader.read_document([(b"\xff\xd8fake", "image/jpeg")], session=Session())
-    assert [m for _, m in calls] == ["muse-glimmer", reader.MODEL]
+    assert [m for _, m in calls] == [reader.PROVIDERS["jetstream"]["vision"], reader.MODEL]
     assert r.balance_due == 40 and "Groq" in r.model
 
 
