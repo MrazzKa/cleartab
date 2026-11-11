@@ -108,6 +108,19 @@ For H4, the best model alone (qwen, 98.8% sensitivity, 100% specificity) is with
 (100%, 100%) on these cases; whether that holds is decided on the confirmatory set (new seed), as fixed in
 docs/PROPOSAL_V2_CHANGES.md. H4's rule looks at detection only; the amount due is reported next to it.
 
+## Confirmatory run plan (written 2026-11-11, before the confirmatory cases were generated)
+- Cases: `R2_DATA=data_confirm python -m research.r2.cases --seed 20261111`, the same generator and error mix
+  (100 cases: 20 clean, 10 of each of the eight error kinds). Images: `R2_DATA=data_confirm node research/r2/render.cjs`.
+- Run once, nothing changed after the cases are seen: `R2_DATA=data_confirm python -m research.r2.run --provider
+  jetstream --conditions A,B,C,D`. Rules, prompt, readers and models are frozen at this commit.
+- Conditions: A rules; B gpt-oss-120b, gemma-4-31b-it, qwen-3.8-27b (Jetstream2, the prompt above, temperature 0);
+  C hybrid, gemma-4-31b-it reads the two images and the rules check; D local text recognition + rules.
+- H4 (docs/PROPOSAL_V2_CHANGES.md): "best model" is the B model with the highest sensitivity (ties: higher
+  specificity). If it is within 5 percentage points of C on both sensitivity and specificity, the product may use
+  the model as the checker with the rules as a verifier; otherwise the rules stay the only source of findings.
+  Amount due right and kind named are reported next to it but are not part of the rule.
+- Every result is reported, including failed requests (counted as misses).
+
 ## Reading the results (Groq pilot, 2026-11-02)
 - The rule engine was built for these eight kinds of error, so its 100% is an upper bound on these cases, not an
   accuracy claim for real bills.

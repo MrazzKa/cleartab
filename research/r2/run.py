@@ -30,7 +30,7 @@ from billcheck.models import CheckRequest
 from billcheck.reader import ReaderError, read_document
 from pipeline import common  # loads .env
 
-DATA = pathlib.Path(__file__).with_name("data")
+DATA = pathlib.Path(__file__).with_name(os.environ.get("R2_DATA", "data"))   # data_confirm: confirmatory set
 RESP = DATA / "responses"
 GROQ = "https://api.groq.com/openai/v1/chat/completions"
 JETSTREAM = "https://llm.jetstream-cloud.org/api/chat/completions"
