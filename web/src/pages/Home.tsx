@@ -7,6 +7,7 @@ import { useT } from '../i18n'
 const DOORS: [string, IconName, string, string][] = [
   ['#/help', 'heart', 'I can’t afford it', 'See if the hospital must lower it or forgive it, and get your application ready. About 1 minute.'],
   ['#/bill', 'check', 'I think it’s wrong', 'Compare the bill with your insurance statement and the hospital’s own prices. Ambulance bills too. Get a letter to send.'],
+  ['#/denied', 'shield', 'My insurer said no', 'Find out what the denial means, what to do first, your appeal deadline, and get an appeal letter.'],
   ['#/visits', 'layers', 'I have a pile of bills from one visit', 'Put every bill, EOB and receipt in one place and see whom you really owe. Saved only on your phone.'],
   ['#/prices', 'tag', 'I want a price before care', 'What Tucson and Phoenix hospitals published for 50 common procedures.'],
 ]

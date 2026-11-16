@@ -247,3 +247,14 @@ Each phase appends a summary of at most 15 lines.
   "allowed above published rate"). gpt-oss-120b 82.5% / 90% / 76%; gemma-4-31b-it 92.5% / 70% / 94%.
 - H4 ("AI alone is not enough") not supported by its fixed rule. Product keeps rules for privacy (no hosted model on
   real bills) and sourced findings; the comparison and the serving-limit effect are the paper result.
+
+## A1: "My insurer said no" (2026-11-16)
+- New door and page (#/denied): the reason printed on the EOB or denial letter (or one picked by hand) -> what it
+  means, the first thing to do, deadlines, a call script and an appeal letter. English and Spanish.
+- billcheck/denial.py: 11 reasons found by fixed rules from the printed words and CARC code numbers (X12 list is
+  copyrighted: only numbers are matched, explanations are ours). Reasons a call usually fixes (billing error, other
+  insurance, eligibility, late filing, duplicate, bundling) say so instead of sending people to an appeal.
+- Deadlines from official pages: ACA plans 180 days for the internal appeal and 4 months for external review
+  (HealthCare.gov; Arizona DIFI for state plans), AHCCCS 60 days (ACOM 444), Medicare: printed on the notice.
+  Emergency care: no prior approval and in-network cost share (No Surprises Act).
+- API POST /denial and GET /denial/reasons; nothing logged or stored. Tests: 56 passed; ruff, eslint, tsc clean.

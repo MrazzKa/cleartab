@@ -3,16 +3,17 @@ import Icon from './icons'
 import type { IconName } from './icons'
 import Assistance from './pages/Assistance'
 import BillCheck from './pages/BillCheck'
+import Denied from './pages/Denied'
 import Home from './pages/Home'
 import Prices from './pages/Prices'
 import Visits from './pages/Visits'
 import { useLang, useT } from './i18n'
 
-type Route = 'home' | 'bill' | 'help' | 'prices' | 'visits'
+type Route = 'home' | 'bill' | 'help' | 'prices' | 'visits' | 'denied'
 
 const routeFromHash = (): Route => {
   const h = window.location.hash.replace('#/', '')
-  return h === 'bill' || h === 'help' || h === 'prices' || h === 'visits' ? h : 'home'
+  return h === 'bill' || h === 'help' || h === 'prices' || h === 'visits' || h === 'denied' ? h : 'home'
 }
 
 const TABS: [Route, IconName, string][] = [
@@ -59,6 +60,7 @@ export default function App() {
           {route === 'help' && <Assistance />}
           {route === 'prices' && <Prices />}
           {route === 'visits' && <Visits />}
+          {route === 'denied' && <Denied />}
         </main>
         <footer>
           <p>{t('ClearTab compares what you enter with published rules and prices. It is not legal or medical advice. Nothing you enter is stored, and there are no accounts.')}</p>
