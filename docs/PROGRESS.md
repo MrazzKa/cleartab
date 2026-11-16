@@ -267,3 +267,10 @@ Each phase appends a summary of at most 15 lines.
   one-year Treasury yield; upheld by the Court of Appeals in 2024); credit bureaus' voluntary medical debt policy
   (under $500 not reported, one-year wait, paid removed; CFPB rule vacated July 2025); 501(r) 240-day assistance
   window; court papers -> free legal aid (Step Up to Justice, AZLawHelp). Tests: 57 passed; lint and types clean.
+
+## R4: Arizona Marketplace denials and appeals (2026-11-16)
+- CMS Transparency in Coverage PUF (PY2027 = 2025 claims, PY2026 = 2024), python -m pipeline.tc_puf; outputs in
+  data/processed/r4_*.csv; report research/r4/REPORT.md. National 2024 check: 18.73% vs about 19% (KFF, MoneyGeek).
+- Arizona 2025: 16.1% of 8,988,391 in-network claims denied; 0.77 internal appeals per 100 denials; 40.2% of
+  appeals overturned (2024: 20.1%, 0.78, 30.4%). Insurer denial rates from about 10% to 50%.
+- The denial page shows the 2025 Arizona numbers with the CMS link.

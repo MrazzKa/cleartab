@@ -162,6 +162,8 @@ export default function Denied() {
               <p className="small muted">{t('What the denial means')}</p>
               <h1>{t(res.reasons[0].title)}</h1>
               <p className="lead">{t('A denial is not the final word. People who appeal often win, and many denials are fixed with one phone call.')}</p>
+              <p className="small">{t('In Arizona HealthCare.gov plans in 2025, insurers denied 1 in 6 in-network claims. Fewer than 1 in 100 denials were appealed, and 40% of appeals won.')}{' '}
+                <a href="https://www.cms.gov/marketplace/resources/data/public-use-files" target="_blank" rel="noreferrer">{t('CMS data')}</a></p>
             </section>
           )}
           {res.reasons[0] && <ReasonCard r={res.reasons[0]} main />}

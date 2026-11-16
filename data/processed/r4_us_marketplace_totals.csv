@@ -1,0 +1,3 @@
+data_year,scope,issuers,in_network_claims_received,in_network_claims_denied,in_network_denial_rate_pct,internal_appeals_filed,internal_appeals_overturned,source_url,retrieved_at
+2025,all HealthCare.gov issuers with reported counts,135,533960787,83907852,15.71,241328,64636,https://download.cms.gov/marketplace-puf/2027/transparency-in-coverage-puf.zip,2026-11-16T23:31:54Z
+2024,all HealthCare.gov issuers with reported counts,158,451249751.0,84502749,18.73,255373,85807,https://download.cms.gov/marketplace-puf/2026/transparency-in-coverage-puf.zip,2026-11-16T23:31:54Z

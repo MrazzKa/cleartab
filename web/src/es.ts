@@ -486,4 +486,6 @@ export const ES: Record<string, string> = {
   "Collection agency name and address": "Nombre y dirección de la agencia de cobranza",
   "Account number on the letter": "Número de cuenta en la carta",
   "Original hospital or provider": "Hospital o proveedor original",
+  "In Arizona HealthCare.gov plans in 2025, insurers denied 1 in 6 in-network claims. Fewer than 1 in 100 denials were appealed, and 40% of appeals won.": "En los planes de HealthCare.gov de Arizona en 2025, las aseguradoras negaron 1 de cada 6 reclamaciones dentro de la red. Se apeló menos de 1 de cada 100 negaciones, y se ganó el 40% de las apelaciones.",
+  "CMS data": "Datos de CMS",
 }
