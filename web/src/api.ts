@@ -135,6 +135,12 @@ export interface DenialResponse {
   sources: { title: string; url: string }[]
 }
 
+export interface CollectionItem {
+  key: string; level: 'urgent' | 'warning' | 'info' | 'ok'; title: string; text: string; action: string
+  sources: string[]; date: string | null
+}
+export interface CollectionResponse { items: CollectionItem[]; letter: string; sources: { title: string; url: string }[] }
+
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
   const r = await fetch(BASE + path, init)
   if (!r.ok) {
@@ -160,6 +166,8 @@ export const api = {
     call<AssistanceResponse>('/assistance', post({ household_size, annual_income, coverage, hospital_system, lang })),
   denial: (req: { text: string; reason: string | null; plan: string; notice_date: string | null; emergency: boolean }) =>
     call<DenialResponse>('/denial', post(req)),
+  collections: (req: { sender: string; first_notice: string | null; service_date: string | null; interest_rate: number | null;
+    amount: number | null; nonprofit: string; insured: string }) => call<CollectionResponse>('/collections', post(req)),
   denialReasons: () => call<DenialReason[]>('/denial/reasons'),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   search: (q: string, plan: string, zip: string) => call<any>(`/search?${new URLSearchParams({ q, plan, zip })}`),

@@ -301,6 +301,27 @@ def denial_reasons():
     return denial.reason_info()
 
 
+from billcheck import collection_letter as _collections  # noqa: E402
+
+
+class CollectionRequest(_BaseModel):
+    sender: str = "collector"                 # collector | hospital | court
+    first_notice: _date | None = None
+    service_date: _date | None = None
+    interest_rate: float | None = _Field(None, ge=0, le=100)
+    amount: float | None = _Field(None, ge=0, le=10_000_000)
+    nonprofit: str = "unknown"
+    insured: str = "unknown"
+
+
+@app.post("/collections")
+def collections_check(req: CollectionRequest):
+    """Rights and next steps for a medical debt in collections. Used for this answer only; never logged or stored."""
+    res = _collections.assess(req.sender, req.first_notice, req.service_date, req.interest_rate, req.amount,
+                              req.nonprofit, req.insured)
+    return {"items": res.items, "letter": res.letter, "sources": [{"title": t, "url": u} for t, u in res.sources]}
+
+
 # ---------------------------------------------------------------- v2: read a photo (Feature 10, optional)
 import base64 as _b64  # noqa: E402
 import hashlib as _hashlib  # noqa: E402

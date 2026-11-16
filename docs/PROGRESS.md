@@ -258,3 +258,12 @@ Each phase appends a summary of at most 15 lines.
   (HealthCare.gov; Arizona DIFI for state plans), AHCCCS 60 days (ACOM 444), Medicare: printed on the notice.
   Emergency care: no prior approval and in-network cost share (No Surprises Act).
 - API POST /denial and GET /denial/reasons; nothing logged or stored. Tests: 56 passed; ruff, eslint, tsc clean.
+
+## B1: "A collector is after me" (2026-11-16)
+- New door and page (#/collections): who sent it (collector, provider, court), first-notice date, date of care,
+  amount and interest rate -> rights and next steps, and a dispute letter. English and Spanish.
+- billcheck/collection_letter.py: Regulation F dispute window (30 days after the validation notice; collection
+  stops until verification); Arizona Prop 209 interest cap for medical debt from care after Dec 5, 2022 (3% or the
+  one-year Treasury yield; upheld by the Court of Appeals in 2024); credit bureaus' voluntary medical debt policy
+  (under $500 not reported, one-year wait, paid removed; CFPB rule vacated July 2025); 501(r) 240-day assistance
+  window; court papers -> free legal aid (Step Up to Justice, AZLawHelp). Tests: 57 passed; lint and types clean.

@@ -478,3 +478,21 @@ def test_denial_reasons_from_words_and_codes():
     assert e.reasons[0] == "out_of_network" and "emergency care" in e.letter
     assert any("cms.gov" in u for _, u in e.sources)
     assert denial.add_months(date(2026, 10, 31), 4) == date(2027, 2, 28)
+
+
+def test_collection_letter_rules():
+    from datetime import date
+
+    from billcheck import collection_letter as col
+    r = col.assess("collector", first_notice=date(2026, 11, 1), service_date=date(2025, 6, 1), interest_rate=8,
+                   amount=320, nonprofit="yes", insured="yes", today=date(2026, 11, 16))
+    keys = [i.key for i in r.items]
+    assert keys[0] == "dispute_window" and r.items[0].date == "2026-12-01"
+    assert "interest_over_cap" in keys and "3%" in r.letter
+    assert "credit_small" in keys and "assistance" in keys and "insurance" in keys
+    old = col.assess("collector", service_date=date(2021, 5, 1), interest_rate=8, today=date(2026, 11, 16))
+    assert "interest_old_debt" in [i.key for i in old.items] and "3%" not in old.letter
+    late = col.assess("collector", first_notice=date(2026, 9, 1), today=date(2026, 11, 16))
+    assert late.items[0].key == "dispute_late"
+    court = col.assess("court")
+    assert court.items[0].level == "urgent" and any("stepuptojustice" in u for _, u in court.sources)
