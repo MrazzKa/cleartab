@@ -1,4 +1,4 @@
-# ClearTab plan to iShowcase (2026-11-04 to 2026-12-10)
+# ClearTab plan to iShowcase (2026-11-04 to 2026-12-09)
 
 Builds on docs/PLAN_V2.md. Evidence: research/landscape/US_ARIZONA.md and research/landscape/WORLD.md.
 
@@ -35,7 +35,7 @@ Gap: no free, open-source tool combines rule-based bill and EOB checks, Arizona 
 - Public web app with a stable URL and a QR code; works on any phone; no account.
 - At least 100 survey responses; at least 10 usability sessions (R3); at least 5 real bills walked through
   with consent; at least 1 documented real outcome (bill corrected, reduced, or assistance approved) with the
-  person's written permission to share. If no outcome is final by Dec 10, we report honestly what is pending.
+  person's written permission to share. If no outcome is final by Dec 9, we report honestly what is pending.
 - Every finding on screen traceable to a rule and an official source; a language model never produces a number.
 - Native app stores: decision on Nov 20 (web first).
 
@@ -95,7 +95,7 @@ Backup: recorded video and offline build in case of network failure.
 | Nov 17-23 | P2, P3, P4; usability round 1 (R3); App store decision Nov 20; R2 condition C finished |
 | Nov 24-30 | P5-P8; usability round 2; accuracy check; 16 policies |
 | Dec 1-7 | Feature freeze Dec 1; poster, demo video, final report, manuscript outline Dec 5; submission Dec 7 |
-| Dec 8-10 | Rehearsal, iShowcase Dec 10 |
+| Dec 7-9 | Rehearsal, iShowcase Dec 9 (date corrected on 2026-11-10) |
 
 ## 9. Risks
 - IRB scope unclear: no survey or usability data used for publication before Dr. Li confirms.
@@ -106,3 +106,37 @@ Backup: recorded video and offline build in case of network failure.
 - Not legal advice: every letter says the user sends it themselves; legal questions go to Step Up to Justice.
 - Numbers still to verify before the poster: Arizona RAND price ratio, Dollar For 29% (original report), status
   of SB 1607 / HB 2581, Prop 209 court challenge.
+
+## 10. Decisions and status (2026-11-10)
+- iShowcase is on **Dec 9** (not Dec 10).
+- Reading real documents: **local only** (Dr. Li: private documents only on a locally deployed model; Greg Chism:
+  Jetstream2 is not rated for health information). Public site runs READ_MODE=local: text layer (pdfplumber) or
+  on-server text recognition (RapidOCR) + fixed rules, no language model, nothing leaves the server. Four real EOBs
+  (PDF and rendered as photos): every line and total read correctly. Language models (Jetstream2, Groq) stay for
+  research (R2) and the synthetic examples.
+- Demo hero: the synthetic ER visit (EOB + bill) is the safe default; judges may scan a paper live because reading
+  is local. Real case from Michael's family only with written consent.
+- Web app only until after Dec 9; stores (Play $25, App Store $99/yr with the library iMac) decided later.
+- Domain: buy cleartab.app (Cloudflare Registrar, DNS only so Caddy gets the certificate).
+- Promotion (Daily Wildcat / UA News, Campus Health, Dollar For, Reddit, Instagram, video, poster) after the
+  product is finished; drafts prepared in advance.
+- One person (PM) does the remaining work; teammates review PRs (non-author approval, rule 9).
+- Done: PR #25 (reading services, example mode, P10 ER visit check), local reader (this branch).
+- Next: P11 plan balances, P3 Medicare yardstick, P12 global period, P1 question-first, deploy (Oracle VM).
+
+## 11. Directions to Dec 9 (2026-11-16)
+Status: P11, P3, P12, P1 done; R2 confirmatory run done (H4 not supported on detection, rules kept for amounts
+and privacy). Gaps: no real users or cases yet, beta not online, survey paused until HSPP answers, one-template R2.
+
+| Item | What | Data / source | Target |
+|---|---|---|---|
+| A1 | "My insurer said no": explain the denial code printed on the EOB in plain words, the appeal path and deadline (ACA internal appeal: 180 days from the notice; then external review), appeal letter and call script | CMS and HealthCare.gov appeal pages; claim adjustment and remark code lists (check the X12 license before copying any list; otherwise our own explanations of the most common codes with a source each) | Nov 24 |
+| R4 | Arizona Marketplace insurers: denial and appeal rates, overturn rate | CMS Transparency in Coverage PUF (PY2026 file, 2024 claims), public, no people | Nov 24 |
+| R2v2 | Harder benchmark: 3 bill layouts, phone-style photos (blur, angle, light), prompt without the error list, models 7B-32B (Li), plan written before the cases | Jetstream2 (usage logged for Greg Chism) | Nov 30 |
+| B1 | Collection letter check: validation notice items (Reg F), Arizona Prop 209 limits for medical debt (verify the current text and court status first), credit reporting rules | A.R.S. as amended by Prop 209, CFPB | Nov 27 |
+| E1 | Real cases (3-5 people, consent, no copies), outcome in dollars for the poster | only after HSPP answers | Dec 6 |
+| D1 | Beta online with a domain | needs the Oracle VM and the domain from the PM | Nov 22 |
+| P | Poster draft Nov 18 (R2 result, rules vs AI, Arizona denial numbers once R4 is done), demo script, rehearsal | | Dec 7 |
+
+Feature freeze stays Dec 1. Denials (A1, R4) are the new headline: the KFF analysis of HealthCare.gov insurers found
+about 1 in 5 in-network claims denied in 2023 and about 1% of denials appealed (44% of appeals overturned).

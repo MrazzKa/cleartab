@@ -40,6 +40,18 @@ on cms.gov, so a team member downloads them by hand after reading and accepting 
 
 The MUE tables have no click-through and are downloaded by `python -m billcheck.fetch_reference`.
 
+## Medicare hospital outpatient rates (OPPS Addendum B, October 2026)
+
+Used for the Medicare yardstick of hospital (facility) charges, such as the emergency department visit levels.
+The CMS link goes through the AMA license page, so a person downloads it:
+1. Open https://www.cms.gov/medicare/payment/prospective-payment-systems/hospital-outpatient-pps/quarterly-addenda-updates/october-2026-addendum-b
+2. Click "Addendum B - Updated 10/15/2026", read and accept the license.
+3. Put October-2026-OPPS-Addendum-B.zip, unchanged, in `data/raw/manual/opps/` (gitignored, never committed).
+4. Record the download in the table below.
+
+The Physician Fee Schedule file (RVU26D) has no click-through and is downloaded by a script
+(data/raw/reference/pfs/, built with `python -m pipeline.medicare_pfs`).
+
 ## Record of manual downloads
 
 | CCN | Downloaded by | Date | Page where the link was | File name | Notes |

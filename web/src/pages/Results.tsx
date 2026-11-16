@@ -7,7 +7,7 @@ const LABEL: Record<Severity, string> = { error: 'Likely error', warning: 'Ask a
 const ICON: Record<Severity, string> = { error: '✕', warning: '!', info: 'i', ok: '✓' }
 const CHECK_NAMES: Record<string, string> = {
   eob_arithmetic: 'EOB math', bill_vs_eob: 'Bill against EOB', duplicates: 'Duplicate charges',
-  mue_units: 'Medicare unit limits (MUE)', ncci_ptp: 'Code pairs (NCCI)', published_prices: 'Hospital published prices', er_rates: 'Hospital published ER visit rates',
+  mue_units: 'Medicare unit limits (MUE)', ncci_ptp: 'Code pairs (NCCI)', published_prices: 'Hospital published prices', er_rates: 'Hospital published ER visit rates', plan_balances: 'Deductible and out-of-pocket balances', medicare: 'Medicare price in Arizona', global_period: 'Visits inside a surgery global period',
   no_surprises_act: 'No Surprises Act', paperwork: 'Paperwork', az_ambulance_rate: 'Arizona ambulance rates',
 }
 
@@ -100,6 +100,14 @@ export default function Results({ result, simple = false }: { result: CheckResul
           <h2>{t('What to do now')}</h2>
           <ol className="script">{steps.map((x, i) => <li key={i}>{x}</li>)}</ol>
           {result.letter && !showKit && <div><button type="button" onClick={() => setShowKit(true)}>{t('Get a ready-to-send letter')}</button></div>}
+        </section>
+      )}
+
+      {simple && problems.length === 0 && result.letter && (
+        <section className="card stack">
+          <h2>{t('First step: ask for an itemized bill')}</h2>
+          <p>{t('We could not confirm this bill yet. Before you pay, ask the billing office for an itemized bill with a code for each charge. Asking is free, and you can ask them to hold the account while you wait.')}</p>
+          {!showKit && <div><button type="button" onClick={() => setShowKit(true)}>{t('Get the letter and phone script')}</button></div>}
         </section>
       )}
 

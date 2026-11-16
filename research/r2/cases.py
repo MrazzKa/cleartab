@@ -5,14 +5,17 @@ Cross Blue Shield of Arizona. Allowed amounts are drawn inside the hospital's pu
 (data/processed/assistance_policies.json is not used here; rates are fixed below from the prices table, retrieved
 2026-10-12). One error type is planted per case, or none.
 
-Usage: python -m research.r2.cases          -> research/r2/data/cases.json (seed 20261102)
+Usage: python -m research.r2.cases          -> research/r2/data/cases.json (seed 20261102, pilot)
+       R2_DATA=data_confirm python -m research.r2.cases --seed 20261111   (confirmatory set, see REPORT.md)
 """
+import argparse
 import json
+import os
 import pathlib
 import random
 
 SEED = 20261102
-OUT = pathlib.Path(__file__).with_name("data")
+OUT = pathlib.Path(__file__).with_name(os.environ.get("R2_DATA", "data"))
 
 # code: (description on bill, gross charge, published BCBS AZ fixed dollar rate min, max) at CCN 030064
 SERVICES = {
@@ -154,14 +157,17 @@ def as_text(case: dict) -> str:
 
 
 def main() -> None:
-    rng = random.Random(SEED)
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--seed", type=int, default=SEED)
+    seed = ap.parse_args().seed
+    rng = random.Random(seed)
     plan = ["none"] * 20 + [e for e in ERRORS[1:] for _ in range(10)]
     rng.shuffle(plan)
     cases = [make_case(rng, i + 1, err) for i, err in enumerate(plan)]
     for c in cases:
         c["text"] = as_text(c)
     OUT.mkdir(exist_ok=True)
-    (OUT / "cases.json").write_text(json.dumps({"seed": SEED, "categories": CATEGORIES, "cases": cases}, indent=1))
+    (OUT / "cases.json").write_text(json.dumps({"seed": seed, "categories": CATEGORIES, "cases": cases}, indent=1))
     print(len(cases), "cases;", {e: plan.count(e) for e in ERRORS})
 
 

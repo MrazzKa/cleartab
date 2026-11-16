@@ -32,6 +32,11 @@ export interface BillLine {
   amount: number
 }
 
+export interface PlanBalance {
+  kind: 'deductible' | 'out_of_pocket'; network: 'in' | 'out' | 'unknown'; level: 'individual' | 'family' | 'unknown'
+  limit: number | null; used: number | null; remaining: number | null
+}
+
 export interface Context {
   coverage: 'insured' | 'self_pay'
   hospital_ccn?: string | null
@@ -53,7 +58,10 @@ export interface Context {
 
 export interface CheckRequest {
   context: Context
-  eob?: { claim_number?: string | null; lines: EobLine[]; you_owe_total?: number | null; oop_max_met?: boolean } | null
+  eob?: {
+    claim_number?: string | null; lines: EobLine[]; you_owe_total?: number | null; oop_max_met?: boolean
+    balances?: PlanBalance[]
+  } | null
   bill?: {
     provider_type: 'facility' | 'professional' | 'ambulance' | 'unknown'
     statement_date?: string | null
@@ -155,6 +163,7 @@ export interface ReadResult {
   document_type: 'eob' | 'bill' | 'both' | 'other'; provider_type: string; provider_name: string | null; insurer_name?: string | null; statement_date: string | null
   claim_number: string | null; balance_due: number | null; patient_payments: number | null
   you_owe_total: number | null; oop_max_met: boolean; eob_lines: ReadLine[]; bill_lines: ReadLine[]
+  plan_balances?: PlanBalance[]
   unreadable: string[]; note: string
 }
 
@@ -175,13 +184,13 @@ async function toUploads(files: FileList | File[]): Promise<{ data: string; type
   return Promise.all(list.slice(0, 3).map(shrinkPhoto))
 }
 
-export interface ReaderInfo { available: boolean; mode: 'on' | 'examples' | 'off'; service: string | null }
+export interface ReaderInfo { available: boolean; mode: 'on' | 'local' | 'examples' | 'off'; service: string | null }
 const noReader: ReaderInfo = { available: false, mode: 'off', service: null }
 
 export const reader = {
   info: () => call<ReaderInfo>('/bill/read/status').catch(() => noReader),
-  /** True when the user's own documents may be read (READ_MODE=on). */
-  status: () => reader.info().then((x) => x.available && x.mode === 'on'),
+  /** True when the user's own documents may be read (READ_MODE on or local). */
+  status: () => reader.info().then((x) => x.available && (x.mode === 'on' || x.mode === 'local')),
   read: async (files: FileList | File[]) => call<ReadResult>('/bill/read', post({ images: await toUploads(files), consent: true })),
   /** Read a synthetic example document kept on the server (no upload). */
   example: (name: string) => call<ReadResult>(`/bill/read/example/${encodeURIComponent(name)}`, post({})),

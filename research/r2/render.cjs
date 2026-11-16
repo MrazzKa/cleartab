@@ -9,7 +9,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE ||
   `${home}/.nvm/versions/node/v20.19.4/lib/node_modules/@playwright/cli/node_modules/playwright-core`)
 const exe = process.env.CHROMIUM || `${home}/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome`
 
-const dir = path.join(__dirname, 'data')
+const dir = path.join(__dirname, process.env.R2_DATA || 'data')   // data_confirm: confirmatory set
 const out = path.join(dir, 'images')
 fs.mkdirSync(out, { recursive: true })
 const { cases } = JSON.parse(fs.readFileSync(path.join(dir, 'cases.json'), 'utf8'))

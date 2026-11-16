@@ -270,7 +270,7 @@ function buildSignupForm_() {
     .showOtherOption(true);
   form.addMultipleChoiceItem()
     .setTitle('If ClearTab helps you lower or correct a bill, may we contact you later to ask whether you would ' +
-      'share your story (anonymously or by first name) at the UA iShowcase on December 10? You can say no later.')
+      'share your story (anonymously or by first name) at the UA iShowcase on December 9? You can say no later.')
     .setChoiceValues(['Yes, you may ask me', 'No']);
 
   form.setConfirmationMessage('Thank you! A team member will contact you within a few days.');

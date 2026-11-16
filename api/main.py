@@ -289,9 +289,9 @@ class _ReadRequest(_Model):
 @app.get("/bill/read/status")
 def bill_read_status():
     services = reader.providers()
-    return {"available": reader.available(), "mode": reader.read_mode(),
-            "service": services[0][1]["label"] if services else None,
-            "models": {k: services[0][1][k] for k in ("text", "vision")} if services else None}
+    local = reader.read_mode() == "local"
+    return {"available": reader.available(), "mode": reader.read_mode(), "service": reader.service_label(),
+            "models": None if local or not services else {k: services[0][1][k] for k in ("text", "vision")}}
 
 
 @app.get("/bill/examples")
