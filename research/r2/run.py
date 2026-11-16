@@ -25,7 +25,7 @@ import time
 
 import requests
 
-from billcheck import run_check
+from billcheck import run_check, usage
 from billcheck.models import CheckRequest
 from billcheck.reader import ReaderError, read_document
 from pipeline import common  # loads .env
@@ -90,7 +90,9 @@ def chat(model: str, prompt: str, provider: str = "groq") -> str:
             time.sleep(wait_for(r, attempt))
             continue
         r.raise_for_status()
-        return r.json()["choices"][0]["message"]["content"]
+        data = r.json()
+        usage.log(provider, model, data, "r2")
+        return data["choices"][0]["message"]["content"]
     raise RuntimeError(f"{model}: still rate limited")
 
 
