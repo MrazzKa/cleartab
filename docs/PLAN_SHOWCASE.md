@@ -123,3 +123,20 @@ Backup: recorded video and offline build in case of network failure.
 - One person (PM) does the remaining work; teammates review PRs (non-author approval, rule 9).
 - Done: PR #25 (reading services, example mode, P10 ER visit check), local reader (this branch).
 - Next: P11 plan balances, P3 Medicare yardstick, P12 global period, P1 question-first, deploy (Oracle VM).
+
+## 11. Directions to Dec 9 (2026-11-16)
+Status: P11, P3, P12, P1 done; R2 confirmatory run done (H4 not supported on detection, rules kept for amounts
+and privacy). Gaps: no real users or cases yet, beta not online, survey paused until HSPP answers, one-template R2.
+
+| Item | What | Data / source | Target |
+|---|---|---|---|
+| A1 | "My insurer said no": explain the denial code printed on the EOB in plain words, the appeal path and deadline (ACA internal appeal: 180 days from the notice; then external review), appeal letter and call script | CMS and HealthCare.gov appeal pages; claim adjustment and remark code lists (check the X12 license before copying any list; otherwise our own explanations of the most common codes with a source each) | Nov 24 |
+| R4 | Arizona Marketplace insurers: denial and appeal rates, overturn rate | CMS Transparency in Coverage PUF (PY2026 file, 2024 claims), public, no people | Nov 24 |
+| R2v2 | Harder benchmark: 3 bill layouts, phone-style photos (blur, angle, light), prompt without the error list, models 7B-32B (Li), plan written before the cases | Jetstream2 (usage logged for Greg Chism) | Nov 30 |
+| B1 | Collection letter check: validation notice items (Reg F), Arizona Prop 209 limits for medical debt (verify the current text and court status first), credit reporting rules | A.R.S. as amended by Prop 209, CFPB | Nov 27 |
+| E1 | Real cases (3-5 people, consent, no copies), outcome in dollars for the poster | only after HSPP answers | Dec 6 |
+| D1 | Beta online with a domain | needs the Oracle VM and the domain from the PM | Nov 22 |
+| P | Poster draft Nov 18 (R2 result, rules vs AI, Arizona denial numbers once R4 is done), demo script, rehearsal | | Dec 7 |
+
+Feature freeze stays Dec 1. Denials (A1, R4) are the new headline: the KFF analysis of HealthCare.gov insurers found
+about 1 in 5 in-network claims denied in 2023 and about 1% of denials appealed (44% of appeals overturned).
