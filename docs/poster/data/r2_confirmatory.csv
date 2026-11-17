@@ -1,0 +1,7 @@
+checker,how_it_works,bills,errors_planted,errors_missed,clean_bills,false_alarms,wrong_amount_due,errors_caught_pct,clean_passed_pct,amount_right_pct
+ClearTab rules,fixed rules on the exact numbers,100,80,0,20,0,0,100.0,100.0,100
+gemma-4-31b-it reads + rules,AI copies the numbers from images; rules check them,100,80,0,20,0,0,100.0,100.0,100
+Local text recognition + rules,no AI: on-server text recognition; rules check,100,80,0,20,0,0,100.0,100.0,100
+qwen-3.8-27b alone,AI reads the text and decides,100,80,0,20,0,12,100.0,100.0,88
+gemma-4-31b-it alone,AI reads the text and decides,100,80,6,20,6,6,92.5,70.0,94
+gpt-oss-120b alone,AI reads the text and decides,100,80,14,20,2,24,82.5,90.0,76

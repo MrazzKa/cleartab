@@ -1,0 +1,4 @@
+group,median_highest_to_lowest_ratio,ci95_low,ci95_high,n_procedure_metro_groups
+Phoenix and Tucson (pre-registered),1.92,1.82,2.39,99
+Phoenix,2.81,2.81,3.90,50
+Tucson,1.39,1.25,1.74,49
