@@ -247,3 +247,30 @@ Each phase appends a summary of at most 15 lines.
   "allowed above published rate"). gpt-oss-120b 82.5% / 90% / 76%; gemma-4-31b-it 92.5% / 70% / 94%.
 - H4 ("AI alone is not enough") not supported by its fixed rule. Product keeps rules for privacy (no hosted model on
   real bills) and sourced findings; the comparison and the serving-limit effect are the paper result.
+
+## A1: "My insurer said no" (2026-11-16)
+- New door and page (#/denied): the reason printed on the EOB or denial letter (or one picked by hand) -> what it
+  means, the first thing to do, deadlines, a call script and an appeal letter. English and Spanish.
+- billcheck/denial.py: 11 reasons found by fixed rules from the printed words and CARC code numbers (X12 list is
+  copyrighted: only numbers are matched, explanations are ours). Reasons a call usually fixes (billing error, other
+  insurance, eligibility, late filing, duplicate, bundling) say so instead of sending people to an appeal.
+- Deadlines from official pages: ACA plans 180 days for the internal appeal and 4 months for external review
+  (HealthCare.gov; Arizona DIFI for state plans), AHCCCS 60 days (ACOM 444), Medicare: printed on the notice.
+  Emergency care: no prior approval and in-network cost share (No Surprises Act).
+- API POST /denial and GET /denial/reasons; nothing logged or stored. Tests: 56 passed; ruff, eslint, tsc clean.
+
+## B1: "A collector is after me" (2026-11-16)
+- New door and page (#/collections): who sent it (collector, provider, court), first-notice date, date of care,
+  amount and interest rate -> rights and next steps, and a dispute letter. English and Spanish.
+- billcheck/collection_letter.py: Regulation F dispute window (30 days after the validation notice; collection
+  stops until verification); Arizona Prop 209 interest cap for medical debt from care after Dec 5, 2022 (3% or the
+  one-year Treasury yield; upheld by the Court of Appeals in 2024); credit bureaus' voluntary medical debt policy
+  (under $500 not reported, one-year wait, paid removed; CFPB rule vacated July 2025); 501(r) 240-day assistance
+  window; court papers -> free legal aid (Step Up to Justice, AZLawHelp). Tests: 57 passed; lint and types clean.
+
+## R4: Arizona Marketplace denials and appeals (2026-11-16)
+- CMS Transparency in Coverage PUF (PY2027 = 2025 claims, PY2026 = 2024), python -m pipeline.tc_puf; outputs in
+  data/processed/r4_*.csv; report research/r4/REPORT.md. National 2024 check: 18.73% vs about 19% (KFF, MoneyGeek).
+- Arizona 2025: 16.1% of 8,988,391 in-network claims denied; 0.77 internal appeals per 100 denials; 40.2% of
+  appeals overturned (2024: 20.1%, 0.78, 30.4%). Insurer denial rates from about 10% to 50%.
+- The denial page shows the 2025 Arizona numbers with the CMS link.

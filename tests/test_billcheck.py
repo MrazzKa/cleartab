@@ -457,3 +457,42 @@ def test_itemized_request_is_the_first_step_when_nothing_is_confirmed():
                       "allowed": 120, "plan_paid": 96, "coinsurance": 24, "you_owe": 24}]}
     r = run_check(CheckRequest(context={"coverage": "insured"}, eob=eob))
     assert "global period" in r.letter
+
+
+def test_denial_reasons_from_words_and_codes():
+    from datetime import date
+
+    from billcheck import denial
+    assert denial.classify("Claim denied: CO-197 Precertification absent")[0] == "prior_auth"
+    assert denial.classify("This service is not medically necessary") == ["medical_necessity"]
+    assert denial.classify("", ["29"]) == ["late_filing"]
+    assert denial.classify("Provider is out-of-network")[0] == "out_of_network"
+    assert denial.classify("Your visit on 03/16/2026 for $50") == []          # numbers alone are not codes
+    r = denial.explain("Not medically necessary", plan="job", notice_date=date(2026, 3, 1))
+    assert r.deadlines[0].date == "2026-08-28"                                   # 180 days
+    assert "letter of medical necessity" in denial.BY_KEY[r.reasons[0]].first_step
+    assert "[claim number]" in r.letter and "free of charge" in r.letter
+    assert denial.explain("x", plan="ahcccs", notice_date=date(2026, 3, 1)).deadlines[0].date == "2026-04-30"
+    assert denial.explain("x", plan="medicare").deadlines[0].date is None
+    e = denial.explain("out of network", plan="marketplace", emergency=True)
+    assert e.reasons[0] == "out_of_network" and "emergency care" in e.letter
+    assert any("cms.gov" in u for _, u in e.sources)
+    assert denial.add_months(date(2026, 10, 31), 4) == date(2027, 2, 28)
+
+
+def test_collection_letter_rules():
+    from datetime import date
+
+    from billcheck import collection_letter as col
+    r = col.assess("collector", first_notice=date(2026, 11, 1), service_date=date(2025, 6, 1), interest_rate=8,
+                   amount=320, nonprofit="yes", insured="yes", today=date(2026, 11, 16))
+    keys = [i.key for i in r.items]
+    assert keys[0] == "dispute_window" and r.items[0].date == "2026-12-01"
+    assert "interest_over_cap" in keys and "3%" in r.letter
+    assert "credit_small" in keys and "assistance" in keys and "insurance" in keys
+    old = col.assess("collector", service_date=date(2021, 5, 1), interest_rate=8, today=date(2026, 11, 16))
+    assert "interest_old_debt" in [i.key for i in old.items] and "3%" not in old.letter
+    late = col.assess("collector", first_notice=date(2026, 9, 1), today=date(2026, 11, 16))
+    assert late.items[0].key == "dispute_late"
+    court = col.assess("court")
+    assert court.items[0].level == "urgent" and any("stepuptojustice" in u for _, u in court.sources)

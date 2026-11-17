@@ -265,6 +265,63 @@ def assistance_policies():
     return policies()
 
 
+from datetime import date as _date  # noqa: E402
+
+from pydantic import BaseModel as _BaseModel  # noqa: E402
+from pydantic import Field as _Field  # noqa: E402
+
+from billcheck import denial  # noqa: E402
+
+
+class DenialRequest(_BaseModel):
+    text: str = _Field("", max_length=2000)
+    codes: list[str] = _Field(default_factory=list, max_length=20)
+    reason: str | None = None          # a reason the person picked by hand
+    plan: str = "unknown"
+    notice_date: _date | None = None
+    emergency: bool = False
+
+
+@app.post("/denial")
+def denial_explain(req: DenialRequest):
+    """What a claim denial means, what to do and the appeal deadlines. The printed reason is used for this answer
+    only; never logged or stored."""
+    res = denial.explain(req.text, req.codes, req.plan, req.notice_date, req.emergency)
+    if req.reason in denial.BY_KEY:
+        res.reasons = [req.reason] + [k for k in res.reasons if k != req.reason]
+        res.letter = denial.letter(res.reasons, req.plan, req.emergency)
+        res.call_script = denial.call_script(res.reasons)
+    return {"reasons": denial.reason_info(res.reasons), "deadlines": res.deadlines, "letter": res.letter,
+            "call_script": res.call_script, "emergency_note": res.emergency_note,
+            "sources": [{"title": t, "url": u} for t, u in res.sources]}
+
+
+@app.get("/denial/reasons")
+def denial_reasons():
+    return denial.reason_info()
+
+
+from billcheck import collection_letter as _collections  # noqa: E402
+
+
+class CollectionRequest(_BaseModel):
+    sender: str = "collector"                 # collector | hospital | court
+    first_notice: _date | None = None
+    service_date: _date | None = None
+    interest_rate: float | None = _Field(None, ge=0, le=100)
+    amount: float | None = _Field(None, ge=0, le=10_000_000)
+    nonprofit: str = "unknown"
+    insured: str = "unknown"
+
+
+@app.post("/collections")
+def collections_check(req: CollectionRequest):
+    """Rights and next steps for a medical debt in collections. Used for this answer only; never logged or stored."""
+    res = _collections.assess(req.sender, req.first_notice, req.service_date, req.interest_rate, req.amount,
+                              req.nonprofit, req.insured)
+    return {"items": res.items, "letter": res.letter, "sources": [{"title": t, "url": u} for t, u in res.sources]}
+
+
 # ---------------------------------------------------------------- v2: read a photo (Feature 10, optional)
 import base64 as _b64  # noqa: E402
 import hashlib as _hashlib  # noqa: E402

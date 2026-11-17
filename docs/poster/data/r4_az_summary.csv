@@ -1,0 +1,3 @@
+data_year,in_network_claims,denied,denial_rate_pct,internal_appeals,appeals_per_100_denials,appeals_won,appeals_won_pct,us_denial_rate_pct
+2025,8988391,1449189,16.12,11145,0.77,4477,40.2,15.71
+2024,7874919,1581162,20.08,12351,0.78,3753,30.4,18.73

@@ -1,0 +1,5 @@
+checker,bills,errors_missed_of_80,false_alarms_of_20,wrong_amount_due_of_100,note
+ClearTab rules,100,0,0,0,
+openai/gpt-oss-120b (Groq),100,13,1,29,free tier
+openai/gpt-oss-20b (Groq),100,30,3,31,free tier
+qwen/qwen3.8-27b (Groq),100,46,0,42,free tier: reasoning off and 600 output tokens

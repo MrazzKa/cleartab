@@ -25,6 +25,7 @@ from pathlib import Path
 import requests
 from pydantic import BaseModel, Field, ValidationError
 
+from billcheck import usage
 from billcheck.models import PlanBalance
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
@@ -353,7 +354,9 @@ def read_document(images: list[tuple[bytes, str]], session=requests) -> ReadResu
             error = f"The reader returned an error ({r.status_code}). Enter the numbers by hand."
             continue
         try:
-            raw = parse_json(r.json()["choices"][0]["message"]["content"])
+            answer = r.json()
+            usage.log(name, model, answer, "reader")
+            raw = parse_json(answer["choices"][0]["message"]["content"])
             res = ReadResult(**{k: v for k, v in raw.items() if k in ReadResult.model_fields and k != "model"})
             res.model = f"{model} ({p['label']})"
             if pdf_source is not None:
